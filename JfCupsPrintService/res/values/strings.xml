@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Cups Print Service</string>
+    <string name="app_name">Cups</string>
     <string name="title_activity_printer_list">Cups</string>
     <string name="about">About</string>
     <string name="addprinter">Add Printer</string>
