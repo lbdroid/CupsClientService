@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">JfCupsPrintService</string>
-    <string name="title_activity_printer_list">JfCupsPrintService</string>
+    <string name="app_name">CupsPrintService</string>
+    <string name="title_activity_printer_list">CupsPrintService</string>
     <string name="about">About</string>
     <string name="addprinter">Add Printer</string>
     <string name="certificates">Certificates</string>
@@ -33,8 +33,8 @@
     <string name="test">Test</string>
     <string name="title_activity_ppd_groups">Ppd Groups</string>
     <string name="title_activity_ppd_sections">Ppd Items</string>
-    <string name="title_activity_printer_print_to">JfCupsPrintService&#8230;</string>
-    <string name="title_activity_printer_print_default">JfCupsPrintService default</string>
+    <string name="title_activity_printer_print_to">CupsPrintService&#8230;</string>
+    <string name="title_activity_printer_print_default">CupsPrintService default</string>
     <string name="title_activity_about">About</string>
     <string name="title_activity_mime_types">Mime Types</string>
     <string name="title_activity_certificate">Certificates</string>
