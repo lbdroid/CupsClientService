@@ -42,6 +42,13 @@
 #  endif /* WIN32 */
 
 
+// The lockf() function is not available on Android; we translate to flock().
+#define F_LOCK LOCK_EX
+#define F_ULOCK LOCK_UN
+inline int lockf(int fd, int cmd, off_t ignored_len) {
+    return flock(fd, cmd);
+}
+
 /*
  * Some operating systems support large files via open flag O_LARGEFILE...
  */

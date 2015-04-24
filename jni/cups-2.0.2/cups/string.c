@@ -233,12 +233,12 @@ _cupsStrFormatd(char         *buf,	/* I - String */
   * Next, find the decimal point...
   */
 
-  if (loc && loc->decimal_point)
-  {
-    dec    = loc->decimal_point;
-    declen = (int)strlen(dec);
-  }
-  else
+  //if (loc && loc->decimal_point)
+  //{
+  //  dec    = loc->decimal_point;
+  //  declen = (int)strlen(dec);
+  //}
+  //else
   {
     dec    = ".";
     declen = 1;
@@ -447,12 +447,13 @@ _cupsStrScand(const char   *buf,	/* I - Pointer to number */
 
     buf ++;
 
-    if (loc && loc->decimal_point)
-    {
-      strlcpy(tempptr, loc->decimal_point, sizeof(temp) - (size_t)(tempptr - temp));
-      tempptr += strlen(tempptr);
-    }
-    else if (tempptr < (temp + sizeof(temp) - 1))
+    //if (loc && loc->decimal_point)
+    //{
+    //  strlcpy(tempptr, loc->decimal_point, sizeof(temp) - (size_t)(tempptr - temp));
+    //  tempptr += strlen(tempptr);
+    //}
+    //else
+    if (tempptr < (temp + sizeof(temp) - 1))
       *tempptr++ = '.';
     else
     {

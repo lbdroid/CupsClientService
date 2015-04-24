@@ -184,7 +184,7 @@ _cups_vsnprintf(char       *buffer,	/* O - Output buffer */
 	      break;
 
 	    sprintf(temp, tformat, va_arg(ap, double));
-	    templen = strlen(temp):
+	    templen = strlen(temp);
 
             bytes += (int)templen;
 
@@ -215,7 +215,7 @@ _cups_vsnprintf(char       *buffer,	/* O - Output buffer */
 	      break;
 
 	    sprintf(temp, tformat, va_arg(ap, int));
-	    templen = strlen(temp):
+	    templen = strlen(temp);
 
             bytes += (int)templen;
 
@@ -239,7 +239,7 @@ _cups_vsnprintf(char       *buffer,	/* O - Output buffer */
 	      break;
 
 	    sprintf(temp, tformat, va_arg(ap, void *));
-	    templen = strlen(temp):
+	    templen = strlen(temp);
 
             bytes += (int)templen;
 

@@ -758,7 +758,7 @@ ppd_mark_option(ppd_file_t *ppd,	/* I - PPD file */
   ppd_choice_t	*c,			/* Choice pointer */
 		*oldc,			/* Old choice pointer */
 		key;			/* Search key for choice */
-  struct lconv	*loc;			/* Locale data */
+  //struct lconv	*loc;			/* Locale data */
 
 
   DEBUG_printf(("7ppd_mark_option(ppd=%p, option=\"%s\", choice=\"%s\")",
@@ -799,7 +799,7 @@ ppd_mark_option(ppd_file_t *ppd,	/* I - PPD file */
   if (!o)
     return;
 
-  loc = localeconv();
+  //loc = localeconv();
 
   if (!_cups_strncasecmp(choice, "Custom.", 7))
   {
@@ -840,13 +840,13 @@ ppd_mark_option(ppd_file_t *ppd,	/* I - PPD file */
 	  case PPD_CUSTOM_INVCURVE :
 	  case PPD_CUSTOM_REAL :
 	      cparam->current.custom_real = (float)_cupsStrScand(choice + 7,
-	                                                         NULL, loc);
+	                                                         NULL, NULL);//loc);
 	      break;
 
 	  case PPD_CUSTOM_POINTS :
 	      cparam->current.custom_points = (float)_cupsStrScand(choice + 7,
 	                                                           &units,
-	                                                           loc);
+	                                                           NULL);//loc);
 
               if (units)
 	      {
@@ -917,13 +917,13 @@ ppd_mark_option(ppd_file_t *ppd,	/* I - PPD file */
 	  case PPD_CUSTOM_INVCURVE :
 	  case PPD_CUSTOM_REAL :
 	      cparam->current.custom_real = (float)_cupsStrScand(val->value,
-	                                                         NULL, loc);
+	                                                         NULL, NULL);//loc);
 	      break;
 
 	  case PPD_CUSTOM_POINTS :
 	      cparam->current.custom_points = (float)_cupsStrScand(val->value,
 	                                                           &units,
-	                                                           loc);
+	                                                           NULL);//loc);
 
 	      if (units)
 	      {

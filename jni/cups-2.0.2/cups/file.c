@@ -28,6 +28,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+# define F_TLOCK 2	/* Test and lock a region for exclusive use.  */
+# define F_TEST  3	/* Test a region for other processes locks.  */
+
 
 /*
  * Local functions...

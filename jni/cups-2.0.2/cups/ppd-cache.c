@@ -2106,14 +2106,14 @@ _ppdCacheGetSize(
 
     double		w, l;		/* Width and length of page */
     char		*ptr;		/* Pointer into PageSize */
-    struct lconv	*loc;		/* Locale data */
+    //struct lconv	*loc;		/* Locale data */
 
-    loc = localeconv();
-    w   = (float)_cupsStrScand(page_size + 7, &ptr, loc);
+    //loc = localeconv();
+    w   = (float)_cupsStrScand(page_size + 7, &ptr, NULL);//loc);
     if (!ptr || *ptr != 'x')
       return (NULL);
 
-    l = (float)_cupsStrScand(ptr + 1, &ptr, loc);
+    l = (float)_cupsStrScand(ptr + 1, &ptr, NULL);//loc);
     if (!ptr)
       return (NULL);
 

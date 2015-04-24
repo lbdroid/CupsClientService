@@ -45,7 +45,7 @@ ppdPageSize(ppd_file_t *ppd,		/* I - PPD file record */
   ppd_size_t	*size;			/* Current page size */
   double	w, l;			/* Width and length of page */
   char		*nameptr;		/* Pointer into name */
-  struct lconv	*loc;			/* Locale data */
+  //struct lconv	*loc;			/* Locale data */
   ppd_coption_t	*coption;		/* Custom option for page size */
   ppd_cparam_t	*cparam;		/* Custom option parameter */
 
@@ -87,12 +87,12 @@ ppdPageSize(ppd_file_t *ppd,		/* I - PPD file record */
       *    Custom.WIDTHxLENGTH[pt]  - Size in points
       */
 
-      loc = localeconv();
-      w   = _cupsStrScand(name + 7, &nameptr, loc);
+      //loc = localeconv();
+      w   = _cupsStrScand(name + 7, &nameptr, NULL);//loc);
       if (!nameptr || *nameptr != 'x')
         return (NULL);
 
-      l = _cupsStrScand(nameptr + 1, &nameptr, loc);
+      l = _cupsStrScand(nameptr + 1, &nameptr, NULL);//loc);
       if (!nameptr)
         return (NULL);
 

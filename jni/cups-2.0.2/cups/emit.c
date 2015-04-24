@@ -614,7 +614,7 @@ ppdEmitString(ppd_file_t    *ppd,	/* I - PPD file record */
   char		*buffer,		/* String buffer */
 		*bufptr,		/* Pointer into buffer */
 		*bufend;		/* End of buffer */
-  struct lconv	*loc;			/* Locale data */
+  //struct lconv	*loc;			/* Locale data */
 
 
   DEBUG_printf(("ppdEmitString(ppd=%p, section=%d, min_order=%f)",
@@ -756,7 +756,7 @@ ppdEmitString(ppd_file_t    *ppd,	/* I - PPD file record */
   }
 
   bufend = buffer + bufsize - 1;
-  loc    = localeconv();
+  //loc    = localeconv();
 
  /*
   * Copy the option code to the buffer...
@@ -810,7 +810,7 @@ ppdEmitString(ppd_file_t    *ppd,	/* I - PPD file record */
 		  case PPD_CUSTOM_REAL :
 		      bufptr = _cupsStrFormatd(bufptr, bufend,
 					       cparam->current.custom_real,
-					       loc);
+					       NULL);//loc);
 		      break;
 
 		  case PPD_CUSTOM_INT :
@@ -962,7 +962,7 @@ ppdEmitString(ppd_file_t    *ppd,	/* I - PPD file record */
 
         for (pos = 0; pos < 5; pos ++)
 	{
-	  bufptr    = _cupsStrFormatd(bufptr, bufend, values[pos], loc);
+	  bufptr    = _cupsStrFormatd(bufptr, bufend, values[pos], NULL);//loc);
 	  *bufptr++ = '\n';
         }
 
@@ -1011,7 +1011,7 @@ ppdEmitString(ppd_file_t    *ppd,	/* I - PPD file record */
 	    case PPD_CUSTOM_POINTS :
 	    case PPD_CUSTOM_REAL :
 	        bufptr    = _cupsStrFormatd(bufptr, bufend,
-		                            cparam->current.custom_real, loc);
+		                            cparam->current.custom_real, NULL);//loc);
                 *bufptr++ = '\n';
 	        break;
 

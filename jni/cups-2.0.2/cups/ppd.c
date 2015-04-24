@@ -409,7 +409,7 @@ _ppdOpen(
   ppd_section_t		section;	/* Order dependency section */
   ppd_profile_t		*profile;	/* Pointer to color profile */
   char			**filter;	/* Pointer to filter */
-  struct lconv		*loc;		/* Locale data */
+  //struct lconv		*loc;		/* Locale data */
   int			ui_keyword;	/* Is this line a UI keyword? */
   cups_lang_t		*lang;		/* Language data */
   cups_encoding_t	encoding;	/* Encoding of PPD file */
@@ -591,7 +591,7 @@ _ppdOpen(
   choice     = NULL;
   ui_keyword = 0;
   encoding   = CUPS_ISO8859_1;
-  loc        = localeconv();
+  //loc        = localeconv();
 
   while ((mask = ppd_read(fp, &line, keyword, name, text, &string, 1, cg)) != 0)
   {
@@ -847,17 +847,17 @@ _ppdOpen(
       strlcpy(profile->resolution, name, sizeof(profile->resolution));
       strlcpy(profile->media_type, text, sizeof(profile->media_type));
 
-      profile->density      = (float)_cupsStrScand(string, &sptr, loc);
-      profile->gamma        = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[0][0] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[0][1] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[0][2] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[1][0] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[1][1] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[1][2] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[2][0] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[2][1] = (float)_cupsStrScand(sptr, &sptr, loc);
-      profile->matrix[2][2] = (float)_cupsStrScand(sptr, &sptr, loc);
+      profile->density      = (float)_cupsStrScand(string, &sptr, NULL);//loc);
+      profile->gamma        = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[0][0] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[0][1] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[0][2] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[1][0] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[1][1] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[1][2] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[2][0] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[2][1] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      profile->matrix[2][2] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
     }
     else if (!strcmp(keyword, "cupsFilter"))
     {
@@ -953,8 +953,8 @@ _ppdOpen(
       if (!strcmp(ctype, "curve"))
       {
         cparam->type = PPD_CUSTOM_CURVE;
-	cparam->minimum.custom_curve = (float)_cupsStrScand(cminimum, NULL, loc);
-	cparam->maximum.custom_curve = (float)_cupsStrScand(cmaximum, NULL, loc);
+	cparam->minimum.custom_curve = (float)_cupsStrScand(cminimum, NULL, NULL);//loc);
+	cparam->maximum.custom_curve = (float)_cupsStrScand(cmaximum, NULL, NULL);//loc);
       }
       else if (!strcmp(ctype, "int"))
       {
@@ -965,8 +965,8 @@ _ppdOpen(
       else if (!strcmp(ctype, "invcurve"))
       {
         cparam->type = PPD_CUSTOM_INVCURVE;
-	cparam->minimum.custom_invcurve = (float)_cupsStrScand(cminimum, NULL, loc);
-	cparam->maximum.custom_invcurve = (float)_cupsStrScand(cmaximum, NULL, loc);
+	cparam->minimum.custom_invcurve = (float)_cupsStrScand(cminimum, NULL, NULL);//loc);
+	cparam->maximum.custom_invcurve = (float)_cupsStrScand(cmaximum, NULL, NULL);//loc);
       }
       else if (!strcmp(ctype, "passcode"))
       {
@@ -983,14 +983,14 @@ _ppdOpen(
       else if (!strcmp(ctype, "points"))
       {
         cparam->type = PPD_CUSTOM_POINTS;
-	cparam->minimum.custom_points = (float)_cupsStrScand(cminimum, NULL, loc);
-	cparam->maximum.custom_points = (float)_cupsStrScand(cmaximum, NULL, loc);
+	cparam->minimum.custom_points = (float)_cupsStrScand(cminimum, NULL, NULL);//loc);
+	cparam->maximum.custom_points = (float)_cupsStrScand(cmaximum, NULL, NULL);//loc);
       }
       else if (!strcmp(ctype, "real"))
       {
         cparam->type = PPD_CUSTOM_REAL;
-	cparam->minimum.custom_real = (float)_cupsStrScand(cminimum, NULL, loc);
-	cparam->maximum.custom_real = (float)_cupsStrScand(cmaximum, NULL, loc);
+	cparam->minimum.custom_real = (float)_cupsStrScand(cminimum, NULL, NULL);//loc);
+	cparam->maximum.custom_real = (float)_cupsStrScand(cmaximum, NULL, NULL);//loc);
       }
       else if (!strcmp(ctype, "string"))
       {
@@ -1026,7 +1026,7 @@ _ppdOpen(
     else if (!strcmp(keyword, "HWMargins"))
     {
       for (i = 0, sptr = string; i < 4; i ++)
-        ppd->custom_margins[i] = (float)_cupsStrScand(sptr, &sptr, loc);
+        ppd->custom_margins[i] = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
     }
     else if (!strncmp(keyword, "Custom", 6) && !strcmp(name, "True") && !option)
     {
@@ -1522,7 +1522,7 @@ _ppdOpen(
     }
     else if (!strcmp(keyword, "OrderDependency"))
     {
-      order = (float)_cupsStrScand(string, &sptr, loc);
+      order = (float)_cupsStrScand(string, &sptr, NULL);//loc);
 
       if (!sptr || sscanf(sptr, "%40s%40s", name, keyword) != 2)
       {
@@ -1837,8 +1837,8 @@ _ppdOpen(
 	goto error;
       }
 
-      size->width  = (float)_cupsStrScand(string, &sptr, loc);
-      size->length = (float)_cupsStrScand(sptr, NULL, loc);
+      size->width  = (float)_cupsStrScand(string, &sptr, NULL);//loc);
+      size->length = (float)_cupsStrScand(sptr, NULL, NULL);//loc);
 
       _cupsStrFree(string);
       string = NULL;
@@ -1859,10 +1859,10 @@ _ppdOpen(
 	goto error;
       }
 
-      size->left   = (float)_cupsStrScand(string, &sptr, loc);
-      size->bottom = (float)_cupsStrScand(sptr, &sptr, loc);
-      size->right  = (float)_cupsStrScand(sptr, &sptr, loc);
-      size->top    = (float)_cupsStrScand(sptr, NULL, loc);
+      size->left   = (float)_cupsStrScand(string, &sptr, NULL);//loc);
+      size->bottom = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      size->right  = (float)_cupsStrScand(sptr, &sptr, NULL);//loc);
+      size->top    = (float)_cupsStrScand(sptr, NULL, NULL);//loc);
 
       _cupsStrFree(string);
       string = NULL;
