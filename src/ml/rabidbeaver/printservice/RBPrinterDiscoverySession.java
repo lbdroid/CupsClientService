@@ -90,7 +90,7 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 		if (config != null){
 			AuthInfo auth = null;
 			if (!(config.getPassword().equals(""))){
-				auth = new AuthInfo(config.getUserName(), config.getPassword());
+				auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 			}
 			GetServicePpdTask task = new GetServicePpdTask(config, auth, md5);
 			task.setPpdTaskListener(this);

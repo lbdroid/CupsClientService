@@ -23,7 +23,6 @@ import org.cups4j.ppd.PpdItemList;
 import org.cups4j.ppd.PpdSectionList;
 
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -135,7 +134,7 @@ public class PrintJobActivity extends Activity
 		cupsClient.setUserName(printerConfig.userName);
 		AuthInfo auth = null;
 		if (!(printerConfig.password.equals(""))){
-			auth = new AuthInfo(printerConfig.userName, printerConfig.password);
+			auth = new AuthInfo(CupsPrintApp.getContext(), printerConfig.userName, printerConfig.password);
 		}
 		getPrinterTask = new GetPrinterTask(cupsClient, auth, Util.getQueue(printerConfig),true);
 		getPrinterTask.setListener(this);
@@ -167,7 +166,7 @@ public class PrintJobActivity extends Activity
 		
 		auth = null;
 		if (!(printerConfig.password.equals(""))){
-			auth = new AuthInfo(printerConfig.userName, printerConfig.password);
+			auth = new AuthInfo(CupsPrintApp.getContext(), printerConfig.userName, printerConfig.password);
 		}
 		cupsppd = new CupsPpd(auth);
 		if (printerConfig.noOptions){
@@ -298,7 +297,7 @@ public class PrintJobActivity extends Activity
 	    }
 	    AuthInfo auth = null;
 	    if (!(printerConfig.password).equals("")){
-	    	auth = new AuthInfo(printerConfig.userName, printerConfig.password);
+	    	auth = new AuthInfo(CupsPrintApp.getContext(), printerConfig.userName, printerConfig.password);
 	    }
         doPrint(auth);
 	}

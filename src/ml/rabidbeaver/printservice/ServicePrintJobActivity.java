@@ -72,7 +72,7 @@ public class ServicePrintJobActivity extends Activity {
 			if (ppd != null){
 				AuthInfo auth = null;
 				if (!(config.getPassword().equals(""))){
-					auth = new AuthInfo(config.getUserName(), config.getPassword());
+					auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 				}
 				cupsPpd = new CupsPpd(auth);
 				cupsPpd.setPpdRec(ppd.getPpdRec().deepCloneUILists());

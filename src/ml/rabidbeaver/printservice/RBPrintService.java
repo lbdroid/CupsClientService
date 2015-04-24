@@ -169,7 +169,7 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	    cupsClient.setUserName(config.getUserName());
 	    AuthInfo auth = null;
 	    if (!(config.getPassword().equals(""))){
-	    	auth = new AuthInfo(config.getUserName(), config.getPassword());
+	    	auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 	    }
 	    PrintTask printTask = new PrintTask(cupsClient, config.getQueuePath());
 		printTask.setJob(cupsPrintJob, auth);

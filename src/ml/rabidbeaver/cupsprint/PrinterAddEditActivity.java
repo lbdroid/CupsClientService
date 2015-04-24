@@ -16,7 +16,6 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.operations.AuthInfo;
 
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -270,7 +269,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    String passwd = password.getText().toString();
 	    AuthInfo auth = null;
 	    if (!(passwd.equals(""))){
-	    	auth = new AuthInfo(user,passwd);
+	    	auth = new AuthInfo(CupsPrintApp.getContext(), user,passwd);
 	    }
 	    
 	    GetPrinterTask task = new GetPrinterTask(client, auth, Util.getQueue(printConfig), false);

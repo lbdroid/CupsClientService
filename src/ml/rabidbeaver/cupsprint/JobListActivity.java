@@ -69,7 +69,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 		client.setUserName(config.userName);
 		AuthInfo auth = null;
 		if (!(config.password.equals(""))){
-			auth = new AuthInfo(config.userName, config.password);
+			auth = new AuthInfo(getBaseContext(), config.userName, config.password);
 		}
 		GetPrinterTask task = new GetPrinterTask(client, auth, config.getPrintQueue(), false);
 		task = new GetPrinterTask(client, auth, Util.getQueue(config),true);
@@ -152,7 +152,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	public void doOperation(CupsPrintJobAttributes record, int operation){
 	    AuthInfo auth = null;
 	    if (!(config.password.equals(""))){
-	    	auth = new AuthInfo(config.userName, config.password);
+	    	auth = new AuthInfo(getBaseContext(), config.userName, config.password);
 	    }
 	    CancelJobTask.Operation taskOp = null;
 	    switch (operation){
@@ -208,7 +208,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 				if (passes == 0){
 					AuthInfo auth = null;
 					if (!config.password.equals("")){
-						auth = new AuthInfo(config.userName, config.password);
+						auth = new AuthInfo(getBaseContext(), config.userName, config.password);
 					}
 					List<CupsPrintJobAttributes> jobList;
 					try {

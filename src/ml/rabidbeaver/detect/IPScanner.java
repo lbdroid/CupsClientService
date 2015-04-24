@@ -46,7 +46,7 @@ public class IPScanner implements Runnable{
                     try {
                     	AuthInfo auth = null;
                     	if (!(password.equals(""))){
-                    		auth = new AuthInfo(username, password);
+                    		auth = new AuthInfo(ctx, username, password);
                     	}
                     	CupsClient cupsClient = new CupsClient(
                             new URL("http://" + ip + ":" + port), "");
@@ -70,7 +70,7 @@ public class IPScanner implements Runnable{
                     	cupsClient.setUserName(username);
                     	AuthInfo auth = null;
                     	if (!(password.equals(""))){
-                    		auth = new AuthInfo(username, password);
+                    		auth = new AuthInfo(ctx, username, password);
                     	}
                     	List<CupsPrinter> pList = cupsClient.listPrinters(auth);
                     	for (CupsPrinter p: pList){

@@ -11,7 +11,6 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.operations.AuthInfo;
 
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -47,7 +46,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    }
 	    AuthInfo auth = null;
 	    if (!(printConfig.getPassword().equals(""))){
-	    	auth = new AuthInfo(printConfig.getUserName(), printConfig.getPassword());
+	    	auth = new AuthInfo(CupsPrintApp.getContext(), printConfig.getUserName(), printConfig.getPassword());
 	    }
 	    task = new GetPrinterTask(client, auth, Util.getQueue(printConfig),true);
 	    task.setListener(this);
