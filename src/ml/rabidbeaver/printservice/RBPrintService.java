@@ -1,23 +1,5 @@
 package ml.rabidbeaver.printservice;
 
-/*
-JfCupsPrintService
-Copyright (C) 2014 Jon Freeman
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -49,7 +31,7 @@ import android.printservice.PrinterDiscoverySession;
 import android.widget.Toast;
 
 
-public class JfPrintService extends PrintService implements PrintTaskListener{
+public class RBPrintService extends PrintService implements PrintTaskListener{
 	
 	static ConcurrentHashMap<String, CupsPpd> capabilities;
 	static CupsPpd jobPpd;
@@ -69,7 +51,7 @@ public class JfPrintService extends PrintService implements PrintTaskListener{
 	
 	@Override
 	protected PrinterDiscoverySession onCreatePrinterDiscoverySession() {
-		return new JfPrinterDiscoverySession(this);
+		return new RBPrinterDiscoverySession(this);
 	}
 
 	@Override
@@ -224,7 +206,7 @@ public class JfPrintService extends PrintService implements PrintTaskListener{
 		Exception exception = task.getException();
 		PrintJob servicePrintJob = task.getServicePrintJob();
 		String jobname = servicePrintJob.getDocument().getInfo().getName();
-		String errmsg = "JfCupsPrint " + jobname + ":\n";
+		String errmsg = "CupsPrint " + jobname + ":\n";
 		
 		if (exception != null){
 			Toast.makeText(this, errmsg + exception.toString(), Toast.LENGTH_LONG).show();

@@ -1,23 +1,5 @@
 package ml.rabidbeaver.cupsprint;
 
-/*
-JfCupsPrintService
-Copyright (C) 2014 Jon Freeman
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -31,12 +13,11 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.WhichJobsEnum;
 import org.cups4j.operations.AuthInfo;
 
-import com.jonbanjo.cupsprintservice.R;
+import ml.rabidbeaver.cupsprintservice.R;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
@@ -235,7 +216,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 								client.getJobs(config.getQueuePath(), auth, WhichJobsEnum.NOT_COMPLETED, false);
 					}
 					catch (Exception e){
-						Util.showToast(activity, "JfCupsPrintService Jobs List\n" + e.toString());
+						Util.showToast(activity, "CupsPrintService Jobs List\n" + e.toString());
 						activity.finish();
 						return;
 					}

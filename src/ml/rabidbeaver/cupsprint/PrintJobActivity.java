@@ -1,44 +1,5 @@
 package ml.rabidbeaver.cupsprint;
 
-/*Copyright (C) 2013 Jon Freeman
-
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License as published by the Free
-Software Foundation; either version 3 of the License, or (at your option) any
-later version.
- 
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.
- 
-See the GNU Lesser General Public License for more details. You should have
-received a copy of the GNU Lesser General Public License along with this
-program; if not, see <http://www.gnu.org/licenses/>.
-*/
-
-//import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
-//import java.util.HashMap;
-//import java.util.Locale;
-//import java.util.Map;
-
-//import com.jonbanjo.async.GetPpdListener;
-//import com.jonbanjo.async.GetPpdTask;
-//import com.jonbanjo.async.GetPrinterListener;
-//import com.jonbanjo.async.GetPrinterTask;
-//import com.jonbanjo.async.PrintTask;
-//import com.jonbanjo.async.PrintTaskListener;
-//import com.jonbanjo.cups.CupsClient;
-//import com.jonbanjo.cups.CupsPrinter;
-//import com.jonbanjo.cups.PrintJob;
-//import com.jonbanjo.cups.PrintRequestResult;
-//import com.jonbanjo.cups.operations.AuthInfo;
-//import com.jonbanjo.cups.ppd.CupsPpd;
-//import com.jonbanjo.cups.ppd.PpdItemList;
-//import com.jonbanjo.cups.ppd.PpdSectionList;
-//import com.jonbanjo.cupscontrols.CupsTableLayout;
-
-//import android.net.Uri;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -61,7 +22,7 @@ import org.cups4j.ppd.CupsPpd;
 import org.cups4j.ppd.PpdItemList;
 import org.cups4j.ppd.PpdSectionList;
 
-import com.jonbanjo.cupsprintservice.R;
+import ml.rabidbeaver.cupsprintservice.R;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -418,7 +379,7 @@ public class PrintJobActivity extends Activity
 	        		try {
 	        			file = (FileInputStream) getContentResolver().openInputStream(data);
 	        		} catch (FileNotFoundException e) {
-	        			showToast("JfCupsPrint error\n " + e.toString());
+	        			showToast("CupsPrint error\n " + e.toString());
 	        			System.out.println(e.toString());
 	        			setResult(500);
 	        			finish();
@@ -432,11 +393,11 @@ public class PrintJobActivity extends Activity
 	        		}
 	                System.setProperty("java.net.preferIPv4Stack" , "true"); 
 	    			PrintRequestResult printResult = cupsClient.print(cupsPrinter.getQueue(), job, auth);
-	            	showToast("JfCupsPrint\n" + fileName + "\n" + printResult.getResultDescription());
+	            	showToast("CupsPrint\n" + fileName + "\n" + printResult.getResultDescription());
 	                System.out.println("job printed");
 	        	}
 	            catch (Exception e){
-	            	showToast("JfCupsPrint error:\n" + e.toString());
+	            	showToast("CupsPrint error:\n" + e.toString());
 	                System.out.println(e.toString());
 	            }
 	        }

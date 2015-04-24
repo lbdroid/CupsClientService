@@ -1,23 +1,5 @@
 package ml.rabidbeaver.printservice;
 
-/*
-JfCupsPrintService
-Copyright (C) 2014 Jon Freeman
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,8 +8,8 @@ import java.util.Map;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
-import ml.rabidbeaver.discovery.JfPrinterDiscoveryInfo;
-import ml.rabidbeaver.discovery.JfPrinterDiscoveryListener;
+import ml.rabidbeaver.discovery.PrinterDiscoveryInfo;
+import ml.rabidbeaver.discovery.PrinterDiscoveryListener;
 import ml.rabidbeaver.tasks.GetServicePpdListener;
 import ml.rabidbeaver.tasks.GetServicePpdTask;
 
@@ -45,15 +27,13 @@ import android.print.PrinterInfo;
 import android.printservice.PrinterDiscoverySession;
 import android.widget.Toast;
 
+public class RBPrinterDiscoverySession extends PrinterDiscoverySession 
+		implements PrinterDiscoveryListener, GetServicePpdListener{
 
-
-public class JfPrinterDiscoverySession extends PrinterDiscoverySession 
-		implements JfPrinterDiscoveryListener, GetServicePpdListener{
-
-	private JfPrintService printService;
+	private RBPrintService printService;
 	
-	public JfPrinterDiscoverySession(JfPrintService jfPrintService){
-		this.printService = jfPrintService;
+	public RBPrinterDiscoverySession(RBPrintService printService){
+		this.printService = printService;
 	}
 	
 	@Override
@@ -62,11 +42,11 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	
 	@Override
 	public void onStartPrinterDiscovery(List<PrinterId> arg0) {
-		Map<String, JfPrinterDiscoveryInfo> printerMap = CupsPrintApp.getPrinterDiscovery().addDiscoveryListener(this);
+		Map<String, PrinterDiscoveryInfo> printerMap = CupsPrintApp.getPrinterDiscovery().addDiscoveryListener(this);
 		Iterator<String> it = printerMap.keySet().iterator();
 		List<PrinterInfo> printers = new ArrayList<PrinterInfo>();
 		while (it.hasNext()){
-			JfPrinterDiscoveryInfo info = printerMap.get(it.next());
+			PrinterDiscoveryInfo info = printerMap.get(it.next());
 			PrinterInfo printerInfo = createPrinterInfo(info);
 			if (printerInfo != null){
 				printers.add(printerInfo);
@@ -75,9 +55,9 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 		addPrinters(printers);
 		ArrayList<PrinterId>printerIds = new ArrayList<PrinterId>();
 		for (PrinterInfo printerInfo : this.getPrinters()){
-			JfPrinterDiscoveryInfo info = printerMap.get(printerInfo.getName());
+			PrinterDiscoveryInfo info = printerMap.get(printerInfo.getName());
 			if (info == null){
-				JfPrintService.capabilities.remove(printerInfo.getName());
+				RBPrintService.capabilities.remove(printerInfo.getName());
 				printerIds.add(printerInfo.getId());
 			}
 		}
@@ -95,11 +75,11 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	public void onStartPrinterStateTracking(PrinterId printerId) {
 		byte[] md5 = null;
 		String nickName = printerId.getLocalId();
-		CupsPpd savedPpd = JfPrintService.capabilities.get(nickName);
+		CupsPpd savedPpd = RBPrintService.capabilities.get(nickName);
 		if (savedPpd == null){
 			AuthInfo auth = null;
 			savedPpd = new CupsPpd(auth);
-			JfPrintService.capabilities.put(nickName, savedPpd);
+			RBPrintService.capabilities.put(nickName, savedPpd);
 		}
 		else{
 			md5 = savedPpd.getPpdRec().getPpdMd5();
@@ -129,7 +109,7 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	}
 
 	@Override
-	public void onPrinterAdded(final JfPrinterDiscoveryInfo info) {
+	public void onPrinterAdded(final PrinterDiscoveryInfo info) {
 		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
 		Runnable runnable = new Runnable(){
 
@@ -142,7 +122,7 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	}
 	
 	
-	public void onPrinterAddedMainThread(JfPrinterDiscoveryInfo info){
+	public void onPrinterAddedMainThread(PrinterDiscoveryInfo info){
 		List<PrinterInfo> printers = new ArrayList<PrinterInfo>();
 		PrinterInfo printerInfo = createPrinterInfo(info);
 		if (printerInfo != null){
@@ -153,7 +133,7 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	}
 
 	@Override
-	public void onPrinterRemoved(final JfPrinterDiscoveryInfo info) {
+	public void onPrinterRemoved(final PrinterDiscoveryInfo info) {
 		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
 		Runnable runnable = new Runnable(){
 
@@ -166,16 +146,16 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	
 	}
 	
-	private void onPrinterRemovedMainThread(JfPrinterDiscoveryInfo info){
+	private void onPrinterRemovedMainThread(PrinterDiscoveryInfo info){
 		List<PrinterId> ids = new ArrayList<PrinterId>();
 		PrinterId id = printService.generatePrinterId(info.getNickname());
 		ids.add(id);
 		this.removePrinters(ids);
-		JfPrintService.capabilities.remove(id.getLocalId());
+		RBPrintService.capabilities.remove(id.getLocalId());
 	
 	}
 	
-	private PrinterInfo createPrinterInfo(JfPrinterDiscoveryInfo info){
+	private PrinterInfo createPrinterInfo(PrinterDiscoveryInfo info){
 		PrinterId id = printService.generatePrinterId(info.getNickname());
 		PrinterInfo.Builder builder = new PrinterInfo.Builder(id, info.getNickname(), PrinterInfo.STATUS_IDLE);
 		try{
@@ -191,17 +171,17 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	public void onGetServicePpdTaskDone(CupsPpd cupsPpd, PrintQueueConfig config, Exception exception) {
 		final String nicknameId = config.getNickname();
 		if (exception != null){
-			JfPrintService.capabilities.remove(nicknameId);
+			RBPrintService.capabilities.remove(nicknameId);
 			//Toast.makeText(this.printService, exception.toString(), Toast.LENGTH_LONG).show();
 			return;
 		}
 		CupsPpdRec ppdRec = cupsPpd.getPpdRec();
 		//cupsPpd.setServiceResolution(config.getResolution());
 		if (ppdRec.getIsUpdated()){
-			JfPrintService.capabilities.put(nicknameId, cupsPpd);
+			RBPrintService.capabilities.put(nicknameId, cupsPpd);
 		}
 		else{
-			cupsPpd = JfPrintService.capabilities.get(nicknameId);
+			cupsPpd = RBPrintService.capabilities.get(nicknameId);
 			if (cupsPpd != null){
 				cupsPpd.setServiceResolution(config.getResolution());
 			}
@@ -221,7 +201,7 @@ public class JfPrinterDiscoverySession extends PrinterDiscoverySession
 	
 	private void setPrinterCapabilities(String nickname){
 		
-		CupsPpd cupsPpd = JfPrintService.capabilities.get(nickname);
+		CupsPpd cupsPpd = RBPrintService.capabilities.get(nickname);
 		if (cupsPpd == null){
 			return;
 		}

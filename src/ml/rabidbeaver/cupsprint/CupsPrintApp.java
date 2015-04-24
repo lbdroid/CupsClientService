@@ -1,28 +1,10 @@
 package ml.rabidbeaver.cupsprint;
 
-/*
-JfCupsPrintService
-Copyright (C) 2014 Jon Freeman
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import ml.rabidbeaver.discovery.JfPrinterDiscovery;
+import ml.rabidbeaver.discovery.PrinterDiscovery;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,7 +14,7 @@ import android.util.Base64;
 public class CupsPrintApp extends Application{
     
 	private static CupsPrintApp instance;
-	private static JfPrinterDiscovery printerDiscovery;
+	private static PrinterDiscovery printerDiscovery;
 	private static SecretKey secretKey;
 	private static final String PREF_FILE = "userData";
 	private static final String USER_KEY = "userKey";
@@ -42,7 +24,7 @@ public class CupsPrintApp extends Application{
         return instance;
     }
 
-    public static JfPrinterDiscovery getPrinterDiscovery(){
+    public static PrinterDiscovery getPrinterDiscovery(){
     	return printerDiscovery;
     }
 
@@ -60,7 +42,7 @@ public class CupsPrintApp extends Application{
         super.onCreate();
         instance = this;
         setSecretKey(this.getApplicationContext());
-    	printerDiscovery = new JfPrinterDiscovery();
+    	printerDiscovery = new PrinterDiscovery();
     	printerDiscovery.updateStaticConfig();
     }
 

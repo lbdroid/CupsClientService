@@ -1,23 +1,5 @@
 package ml.rabidbeaver.printservice;
 
-/*
-JfCupsPrintService
-Copyright (C) 2014 Jon Freeman
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import java.util.Iterator;
 
 import android.os.Bundle;
@@ -44,7 +26,7 @@ import org.cups4j.ppd.CupsPpd;
 import org.cups4j.ppd.PpdItemList;
 import org.cups4j.ppd.PpdSectionList;
 
-import com.jonbanjo.cupsprintservice.R;
+import ml.rabidbeaver.cupsprintservice.R;
 
 public class ServicePrintJobActivity extends Activity {
 
@@ -82,11 +64,11 @@ public class ServicePrintJobActivity extends Activity {
 			finish();
 			return;
 		}
-		if (JfPrintService.ppdJobId == jobInfo.getId()){
-			cupsPpd = JfPrintService.jobPpd;
+		if (RBPrintService.ppdJobId == jobInfo.getId()){
+			cupsPpd = RBPrintService.jobPpd;
 		}
 		else {
-			CupsPpd ppd = JfPrintService.capabilities.get(nickname);
+			CupsPpd ppd = RBPrintService.capabilities.get(nickname);
 			if (ppd != null){
 				AuthInfo auth = null;
 				if (!(config.getPassword().equals(""))){
@@ -94,8 +76,8 @@ public class ServicePrintJobActivity extends Activity {
 				}
 				cupsPpd = new CupsPpd(auth);
 				cupsPpd.setPpdRec(ppd.getPpdRec().deepCloneUILists());
-				JfPrintService.ppdJobId = jobInfo.getId();
-				JfPrintService.jobPpd = cupsPpd;
+				RBPrintService.ppdJobId = jobInfo.getId();
+				RBPrintService.jobPpd = cupsPpd;
 			}
 			else {
 				Util.showToast(this, "Unable to create advanced options");

@@ -1,36 +1,4 @@
-This is a mirror of the jfcupsprint project created by Jon Freeman 2013
+CupsPrintService
 
-I have created it so that the code is under control etc....
-
-TODO:
-Sill need to re-structure for a cleaner build system and provide better help
-
-Current licence conditions are:
-
-http://mobd.jonbanjo.com/jfcupsprint/licence.php
-
-
-
-Two versions:
-
-http://mobd.jonbanjo.com/jfcupsprint/default.php
-http://mobd.jonbanjo.com/jfcupsprintservice/
-
-The service version is better for kitkat
-
-
-
-fdroid entry:
-
-https://f-droid.org/forums/topic/cups-print-app/page/3/
-
-Src:
-
-Old adt project: http://mobd.jonbanjo.com/jfcupsprint/downloads/jfcupsprint.zip
-Cups4j(patched): http://mobd.jonbanjo.com/jfcupsprint/downloads/cups4jpatched.zip
-
-New adt project: http://mobd.jonbanjo.com/jfcupsprintservice/downloads/jfcupsprintservice.zip
-JfCups: http://mobd.jonbanjo.com/jfcupsprintservice/downloads/jfcups.zip
-
-
+Depends on hacked version of cups4j and whacked out library ssl4cups4j which will need to be murderized.
 

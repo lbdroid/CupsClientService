@@ -1,23 +1,5 @@
 package ml.rabidbeaver.discovery;
 
-/*
-JfCupsPrintService
-Copyright (C) 2014 Jon Freeman
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,31 +11,31 @@ import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
 
-public class JfPrinterDiscovery{
+public class PrinterDiscovery{
 	
-	private Map<String, JfPrinterDiscoveryInfo> printerInfos;
-	private List<JfPrinterDiscoveryListener> printerDiscoveryListeners;
+	private Map<String, PrinterDiscoveryInfo> printerInfos;
+	private List<PrinterDiscoveryListener> printerDiscoveryListeners;
 	
-	public JfPrinterDiscovery(){
-		printerInfos = Collections.synchronizedMap(new HashMap<String, JfPrinterDiscoveryInfo>());
-		printerDiscoveryListeners = new ArrayList<JfPrinterDiscoveryListener>();
+	public PrinterDiscovery(){
+		printerInfos = Collections.synchronizedMap(new HashMap<String, PrinterDiscoveryInfo>());
+		printerDiscoveryListeners = new ArrayList<PrinterDiscoveryListener>();
 	}
 	
-    public Map<String, JfPrinterDiscoveryInfo> addDiscoveryListener(JfPrinterDiscoveryListener listener){
+    public Map<String, PrinterDiscoveryInfo> addDiscoveryListener(PrinterDiscoveryListener listener){
 		printerDiscoveryListeners.add(listener);
 		return getPrinters();
 	}
 	
-	public void removeDiscoveryListener(JfPrinterDiscoveryListener listener){
+	public void removeDiscoveryListener(PrinterDiscoveryListener listener){
 		printerDiscoveryListeners.remove(listener);
 	}
 	
 	
-	public Map<String, JfPrinterDiscoveryInfo>getPrinters(){
-		return new HashMap<String, JfPrinterDiscoveryInfo>(printerInfos);
+	public Map<String, PrinterDiscoveryInfo>getPrinters(){
+		return new HashMap<String, PrinterDiscoveryInfo>(printerInfos);
 	}
 	
-	public JfPrinterDiscoveryInfo getPrinterInfo(String queue){
+	public PrinterDiscoveryInfo getPrinterInfo(String queue){
 		
 		return printerInfos.get(queue);
 	}
@@ -69,7 +51,7 @@ public class JfPrinterDiscovery{
 				String key = it.next();
 				PrintQueueConfig test = ini.getPrinter(key);
 				if (test == null){
-					JfPrinterDiscoveryInfo info = printerInfos.get(key);
+					PrinterDiscoveryInfo info = printerInfos.get(key);
 					if (info != null){
 						if (info.setRemoveStatic()){
 							it.remove();
@@ -79,7 +61,7 @@ public class JfPrinterDiscovery{
 				}
 				else {
 					if (!test.showInPrintService()){
-						JfPrinterDiscoveryInfo info = printerInfos.get(key);
+						PrinterDiscoveryInfo info = printerInfos.get(key);
 						if (info != null){
 							if (info.setRemoveStatic()){
 								it.remove();
@@ -92,26 +74,26 @@ public class JfPrinterDiscovery{
 		}
 		
 		for(String nickname : iniPrintersArray){
-			JfPrinterDiscoveryInfo jfInfo = printerInfos.get(nickname);
-			if (jfInfo == null){
+			PrinterDiscoveryInfo pdInfo = printerInfos.get(nickname);
+			if (pdInfo == null){
 				PrintQueueConfig config = ini.getPrinter(nickname);
 				if (config != null){
-					JfPrinterDiscoveryInfo newInfo = new JfPrinterDiscoveryInfo(nickname,config.getPrintQueue());
+					PrinterDiscoveryInfo newInfo = new PrinterDiscoveryInfo(nickname,config.getPrintQueue());
 					newInfo.setStatic();
 					printerInfos.put(nickname, newInfo);
 					notifyAddPrinter(newInfo);
 				}
 			}
 			else {
-				jfInfo.setStatic();
+				pdInfo.setStatic();
 			}
 		}
 	}
 	
-	private void notifyAddPrinter(JfPrinterDiscoveryInfo info){
-		Iterator<JfPrinterDiscoveryListener> it = printerDiscoveryListeners.iterator();
+	private void notifyAddPrinter(PrinterDiscoveryInfo info){
+		Iterator<PrinterDiscoveryListener> it = printerDiscoveryListeners.iterator();
 		while (it.hasNext()){
-			JfPrinterDiscoveryListener listener = it.next();
+			PrinterDiscoveryListener listener = it.next();
 			try{
 				listener.onPrinterAdded(info);
 			}catch (Exception e){
@@ -121,10 +103,10 @@ public class JfPrinterDiscovery{
 		}
 	}
 	
-	public void notifyRemovePrinter(JfPrinterDiscoveryInfo info){
-		Iterator<JfPrinterDiscoveryListener> it = printerDiscoveryListeners.iterator();
+	public void notifyRemovePrinter(PrinterDiscoveryInfo info){
+		Iterator<PrinterDiscoveryListener> it = printerDiscoveryListeners.iterator();
 		while (it.hasNext()){
-			JfPrinterDiscoveryListener listener = it.next();
+			PrinterDiscoveryListener listener = it.next();
 			try{
 				listener.onPrinterRemoved(info);
 			}catch (Exception e){

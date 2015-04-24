@@ -2,7 +2,7 @@
 
 <print-service
 	xmlns:android="http://schemas.android.com/apk/res/android"
-    android:vendor="jonbanjo"
-    android:addPrintersActivity="com.jonbanjo.cupsprint.PrinterMainActivity"
-    android:advancedPrintOptionsActivity="com.jonbanjo.printservice.ServicePrintJobActivity" 
+    android:vendor="rabidbeaver"
+    android:addPrintersActivity="ml.rabidbeaver.cupsprint.PrinterMainActivity"
+    android:advancedPrintOptionsActivity="ml.rabidbeaver.printservice.ServicePrintJobActivity" 
 />
