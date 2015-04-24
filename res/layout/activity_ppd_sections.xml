@@ -11,7 +11,7 @@ android:fadeScrollbars="true"
 android:scrollbarSize="10dip"
 android:fitsSystemWindows="true"   >
     
-<com.jonbanjo.cupscontrols.CupsTableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ml.rabidbeaver.cupscontrols.CupsTableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sectionsViewLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -21,6 +21,6 @@ android:fitsSystemWindows="true"   >
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".PpdSectionsActivity" >
     
-</com.jonbanjo.cupscontrols.CupsTableLayout>
+</ml.rabidbeaver.cupscontrols.CupsTableLayout>
 </HorizontalScrollView>
 </ScrollView>

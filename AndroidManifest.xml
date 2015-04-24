@@ -14,13 +14,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.jonbanjo.cupsprint.CupsPrintApp"
+        android:name="ml.rabidbeaver.cupsprint.CupsPrintApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         <service
-            android:name="com.jonbanjo.printservice.JfPrintService"
+            android:name="ml.rabidbeaver.printservice.JfPrintService"
             android:permission="android.permission.BIND_PRINT_SERVICE" >
             <intent-filter>
                 <action android:name="android.printservice.PrintService" />
@@ -32,12 +32,12 @@
             </service>
 
         <activity
-            android:name="com.jonbanjo.cupsprint.PrinterMainActivity"
+            android:name="ml.rabidbeaver.cupsprint.PrinterMainActivity"
             android:exported="true"
             android:label="@string/title_activity_printer_list" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.PrinterPrintToActivity"
+            android:name="ml.rabidbeaver.cupsprint.PrinterPrintToActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_printer_print_to" >
             <intent-filter>
@@ -53,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.PrinterPrintDefaultActivity"
+            android:name="ml.rabidbeaver.cupsprint.PrinterPrintDefaultActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_printer_print_default" >
             <intent-filter>
@@ -68,46 +68,46 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.PrinterAddEditActivity"
+            android:name="ml.rabidbeaver.cupsprint.PrinterAddEditActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_printer_add_edit"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.PrintJobActivity"
+            android:name="ml.rabidbeaver.cupsprint.PrintJobActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_print_job"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.PpdGroupsActivity"
+            android:name="ml.rabidbeaver.cupsprint.PpdGroupsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_ppd_groups" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.PpdSectionsActivity"
+            android:name="ml.rabidbeaver.cupsprint.PpdSectionsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_ppd_sections" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.AboutActivity"
+            android:name="ml.rabidbeaver.cupsprint.AboutActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_about"
             android:theme="@android:style/Theme.Holo.Light.Dialog" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.MimeTypesActivity"
+            android:name="ml.rabidbeaver.cupsprint.MimeTypesActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_mime_types" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.CertificateActivity"
+            android:name="ml.rabidbeaver.cupsprint.CertificateActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_certificate"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name="com.jonbanjo.printservice.ServicePrintJobActivity"
+            android:name="ml.rabidbeaver.printservice.ServicePrintJobActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/title_activity_advanced_settings"
@@ -116,7 +116,7 @@
             android:theme="@android:style/Theme.Holo.Light.Dialog" >
         </activity>
         <activity
-            android:name="com.jonbanjo.cupsprint.JobListActivity"
+            android:name="ml.rabidbeaver.cupsprint.JobListActivity"
             android:label="@string/title_activity_job_list" >
         </activity>
     </application>

@@ -10,7 +10,7 @@ android:scrollbarStyle="insideInset"
 android:fadeScrollbars="true"
 android:scrollbarSize="10dip"
 android:fitsSystemWindows="true"   >
-<com.jonbanjo.cupscontrols.CupsTableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ml.rabidbeaver.cupscontrols.CupsTableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/advancedSettingsLayout"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
@@ -20,7 +20,7 @@ android:fitsSystemWindows="true"   >
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".PrintJobActivity" >
-</com.jonbanjo.cupscontrols.CupsTableLayout>
+</ml.rabidbeaver.cupscontrols.CupsTableLayout>
     
 </HorizontalScrollView>
     
