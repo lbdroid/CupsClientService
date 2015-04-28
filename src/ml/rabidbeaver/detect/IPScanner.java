@@ -86,9 +86,9 @@ public class IPScanner implements Runnable{
                     	}
                     }catch (Exception e){
                     	System.out.println(e.toString());
-                    	if (e.getMessage().contains("No Certificate")){
-                    		IPTester.httpsResults.errors.add("https://" + ip + ":" + port + ": No SSL cetificate\n");
-                    	}
+                    	//if (e.getMessage().contains("No Certificate")){
+                    	//	IPTester.httpsResults.errors.add("https://" + ip + ":" + port + ": No SSL cetificate\n");
+                    	//}
                     }
                 }
                 catch (Exception e){

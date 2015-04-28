@@ -7,18 +7,18 @@ import java.util.List;
 public class PrinterResult {
 	
 	List<PrinterRec> printerRecs;
-	List<String> errors;
+	//List<String> errors;
 	
 	public PrinterResult(){
 		printerRecs = Collections.synchronizedList(new ArrayList<PrinterRec>());
-		errors = Collections.synchronizedList(new ArrayList<String>());
+		//errors = Collections.synchronizedList(new ArrayList<String>());
 	}
 
 	public List<PrinterRec> getPrinters(){
 		return printerRecs;
 	}
 	
-	public List<String> getErrors(){
-		return errors;
-	}
+	//public List<String> getErrors(){
+	//	return errors;
+	//}
 }

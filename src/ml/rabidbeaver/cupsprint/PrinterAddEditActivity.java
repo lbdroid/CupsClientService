@@ -385,9 +385,9 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	
 	public void getDetectedPrinter(PrinterResult results){
 			
-			List<String> errors = results.getErrors();
+			//List<String> errors = results.getErrors();
 			final List<PrinterRec> printers = results.getPrinters();
-			if (errors.size() > 0){
+			/*if (errors.size() > 0){
 				String errorMessage = "";
 				for (String error: errors){
 					errorMessage = errorMessage + error + "\n";
@@ -403,9 +403,9 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 				AlertDialog dialog = builder.create();
 				dialog.show();
 			}
-			else {
+			else {*/
 				chooseDetectedPrinter(printers);
-			}
+			//}
 		}
 			
 	public void chooseDetectedPrinter(List<PrinterRec> printers){

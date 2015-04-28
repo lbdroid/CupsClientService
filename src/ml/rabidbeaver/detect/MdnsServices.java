@@ -3,7 +3,6 @@ package ml.rabidbeaver.detect;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +16,7 @@ import com.jmdns.ServiceInfo;
 import com.jmdns.impl.DNSIncoming;
 import com.jmdns.impl.DNSRecord;
 
-import org.cups4j.CupsClient;
+import ml.rabidbeaver.cupsjni.CupsClient;
 
 public class MdnsServices{
 	
@@ -205,17 +204,14 @@ public class MdnsServices{
         	}
         	else {
         		try {
-        			URL url = new URL(urlStr);
-        			CupsClient client = new CupsClient(url, "");
-        			client.getPrinter("", null);
-        			testMap.put(urlStr, true);
+        			CupsClient client = new CupsClient(urlStr, "");
+        			if (client.isPrinterAccessible("")) // if this client is not an accessible printer on ssl, it will return false
+        				testMap.put(urlStr, true);
+        			else throw new Exception("Printer Not Accessible");
         		}
         		catch (Exception e){
         			testMap.put(urlStr, false);
         			it.remove();
-        			if (e.getMessage().contains("No Certificate")){
-        				result.errors.add(urlStr + ": No SSL cetificate\n");
-        			}
         		}
         	}
         }
