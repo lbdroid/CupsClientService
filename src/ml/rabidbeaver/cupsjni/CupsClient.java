@@ -1,5 +1,11 @@
 package ml.rabidbeaver.cupsjni;
 
+/*
+ * Every time a native header in this file is added or altered, it is necessary to enter CupsClientService/jni/include and run the following command:
+ * javah -classpath ../../bin/classes -o shim.h ml.rabidbeaver.cupsjni.CupsClient
+ * to regenerate the shim.h
+ */
+
 public class CupsClient {
 	public String url = null;
 	public String userName = "anonymous";

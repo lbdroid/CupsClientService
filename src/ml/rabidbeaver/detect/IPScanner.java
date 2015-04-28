@@ -5,9 +5,10 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.List;
 
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrinter;
-import org.cups4j.operations.AuthInfo;
+//import org.cups4j.CupsClient;
+//import org.cups4j.CupsPrinter;
+//import org.cups4j.operations.AuthInfo;
+import ml.rabidbeaver.cupsjni.CupsClient;
 
 import android.content.Context;
 
@@ -44,12 +45,16 @@ public class IPScanner implements Runnable{
                     s.close();
                     //System.out.println(ip + " open");
                     try {
+                    	
+                    	//TODO: This is fairly straightforward; authorization is by way of cups.h:cupsSetUser(user) and cupsSetPasswordCB(password).
+                    	// CupsClient.listPrinters() returns a list of CupsPrinter, which are basically the same as what you get from
+                    	// cups.h:cupsGetDests2(http_t *, cups_dest_t **). CupsPrinter is just a datastructure.
+                    	
                     	AuthInfo auth = null;
                     	if (!(password.equals(""))){
                     		auth = new AuthInfo(ctx, username, password);
                     	}
-                    	CupsClient cupsClient = new CupsClient(
-                            new URL("http://" + ip + ":" + port), "");
+                    	CupsClient cupsClient = new CupsClient("http://" + ip + ":" + port, "");
                     	cupsClient.setUserName(username);
                     	List<CupsPrinter> pList = cupsClient.listPrinters(auth);
                     	for (CupsPrinter p: pList){
@@ -65,8 +70,7 @@ public class IPScanner implements Runnable{
                     	}
                     }catch (Exception e){}
                     try {
-                    	CupsClient cupsClient = new CupsClient(
-                            new URL("https://" + ip + ":" + port), "");
+                    	CupsClient cupsClient = new CupsClient("https://" + ip + ":" + port, "");
                     	cupsClient.setUserName(username);
                     	AuthInfo auth = null;
                     	if (!(password.equals(""))){
