@@ -12,16 +12,8 @@ import ml.rabidbeaver.tasks.GetPpdListener;
 import ml.rabidbeaver.tasks.GetPpdTask;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
-
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrintJob;
-import org.cups4j.CupsPrinter;
-import org.cups4j.PrintRequestResult;
-import org.cups4j.operations.AuthInfo;
-import org.cups4j.ppd.CupsPpd;
-import org.cups4j.ppd.PpdItemList;
-import org.cups4j.ppd.PpdSectionList;
-
+import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.cups_dest_s;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,7 +38,7 @@ public class PrintJobActivity extends Activity
 	implements GetPrinterListener, GetPpdListener{
 
 	PrintQueueConfig printerConfig;
-	CupsPrinter cupsPrinter;
+	cups_dest_s cupsPrinter;
 	CupsClient cupsClient;
 	Uri data;
 	static CupsPpd cupsppd;
@@ -126,17 +118,16 @@ public class PrintJobActivity extends Activity
 			mimeType = intent.getStringExtra("mimeType");
 		}
 		try {
-			cupsClient = new CupsClient(Util.getClientURL(printerConfig));
+			cupsClient = new CupsClient(Util.getClientURL(printerConfig).getHost(), Util.getClientURL(printerConfig).getPort());
 		}catch (Exception e){
 			this.doFinish("Invalid ULR " + Util.getClientUrlStr(printerConfig));
 			return;
 		}
-		cupsClient.setUserName(printerConfig.userName);
-		AuthInfo auth = null;
+
 		if (!(printerConfig.password.equals(""))){
-			auth = new AuthInfo(CupsPrintApp.getContext(), printerConfig.userName, printerConfig.password);
+			cupsClient.setUserPass(printerConfig.userName, printerConfig.password);
 		}
-		getPrinterTask = new GetPrinterTask(cupsClient, auth, Util.getQueue(printerConfig),true);
+		getPrinterTask = new GetPrinterTask(cupsClient, Util.getQueue(printerConfig),true);
 		getPrinterTask.setListener(this);
 		try {
 			getPrinterTask.execute().get(5000, TimeUnit.MILLISECONDS);
@@ -164,11 +155,10 @@ public class PrintJobActivity extends Activity
 		else
 			isImage = false;
 		
-		auth = null;
 		if (!(printerConfig.password.equals(""))){
-			auth = new AuthInfo(CupsPrintApp.getContext(), printerConfig.userName, printerConfig.password);
+			cupsClient.setUserPass(printerConfig.userName, printerConfig.password);
 		}
-		cupsppd = new CupsPpd(auth);
+		cupsppd = new CupsPpd();
 		if (printerConfig.noOptions){
 			if (mimeTypeSupported){
 				setStdOpts();
@@ -295,11 +285,10 @@ public class PrintJobActivity extends Activity
 	    	attributes = new HashMap<String, String>();
 	    	attributes.put("job-attributes", stdAttrs);
 	    }
-	    AuthInfo auth = null;
 	    if (!(printerConfig.password).equals("")){
-	    	auth = new AuthInfo(CupsPrintApp.getContext(), printerConfig.userName, printerConfig.password);
+	    	cupsClient.setUserPass(printerConfig.userName, printerConfig.password);
 	    }
-        doPrint(auth);
+        doPrint();
 	}
 	
 	private void setAcceptMimeType(String mimeType, String ext){
@@ -368,7 +357,7 @@ public class PrintJobActivity extends Activity
 		return fileName;
 	}
 	
-	public void doPrint(final AuthInfo auth){
+	public void doPrint(){
 		
         Thread thread = new Thread(){
 	        @Override
@@ -391,7 +380,7 @@ public class PrintJobActivity extends Activity
 	        			job.setAttributes(attributes);
 	        		}
 	                System.setProperty("java.net.preferIPv4Stack" , "true"); 
-	    			PrintRequestResult printResult = cupsClient.print(cupsPrinter.getQueue(), job, auth);
+	    			PrintRequestResult printResult = cupsClient.print(cupsPrinter.getQueue(), job);
 	            	showToast("CupsPrint\n" + fileName + "\n" + printResult.getResultDescription());
 	                System.out.println("job printed");
 	        	}

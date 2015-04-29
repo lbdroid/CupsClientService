@@ -1,7 +1,7 @@
 package ml.rabidbeaver.tasks;
 
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
+import ml.rabidbeaver.cupsjni.cups_dest_s;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -13,7 +13,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 	protected boolean extended;
 	protected Exception exception;
 	protected GetPrinterListener listener;
-	protected cups_dest_t printer;
+	protected cups_dest_s printer;
 	protected Context ctx;
 	
 	public GetPrinterTask(CupsClient client, String queue, boolean extended){
@@ -27,7 +27,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 		this.listener = listener;
 	}
 	
-	public cups_dest_t getPrinter(){
+	public cups_dest_s getPrinter(){
 		return printer;
 	}
 	

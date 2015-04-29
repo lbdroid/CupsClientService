@@ -1,11 +1,7 @@
 package ml.rabidbeaver.cupsprint;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ml.rabidbeaver.cupsjni.CupsPrintJobAttributes;
+import ml.rabidbeaver.cupsjni.cups_job_s;
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,30 +12,29 @@ import android.widget.TextView;
 public class JobRecordAdapter extends BaseAdapter{
 
 	Activity activity;
-	List<CupsPrintJobAttributes> records;
+	cups_job_s.ByReference[] records;
 	
 	public JobRecordAdapter(Activity activity){
 		this.activity = activity;
-		records = new ArrayList<CupsPrintJobAttributes>();
 	}
 	
-	public void setRecords(List<CupsPrintJobAttributes> records){
-		this.records = records;
+	public void setRecords(cups_job_s.ByReference[] jobList){
+		this.records = jobList;
 	}
 	
 	@Override
 	public int getCount() {
-		return records.size();
+		return records.length;
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return records.get(position);
+		return records[position];
 	}
 
 	@Override
 	public long getItemId(int position) {
-		return records.get(position).getJobID();
+		return records[position].id;
 	}
 
 	@Override
@@ -52,12 +47,13 @@ public class JobRecordAdapter extends BaseAdapter{
         	TextView id = (TextView) convertView.findViewById(R.id.jobJobId);
         	TextView name = (TextView) convertView.findViewById(R.id.jobJobName);
         	TextView status = (TextView) convertView.findViewById(R.id.jobJobStatus);
-        	CupsPrintJobAttributes record = records.get(position);
+        	cups_job_s.ByReference record = records[position];
         	
-        	String jobId = String.valueOf(record.getJobID());
+        	String jobId = String.valueOf(record.id);
         	id.setText(jobId);
-        	name.setText(record.getJobName());
-        	status.setText(record.getJobState().getText());
+        	name.setText(record.toString());
+        	//TODO ??? status.setText(record.getJobState().getText());
+        	status.setText(record.state);
         }catch (Exception e){
         	System.err.println(e.toString());
         }

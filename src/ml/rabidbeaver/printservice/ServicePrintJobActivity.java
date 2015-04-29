@@ -21,11 +21,6 @@ import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
 import ml.rabidbeaver.cupsprint.Util;
 
-import org.cups4j.operations.AuthInfo;
-import org.cups4j.ppd.CupsPpd;
-import org.cups4j.ppd.PpdItemList;
-import org.cups4j.ppd.PpdSectionList;
-
 import ml.rabidbeaver.cupsprintservice.R;
 
 public class ServicePrintJobActivity extends Activity {
@@ -70,11 +65,10 @@ public class ServicePrintJobActivity extends Activity {
 		else {
 			CupsPpd ppd = RBPrintService.capabilities.get(nickname);
 			if (ppd != null){
-				AuthInfo auth = null;
 				if (!(config.getPassword().equals(""))){
-					auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
+					//TODO ?? auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 				}
-				cupsPpd = new CupsPpd(auth);
+				cupsPpd = new CupsPpd();
 				cupsPpd.setPpdRec(ppd.getPpdRec().deepCloneUILists());
 				RBPrintService.ppdJobId = jobInfo.getId();
 				RBPrintService.jobPpd = cupsPpd;

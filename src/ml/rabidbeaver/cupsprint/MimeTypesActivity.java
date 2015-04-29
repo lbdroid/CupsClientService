@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
+import ml.rabidbeaver.cupsjni.cups_dest_s;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.Activity;
@@ -34,7 +34,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 		}
 		CupsClient client;
 	    try {
-	    	client = new CupsClient(Util.getClientURL(printConfig).toString());
+	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort());
 	    }
 	    catch (Exception e){
 	    	Util.showToast(this, e.getMessage());
@@ -62,7 +62,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    	return;
 	    }
 	    
-	    cups_dest_t printer = task.getPrinter();
+	    cups_dest_s printer = task.getPrinter();
 	    if (printer == null){
 	    	Util.showToast(this, printConfig.nickname + " not found");
 	    	finish();
@@ -93,7 +93,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 
 
 	@Override
-	public void onGetPrinterTaskDone(cups_dest_t printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
 	}
 
 }

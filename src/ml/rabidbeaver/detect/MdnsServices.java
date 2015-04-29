@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.jmdns.ServiceInfo;
 import com.jmdns.impl.DNSIncoming;
@@ -205,7 +204,7 @@ public class MdnsServices{
         	}
         	else {
         		try {
-        			CupsClient client = new CupsClient(urlStr, "");
+        			CupsClient client = new CupsClient(rec.getHost(), rec.getPort(), "");
         			if (client.isPrinterAccessible(null, "")) // if this client is not an accessible printer on ssl, it will return false
         				testMap.put(urlStr, true);
         			else throw new Exception("Printer Not Accessible");

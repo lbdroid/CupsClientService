@@ -3,8 +3,6 @@ package ml.rabidbeaver.cupsprint;
 import ml.rabidbeaver.cupscontrols.CupsTableLayout;
 import ml.rabidbeaver.printservice.ServicePrintJobActivity;
 
-import org.cups4j.ppd.PpdSectionList;
-
 import ml.rabidbeaver.cupsprintservice.R;
 
 import android.os.Bundle;

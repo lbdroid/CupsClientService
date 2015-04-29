@@ -12,11 +12,7 @@ import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
 import ml.rabidbeaver.tasks.PrintTask;
 import ml.rabidbeaver.tasks.PrintTaskListener;
 
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrintJob;
-import org.cups4j.PrintRequestResult;
-import org.cups4j.operations.AuthInfo;
-import org.cups4j.ppd.CupsPpd;
+import ml.rabidbeaver.cupsjni.CupsClient;
 
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
@@ -165,14 +161,12 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	    	job.fail("Invalid print queue: " + config.getClient());
 	    	return;
 	    }
-	    CupsClient cupsClient = new CupsClient(clientURL);
-	    cupsClient.setUserName(config.getUserName());
-	    AuthInfo auth = null;
+	    CupsClient cupsClient = new CupsClient(clientURL.getHost(),clientURL.getPort());
 	    if (!(config.getPassword().equals(""))){
-	    	auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
+	    	cupsClient.setUserPass(config.getUserName(), config.getPassword());
 	    }
 	    PrintTask printTask = new PrintTask(cupsClient, config.getQueuePath());
-		printTask.setJob(cupsPrintJob, auth);
+		printTask.setJob(cupsPrintJob);
 		printTask.setServicePrintJob(job);
 		printTask.setListener(this);
 		job.start();

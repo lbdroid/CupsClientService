@@ -13,12 +13,6 @@ import ml.rabidbeaver.discovery.PrinterDiscoveryListener;
 import ml.rabidbeaver.tasks.GetServicePpdListener;
 import ml.rabidbeaver.tasks.GetServicePpdTask;
 
-import org.cups4j.operations.AuthInfo;
-import org.cups4j.ppd.CupsPpd;
-import org.cups4j.ppd.CupsPpdRec;
-import org.cups4j.ppd.PpdServiceInfo;
-import org.cups4j.ppd.PpdServiceInfo.Dimension;
-
 import android.os.Handler;
 import android.print.PrintAttributes;
 import android.print.PrinterCapabilitiesInfo;
@@ -77,8 +71,7 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 		String nickName = printerId.getLocalId();
 		CupsPpd savedPpd = RBPrintService.capabilities.get(nickName);
 		if (savedPpd == null){
-			AuthInfo auth = null;
-			savedPpd = new CupsPpd(auth);
+			savedPpd = new CupsPpd();
 			RBPrintService.capabilities.put(nickName, savedPpd);
 		}
 		else{
@@ -88,11 +81,10 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 		PrintQueueIniHandler ini = new PrintQueueIniHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = ini.getPrinter(nickName);
 		if (config != null){
-			AuthInfo auth = null;
 			if (!(config.getPassword().equals(""))){
-				auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
+				//TODO auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 			}
-			GetServicePpdTask task = new GetServicePpdTask(config, auth, md5);
+			GetServicePpdTask task = new GetServicePpdTask(config, md5);
 			task.setPpdTaskListener(this);
 			task.get(true, Thread.NORM_PRIORITY);
 		}

@@ -3,17 +3,13 @@ package ml.rabidbeaver.tasks;
 import android.os.AsyncTask;
 import android.printservice.PrintJob;
 
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrintJob;
-import org.cups4j.PrintRequestResult;
-import org.cups4j.operations.AuthInfo;
+import ml.rabidbeaver.cupsjni.CupsClient;
 
 public class PrintTask extends AsyncTask<Void, Void, Void>{
 	
 	private CupsClient client;
 	private String queue;
 	private CupsPrintJob cupsPrintJob;
-	private AuthInfo auth;
 	private Exception exception;
 	private PrintRequestResult result;
 	private PrintTaskListener listener;	
@@ -29,9 +25,8 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 		this.listener = listener;
 	}
 	
-	public void setJob(CupsPrintJob job, AuthInfo auth){
+	public void setJob(CupsPrintJob job){
 		this.cupsPrintJob = job;
-		this.auth = auth;
         System.setProperty("java.net.preferIPv4Stack" , "true"); 
 	}
 	

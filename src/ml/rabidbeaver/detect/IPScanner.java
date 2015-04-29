@@ -2,14 +2,9 @@ package ml.rabidbeaver.detect;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.List;
 
-
-//import org.cups4j.CupsClient;
-//import org.cups4j.CupsPrinter;
-//import org.cups4j.operations.AuthInfo;
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
+import ml.rabidbeaver.cupsjni.cups_dest_s;
 import android.content.Context;
 
 public class IPScanner implements Runnable{
@@ -45,36 +40,36 @@ public class IPScanner implements Runnable{
                     s.close();
                     //System.out.println(ip + " open");
                     try {
-                    	CupsClient cupsClient = new CupsClient("http://" + ip + ":" + port, "");
+                    	CupsClient cupsClient = new CupsClient(ip, port, "");
                     	if (!(password.equals(""))){
                     		cupsClient.setUserPass(username, password);
                     	}
-                    	List<cups_dest_t> pList = cupsClient.listPrinters();
-                    	for (cups_dest_t p: pList){
+                    	cups_dest_s.ByReference[] pList = cupsClient.listPrinters();
+                    	for (cups_dest_s p: pList){
                     		PrinterRec rec = new PrinterRec(
-                                p.getOption("printer-info"),
+                    			p.name.toString(),
                                 "http",
                                 ip,
                                 port,
-                                p.name
+                                p.name.toString()
                                 );
                     		IPTester.httpResults.printerRecs.add(rec);
                     		//System.out.println(p.getName());
                     	}
                     }catch (Exception e){}
                     try {
-                    	CupsClient cupsClient = new CupsClient("https://" + ip + ":" + port, "");
+                    	CupsClient cupsClient = new CupsClient(ip, port, "");
                     	if (!(password.equals(""))){
                     		cupsClient.setUserPass(username, password);
                     	}
-                    	List<cups_dest_t> pList = cupsClient.listPrinters();
-                    	for (cups_dest_t p: pList){
+                    	cups_dest_s.ByReference[] pList = cupsClient.listPrinters();
+                    	for (cups_dest_s p: pList){
                     		PrinterRec rec = new PrinterRec(
-                    			p.getOption("printer-info"),
+                    			p.name.toString(),
                                 "https",
                                 ip,
                                 port,
-                                p.name
+                                p.name.toString()
                                 );
                     		IPTester.httpsResults.printerRecs.add(rec);
                         //System.out.println(p.getName());

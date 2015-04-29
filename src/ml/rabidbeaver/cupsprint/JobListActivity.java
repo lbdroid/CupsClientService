@@ -1,22 +1,17 @@
 package ml.rabidbeaver.cupsprint;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ml.rabidbeaver.tasks.CancelJobTask;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 
-//import org.cups4j.CupsClient;
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
-
 import ml.rabidbeaver.cupsjni.CupsPrintJobAttributes;
-//import org.cups4j.CupsPrinter;
-import ml.rabidbeaver.cupsjni.WhichJobsEnum;
-//import org.cups4j.operations.AuthInfo;
 
 
+import ml.rabidbeaver.cupsjni.cups_dest_s;
+import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.Activity;
@@ -63,7 +58,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 		recordAdapter = new JobRecordAdapter(this);
 		jobsListView.setAdapter(recordAdapter);
 		try {
-			client = new CupsClient(Util.getClientURL(config).toString());
+			client = new CupsClient(Util.getClientURL(config).getHost(), Util.getClientURL(config).getPort());
 		} catch (Exception e){
 			Util.showToast(this, e.toString());
 			finish();
@@ -170,13 +165,13 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	    }
 	}
 	
-	public void updateUI(final List<CupsPrintJobAttributes> records){
+	public void updateUI(final ByReference[] jobList){
 		
 		runOnUiThread(new Runnable(){
 			
 			public void run() {
-				jobPrinter.setText(config.nickname + ": " + records.size() + " " + "jobs");
-				recordAdapter.setRecords(records);
+				jobPrinter.setText(config.nickname + ": " + jobList.length + " " + "jobs");
+				recordAdapter.setRecords(jobList);
 				recordAdapter.notifyDataSetChanged();
 			}
 		});
@@ -203,10 +198,10 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 			int passes = 0;
 			while (!stop){
 				if (passes == 0){
-					List<CupsPrintJobAttributes> jobList;
+					ByReference[] jobList;
 					try {
 						jobList = 
-								client.getJobs(config.getQueuePath(), WhichJobsEnum.NOT_COMPLETED, false);
+								client.getJobs(config.getQueuePath(), client.CUPS_WHICHJOBS_ACTIVE, false);
 					}
 					catch (Exception e){
 						Util.showToast(activity, "CupsPrintService Jobs List\n" + e.toString());
@@ -234,7 +229,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	}
 
 	@Override
-	public void onGetPrinterTaskDone(cups_dest_t printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
 		// do nothing
 	}
 

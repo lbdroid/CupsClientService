@@ -11,9 +11,7 @@ import ml.rabidbeaver.detect.PrinterUpdater;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrinter;
-import org.cups4j.operations.AuthInfo;
+import ml.rabidbeaver.cupsjni.CupsClient;
 
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
@@ -254,7 +252,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		
 	    CupsClient client;
 	    try {
-	    	client = new CupsClient(Util.getClientURL(printConfig));
+	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort());
 	    }
 	    catch (Exception e){
 	    	showResult("Failed", e.getMessage());
@@ -265,14 +263,12 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    if (user.equals("")){
 	    	user = "anonymous";
 	    }
-	    client.setUserName(user);
 	    String passwd = password.getText().toString();
-	    AuthInfo auth = null;
 	    if (!(passwd.equals(""))){
-	    	auth = new AuthInfo(CupsPrintApp.getContext(), user,passwd);
+	    	client.setUserPass(user,passwd);
 	    }
 	    
-	    GetPrinterTask task = new GetPrinterTask(client, auth, Util.getQueue(printConfig), false);
+	    GetPrinterTask task = new GetPrinterTask(client, Util.getQueue(printConfig), false);
 	    task.setListener(this);
 	    task.execute();
 	}
