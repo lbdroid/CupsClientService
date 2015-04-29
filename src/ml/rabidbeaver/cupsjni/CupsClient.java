@@ -1,5 +1,7 @@
 package ml.rabidbeaver.cupsjni;
 
+import java.util.List;
+
 /*
  * Every time a native header in this file is added or altered, it is necessary to enter CupsClientService/jni/include and run the following command:
  * javah -classpath ../../bin/classes -o shim.h ml.rabidbeaver.cupsjni.CupsClient
@@ -8,7 +10,15 @@ package ml.rabidbeaver.cupsjni;
 
 public class CupsClient {
 	public String url = null;
-	public String userName = "anonymous";
+	private String userName = "anonymous";
+	private String password;
+	
+	public static final int USER_AllOWED = 0;
+	public static final int USER_DENIED = 1;
+	public static final int USER_NOT_ALLOWED = 2;
+	
+	private static final String listAttrs = 
+		     "device-uri printer-name printer-info printer-location printer-make-and-model printer-uri-supported";
 	
 	// Load jni library
 	static {
@@ -22,6 +32,11 @@ public class CupsClient {
 	}
 	public CupsClient(String url){
 		this.url=url;
+	}
+	
+	public void setUserPass(String userName, String password){
+		this.userName=userName;
+		this.password=password;
 	}
 	
 	// Structures
@@ -41,19 +56,28 @@ public class CupsClient {
 			this.num_options=num_options;
 			this.options=options;
 		}
-		String name;
+		public String getOption(String name){
+			for (int i=0; i<num_options; i++){
+				if (options[i].name.equals(name)) return options[i].value;
+			}
+			return null;
+		}
+		public String name;
 		String instance;
 		boolean is_default;
 		int num_options;
 		cups_option_t[] options;
 	}
-	//private static native cups_dest_t cupsGetDestWithURI(String name, String uri);
-	//
+
 	public boolean isPrinterAccessible(String name, String queue){
 		if (cupsGetDestWithURI(name, queue) == null) return false;
 		return true;
 	}
 	
 	public native cups_dest_t cupsGetDestWithURI(String name, String queue);
-
+	public native List<cups_dest_t> cupsGetDests2(String url);
+	
+	public List<cups_dest_t> listPrinters(){
+		return cupsGetDests2(url);
+    }
 }

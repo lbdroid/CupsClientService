@@ -2,14 +2,14 @@ package ml.rabidbeaver.detect;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.URL;
 import java.util.List;
+
 
 //import org.cups4j.CupsClient;
 //import org.cups4j.CupsPrinter;
 //import org.cups4j.operations.AuthInfo;
 import ml.rabidbeaver.cupsjni.CupsClient;
-
+import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
 import android.content.Context;
 
 public class IPScanner implements Runnable{
@@ -45,25 +45,18 @@ public class IPScanner implements Runnable{
                     s.close();
                     //System.out.println(ip + " open");
                     try {
-                    	
-                    	//TODO: This is fairly straightforward; authorization is by way of cups.h:cupsSetUser(user) and cupsSetPasswordCB(password).
-                    	// CupsClient.listPrinters() returns a list of CupsPrinter, which are basically the same as what you get from
-                    	// cups.h:cupsGetDests2(http_t *, cups_dest_t **). CupsPrinter is just a datastructure.
-                    	
-                    	AuthInfo auth = null;
-                    	if (!(password.equals(""))){
-                    		auth = new AuthInfo(ctx, username, password);
-                    	}
                     	CupsClient cupsClient = new CupsClient("http://" + ip + ":" + port, "");
-                    	cupsClient.setUserName(username);
-                    	List<CupsPrinter> pList = cupsClient.listPrinters(auth);
-                    	for (CupsPrinter p: pList){
+                    	if (!(password.equals(""))){
+                    		cupsClient.setUserPass(username, password);
+                    	}
+                    	List<cups_dest_t> pList = cupsClient.listPrinters();
+                    	for (cups_dest_t p: pList){
                     		PrinterRec rec = new PrinterRec(
-                                p.getDescription(),
+                                p.getOption("printer-info"),
                                 "http",
                                 ip,
                                 port,
-                                p.getName()
+                                p.name
                                 );
                     		IPTester.httpResults.printerRecs.add(rec);
                     		//System.out.println(p.getName());
@@ -71,34 +64,26 @@ public class IPScanner implements Runnable{
                     }catch (Exception e){}
                     try {
                     	CupsClient cupsClient = new CupsClient("https://" + ip + ":" + port, "");
-                    	cupsClient.setUserName(username);
-                    	AuthInfo auth = null;
                     	if (!(password.equals(""))){
-                    		auth = new AuthInfo(ctx, username, password);
+                    		cupsClient.setUserPass(username, password);
                     	}
-                    	List<CupsPrinter> pList = cupsClient.listPrinters(auth);
-                    	for (CupsPrinter p: pList){
+                    	List<cups_dest_t> pList = cupsClient.listPrinters();
+                    	for (cups_dest_t p: pList){
                     		PrinterRec rec = new PrinterRec(
-                                p.getDescription(),
+                    			p.getOption("printer-info"),
                                 "https",
                                 ip,
                                 port,
-                                p.getName()
+                                p.name
                                 );
-                        IPTester.httpsResults.printerRecs.add(rec);
+                    		IPTester.httpsResults.printerRecs.add(rec);
                         //System.out.println(p.getName());
                     	}
                     }catch (Exception e){
                     	System.out.println(e.toString());
-                    	//if (e.getMessage().contains("No Certificate")){
-                    	//	IPTester.httpsResults.errors.add("https://" + ip + ":" + port + ": No SSL cetificate\n");
-                    	//}
                     }
                 }
-                catch (Exception e){
-                    //System.out.println(e.toString());
-                    //System.out.println(ip + "closed");
-                }
+                catch (Exception e){}
                 IPTester.tested.incrementAndGet();
                 ipnum=IPTester.portIps.take();
             }
