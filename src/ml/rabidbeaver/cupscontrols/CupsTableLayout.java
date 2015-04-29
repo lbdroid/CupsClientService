@@ -2,8 +2,8 @@ package ml.rabidbeaver.cupscontrols;
 
 import java.util.ArrayList;
 
-import org.cups4j.ppd.PpdItemList;
-import org.cups4j.ppd.PpdSectionList;
+import ml.rabidbeaver.cupsjni.PpdItemList;
+import ml.rabidbeaver.cupsjni.PpdSectionList;
 
 import android.content.Context;
 import android.util.AttributeSet;

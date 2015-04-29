@@ -2,7 +2,7 @@ package ml.rabidbeaver.cupscontrols;
 
 import java.util.Locale;
 
-import org.cups4j.ppd.PpdItemList;
+import ml.rabidbeaver.cupsjni.PpdItemList;
 
 import android.content.Context;
 import android.widget.CheckBox;

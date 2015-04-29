@@ -1,6 +1,6 @@
 package ml.rabidbeaver.cupscontrols;
 
-import org.cups4j.ppd.PpdItemList;
+import ml.rabidbeaver.cupsjni.PpdItemList;
 
 import android.content.Context;
 import android.text.InputType;
