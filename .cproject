@@ -21,7 +21,7 @@
 								</outputEntries>
 							</builder>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1344205999" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
-								<option id="gnu.c.compiler.option.include.paths.906742762" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.906742762" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/mnt/data/android-ndk-r10d/platforms/android-19/arch-arm/usr/include"/>
 									<listOptionValue builtIn="false" value="/mnt/data/android-ndk-r10d/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.6/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CupsClientService/jni/include}&quot;"/>
