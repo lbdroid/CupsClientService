@@ -7,14 +7,17 @@ import ml.rabidbeaver.tasks.CancelJobTask;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrintJobAttributes;
-import org.cups4j.CupsPrinter;
-import org.cups4j.WhichJobsEnum;
-import org.cups4j.operations.AuthInfo;
+//import org.cups4j.CupsClient;
+import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
+
+import ml.rabidbeaver.cupsjni.CupsPrintJobAttributes;
+//import org.cups4j.CupsPrinter;
+import ml.rabidbeaver.cupsjni.WhichJobsEnum;
+//import org.cups4j.operations.AuthInfo;
+
 
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -60,19 +63,17 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 		recordAdapter = new JobRecordAdapter(this);
 		jobsListView.setAdapter(recordAdapter);
 		try {
-			client = new CupsClient(Util.getClientURL(config));
+			client = new CupsClient(Util.getClientURL(config).toString());
 		} catch (Exception e){
 			Util.showToast(this, e.toString());
 			finish();
 			return;
 		}
-		client.setUserName(config.userName);
-		AuthInfo auth = null;
 		if (!(config.password.equals(""))){
-			auth = new AuthInfo(getBaseContext(), config.userName, config.password);
+			client.setUserPass(config.userName, config.password);
 		}
-		GetPrinterTask task = new GetPrinterTask(client, auth, config.getPrintQueue(), false);
-		task = new GetPrinterTask(client, auth, Util.getQueue(config),true);
+		GetPrinterTask task = new GetPrinterTask(client, config.getPrintQueue(), false);
+		task = new GetPrinterTask(client, Util.getQueue(config),true);
 		task.setListener(this);
 		try {
 			task.execute().get(5000, TimeUnit.MILLISECONDS);
@@ -150,10 +151,6 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	}
 	
 	public void doOperation(CupsPrintJobAttributes record, int operation){
-	    AuthInfo auth = null;
-	    if (!(config.password.equals(""))){
-	    	auth = new AuthInfo(getBaseContext(), config.userName, config.password);
-	    }
 	    CancelJobTask.Operation taskOp = null;
 	    switch (operation){
 	    	case 0:
@@ -168,7 +165,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	    }
 	    if (taskOp != null){
 	    	CancelJobTask task = 
-	    			new CancelJobTask(this, client, auth, taskOp, record.getJobID());
+	    			new CancelJobTask(this, client, taskOp, record.getJobID());
 	    	task.execute();
 	    }
 	}
@@ -206,14 +203,10 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 			int passes = 0;
 			while (!stop){
 				if (passes == 0){
-					AuthInfo auth = null;
-					if (!config.password.equals("")){
-						auth = new AuthInfo(getBaseContext(), config.userName, config.password);
-					}
 					List<CupsPrintJobAttributes> jobList;
 					try {
 						jobList = 
-								client.getJobs(config.getQueuePath(), auth, WhichJobsEnum.NOT_COMPLETED, false);
+								client.getJobs(config.getQueuePath(), WhichJobsEnum.NOT_COMPLETED, false);
 					}
 					catch (Exception e){
 						Util.showToast(activity, "CupsPrintService Jobs List\n" + e.toString());
@@ -241,7 +234,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	}
 
 	@Override
-	public void onGetPrinterTaskDone(CupsPrinter printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_t printer, Exception exception) {
 		// do nothing
 	}
 

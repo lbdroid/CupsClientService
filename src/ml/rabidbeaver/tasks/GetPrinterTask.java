@@ -1,9 +1,7 @@
 package ml.rabidbeaver.tasks;
 
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrinter;
-import org.cups4j.operations.AuthInfo;
-
+import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -15,14 +13,12 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 	protected boolean extended;
 	protected Exception exception;
 	protected GetPrinterListener listener;
-	protected CupsPrinter printer;
-	protected AuthInfo auth;
+	protected cups_dest_t printer;
 	protected Context ctx;
 	
-	public GetPrinterTask(CupsClient client, AuthInfo auth, String queue, boolean extended){
+	public GetPrinterTask(CupsClient client, String queue, boolean extended){
 		super();
 		this.client = client;
-		this.auth = auth;
 		this.queue = queue;
 		this.extended = extended;
 	}
@@ -31,7 +27,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 		this.listener = listener;
 	}
 	
-	public CupsPrinter getPrinter(){
+	public cups_dest_t getPrinter(){
 		return printer;
 	}
 	
@@ -42,7 +38,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 	@Override
 	protected Void doInBackground(Void... params){
 		try {
-			this.printer = client.getPrinter(queue, auth, extended);
+			this.printer = client.getPrinter(queue, extended);
 		}
 		catch (Exception e){
 			exception = e;

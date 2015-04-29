@@ -1,9 +1,9 @@
 package ml.rabidbeaver.tasks;
 
-import org.cups4j.CupsPrinter;
+import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
 
 public interface GetPrinterListener {
 	
-	public void onGetPrinterTaskDone(CupsPrinter printer, Exception exception);
+	public void onGetPrinterTaskDone(cups_dest_t printer, Exception exception);
 
 }

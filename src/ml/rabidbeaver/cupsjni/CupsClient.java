@@ -1,5 +1,8 @@
 package ml.rabidbeaver.cupsjni;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.List;
 
 /*
@@ -18,7 +21,10 @@ public class CupsClient {
 	public static final int USER_NOT_ALLOWED = 2;
 	
 	private static final String listAttrs = 
-		     "device-uri printer-name printer-info printer-location printer-make-and-model printer-uri-supported";
+			"device-uri printer-name printer-info printer-location printer-make-and-model printer-uri-supported";
+	private static final String stdAttrs = 
+			"device-uri printer-name requesting-user-name-allowed requesting-user-name-denied printer-info printer-location printer-make-and-model printer-uri-supported";
+	private static final String extAttrs = "document-format-supported";
 	
 	// Load jni library
 	static {
@@ -79,5 +85,54 @@ public class CupsClient {
 	
 	public List<cups_dest_t> listPrinters(){
 		return cupsGetDests2(url);
+    }
+	
+	public List<CupsPrintJobAttributes> getJobs(String queue, WhichJobsEnum whichJobs, boolean myJobs) throws IOException, Exception {    
+        URL printerUrl = new URL(url.toString() + queue);
+        //TODO: return new IppGetJobsOperation().getPrintJobs(printerUrl, auth, userName, whichJobs, myJobs);
+        return null;
+    }
+	
+	public boolean /*PrintRequestResult*/ cancelJob(int jobID) throws UnsupportedEncodingException, IOException{
+        //TODO: return new IppCancelJobOperation().cancelJob(url, auth, userName, jobID);
+		return true;
+    }
+
+    public boolean /*PrintRequestResult*/ holdJob(int jobID) throws UnsupportedEncodingException, IOException{
+    	//TODO: return new IppHoldJobOperation().holdJob(url, auth, userName, jobID);
+    	return true;
+    }
+
+    public boolean /*PrintRequestResult*/ releaseJob(int jobID) throws UnsupportedEncodingException, IOException{
+    	//TODO: return new IppReleaseJobOperation().releaseJob(url, auth, userName, jobID);
+    	return true;
+    }
+    
+    public cups_dest_t getPrinter(String queue, boolean extended) throws UnsupportedEncodingException, IOException, Exception{
+        if (extended)
+            return getPrinter(queue, stdAttrs + " " + extAttrs);
+        else 
+            return getPrinter(queue, stdAttrs);
+    }
+    
+    private cups_dest_t getPrinter(String queue, String attrs) throws UnsupportedEncodingException, IOException, Exception{
+        /* TODO URL printerUrl = new URL(url.toString() + queue);
+        IppGetPrinterAttributesOperation op = new IppGetPrinterAttributesOperation();
+        HashMap<String,String> map = new HashMap<String, String>();
+        map.put("requested-attributes", attrs);
+        OperationResult result = op.getPrinterAttributes(printerUrl, userName, auth, map);
+        String status = result.getHttpStatusResult();
+        if (!(status.contains("200"))){
+            throw new Exception(status);
+        }
+        for (AttributeGroup group : result.getIppResult().getAttributeGroupList()) {
+            if (group.getTagName().equals("printer-attributes-tag")) {
+                return setPrinter(url, group);
+            }
+            else if (group.getTagName().equals("unsupported-attributes-tag")) {
+                throw new Exception(this.url + " is not a CUPS server");
+            }
+        }*/
+        return null;
     }
 }

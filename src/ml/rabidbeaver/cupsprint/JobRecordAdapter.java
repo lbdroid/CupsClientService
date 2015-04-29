@@ -3,7 +3,7 @@ package ml.rabidbeaver.cupsprint;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cups4j.CupsPrintJobAttributes;
+import ml.rabidbeaver.cupsjni.CupsPrintJobAttributes;
 import ml.rabidbeaver.cupsprintservice.R;
 
 import android.app.Activity;

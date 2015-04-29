@@ -5,11 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
-
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrinter;
-import org.cups4j.operations.AuthInfo;
-
+import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.CupsClient.cups_dest_t;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.Activity;
@@ -37,18 +34,17 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 		}
 		CupsClient client;
 	    try {
-	    	client = new CupsClient(Util.getClientURL(printConfig));
+	    	client = new CupsClient(Util.getClientURL(printConfig).toString());
 	    }
 	    catch (Exception e){
 	    	Util.showToast(this, e.getMessage());
 	    	finish();
 	    	return;
 	    }
-	    AuthInfo auth = null;
 	    if (!(printConfig.getPassword().equals(""))){
-	    	auth = new AuthInfo(CupsPrintApp.getContext(), printConfig.getUserName(), printConfig.getPassword());
+	    	client.setUserPass(printConfig.getUserName(), printConfig.getPassword());
 	    }
-	    task = new GetPrinterTask(client, auth, Util.getQueue(printConfig),true);
+	    task = new GetPrinterTask(client, Util.getQueue(printConfig),true);
 	    task.setListener(this);
 	    try {
 	    	task.execute().get(5000, TimeUnit.MILLISECONDS);
@@ -66,15 +62,15 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    	return;
 	    }
 	    
-	    CupsPrinter printer = task.getPrinter();
+	    cups_dest_t printer = task.getPrinter();
 	    if (printer == null){
 	    	Util.showToast(this, printConfig.nickname + " not found");
 	    	finish();
 	    	return;
 	    }
 	    
-	    ArrayList<String> mimeTypes = printer.getSupportedMimeTypes();
-	    if (mimeTypes.size() == 0){
+	    //TODO ArrayList<String> mimeTypes = printer.getOption("document-format-supported");//.getSupportedMimeTypes();
+	    if (true){//TODO mimeTypes.size() == 0){
 	    	Util.showToast(this, "Unable to get mime types for " + printConfig.nickname);
 	    	finish();
 	    	return;
@@ -82,10 +78,10 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    
 		TextView mimeList = (TextView) findViewById(R.id.mimeList);
 		String S = printConfig.nickname + "\n\n"; 
-	    for(String type: mimeTypes){
-	    	S = S + type + "\n";
-	    }
-		mimeList.setText(S);
+	    //TODO for(String type: mimeTypes){
+	    //	S = S + type + "\n";
+	    //}
+		//mimeList.setText(S);
 	}
 
 
@@ -97,7 +93,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 
 
 	@Override
-	public void onGetPrinterTaskDone(CupsPrinter printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_t printer, Exception exception) {
 	}
 
 }

@@ -2,9 +2,8 @@ package ml.rabidbeaver.tasks;
 
 import ml.rabidbeaver.cupsprint.Util;
 
-import org.cups4j.CupsClient;
-import org.cups4j.PrintRequestResult;
-import org.cups4j.operations.AuthInfo;
+import ml.rabidbeaver.cupsjni.CupsClient;
+//import org.cups4j.PrintRequestResult;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -17,16 +16,14 @@ public class CancelJobTask extends AsyncTask<Void, Void, Void>{
 	
 	private Activity activity;
 	private CupsClient client;
-	private AuthInfo auth;
 	private int jobId;
 	private Operation op;
-	private PrintRequestResult result;
+	private boolean result;
 	
-	public CancelJobTask(Activity activity, CupsClient client, AuthInfo auth, Operation op, int jobId){
+	public CancelJobTask(Activity activity, CupsClient client, Operation op, int jobId){
 		super();
 		this.activity = activity;
 		this.client = client;
-		this.auth = auth;
 		this.op = op;
 		this.jobId = jobId;
 	}
@@ -36,16 +33,16 @@ public class CancelJobTask extends AsyncTask<Void, Void, Void>{
 		try {
 			switch (op){
 			case CANCEL:
-				result = client.cancelJob(jobId, auth);
+				result = client.cancelJob(jobId);
 				break;
 			case HOLD:
-				result = client.holdJob(jobId, auth);
+				result = client.holdJob(jobId);
 				break;
 			case RELEASE:
-				result = client.releaseJob(jobId, auth);
+				result = client.releaseJob(jobId);
 				break;
 			}
-			Util.showToast(activity, result.getResultDescription());
+			Util.showToast(activity, Boolean.toString(result)/*TODO */);
 		}catch (Exception e){
 			Util.showToast(activity, e.toString());
 		}
