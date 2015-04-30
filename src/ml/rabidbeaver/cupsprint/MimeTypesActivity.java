@@ -34,13 +34,13 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    	return;
 		}
 		CupsClient client;
-		Log.d("MIMETYPESACTIVITY",printConfig.host+":"+printConfig.port);
 	    try {
-	    	Log.d("MIMETYPESACTIVITY",Util.getClientURL(printConfig).getHost()+":"+Util.getClientURL(printConfig).getPort());
+	    	Log.d("MIMETYPESACTIVITY","creating new CupsClient");
 	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort());
+	    	Log.d("MIMETYPESACTIVITY","CupsClient created");
 	    }
 	    catch (Exception e){
-	    	Log.d("MIMETYPESACTIVITY",e.getMessage());
+	    	Log.d("MIMETYPESACTIVITY","someexception during CupsClient creation");
 	    	Util.showToast(this, e.getMessage());
 	    	finish();
 	    	return;
@@ -49,11 +49,13 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    	client.setUserPass(printConfig.getUserName(), printConfig.getPassword());
 	    }
 	    task = new GetPrinterTask(client, Util.getQueue(printConfig),true);
+	    Log.d("MIMETYPESACTIVITY","Queue:"+Util.getQueue(printConfig));
 	    task.setListener(this);
 	    try {
 	    	task.execute().get(5000, TimeUnit.MILLISECONDS);
 	    }
 	    catch (Exception e){
+	    	Log.d("MIMETYPESACTIVITY",e.toString());
 	    	Util.showToast(this, e.toString());
 	    	finish();
 	    	return;
@@ -61,6 +63,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    Exception exception = task.getException();
 	    
 	    if (exception != null){
+	    	Log.d("MIMETYPESACTIVITY",exception.getMessage());
 	    	Util.showToast(this, exception.getMessage());
 	    	finish();
 	    	return;
@@ -68,14 +71,19 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    
 	    cups_dest_s printer = task.getPrinter();
 	    if (printer == null){
+	    	Log.d("MIMETYPESACTIVITY","printer == null");
 	    	Util.showToast(this, printConfig.nickname + " not found");
 	    	finish();
 	    	return;
 	    }
 	    
-	    //TODO ArrayList<String> mimeTypes = printer.getOption("document-format-supported");//.getSupportedMimeTypes();
-	    if (true){//TODO mimeTypes.size() == 0){
+	    //TODO ArrayList<String> mimeTypes = printer.getSupportedMimeTypes();
+	    // Need to figure out how to ASK the server for additional options....
+	    String mimetypes = client.getOption(printer, "document-format-supported");
+	    //Log.d("MIMETYPESACTIVITY","option value:"+mimetypes);
+	    if (mimetypes == null || mimetypes.length() == 0){
 	    	Util.showToast(this, "Unable to get mime types for " + printConfig.nickname);
+	    	Log.d("MIMETYPESACTIVITY",Integer.toString(printer.num_options));
 	    	finish();
 	    	return;
 	    }

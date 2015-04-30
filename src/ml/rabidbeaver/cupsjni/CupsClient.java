@@ -1,6 +1,7 @@
 package ml.rabidbeaver.cupsjni;
 
 import java.net.URL;
+import java.nio.IntBuffer;
 
 import android.util.Log;
 
@@ -8,6 +9,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.cups_device_cb_t;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_encryption_e;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_t;
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
 import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
 
@@ -20,7 +24,9 @@ import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
 public class CupsClient {
 	private String userName = "anonymous";
 	private String password;
-	private PointerByReference serv_conn;
+	private PointerByReference serv_conn_p;
+	private http_t serv_conn;
+	private IntBuffer i_b = IntBuffer.allocate(1);
 	
 	public static final int USER_AllOWED = 0;
 	public static final int USER_DENIED = 1;
@@ -43,11 +49,15 @@ public class CupsClient {
 	public CupsClient(String host, int port, String userName){
 		this.userName=userName;
 		Log.d("CUPSCLIENT",cups==null?"NULL":"notnull");
-		//serv_conn=cups.httpConnect(host, port);
+		serv_conn_p = cups.httpConnect2(host, port, null, 0, http_encryption_e.HTTP_ENCRYPTION_IF_REQUESTED, 0, 2500, i_b);
 	}
 	public CupsClient(String host, int port){
 		Log.d("CUPSCLIENT",cups==null?"NULL":"notnull");
-		//serv_conn=cups.httpConnect(host, port);
+		//serv_conn=(http_t) cups.httpConnect(host, port).toNative();
+		serv_conn_p = cups.httpConnect(host, port);
+		//serv_conn_p = cups.httpConnect2(host, port, null, 0, http_encryption_e.HTTP_ENCRYPTION_IF_REQUESTED, 0, 2500, i_b);
+		//listPrinters();
+		//Log.d("CUPSCLIENT","SERVCONN:"+serv_conn.toString());
 	}
 	public CupsClient(){}
 	
@@ -57,20 +67,41 @@ public class CupsClient {
 	}
 	
 	public boolean isPrinterAccessible(String name, String queue){
-		if (MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetDestWithURI(name, queue) == null) return false;
+		if (cups.cupsGetDestWithURI(name, queue) == null) return false;
 		return true;
 	}
 	
 	public cups_dest_s.ByReference[] listPrinters(){
 		cups_dest_s.ByReference[] dests = null;
-		MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetDests2(serv_conn, dests);
+		//int num = cups.cupsGetDests2(serv_conn_p, dests);
+		//Log.d("CUPSCLIENT","listPrinters(), num:"+num);
+		//for (int i=0; i<num; i++){
+		//	Log.d("CUPSCLIENT","listprinters():"+dests[i].name);
+		//}
+		
+		int s;
+		DevCB a = new DevCB();
+		s=cups.cupsGetDevices(serv_conn_p, 100, "0", "0", a, null);
+		Log.d("CUPSCLIENT","listPrinters(), status:"+((s==ipp_status_e.IPP_STATUS_ERROR_INTERNAL)?"INTERNAL ERROR":"Not internal error"));
 		return dests;
     }
 	
+	private class DevCB implements cups_device_cb_t {
+
+		@Override
+		public void apply(Pointer device_class, Pointer device_id,
+				Pointer device_info, Pointer device_make_and_model,
+				Pointer device_uri, Pointer device_location, Pointer user_data) {
+			// TODO Auto-generated method stub
+			Log.d("CUPSCLIENT","callback running");
+			
+		}
+		
+	}
 
 	public ByReference[] getJobs(String queue, int whichJobs, boolean myJobs){    
         ByReference[] jobs = null;
-        MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetJobs2(serv_conn, jobs, queue, myJobs?1:0, whichJobs);
+        cups.cupsGetJobs2(serv_conn_p, jobs, queue, myJobs?1:0, whichJobs);
         return jobs;
     }
 	
@@ -96,25 +127,15 @@ public class CupsClient {
             return getPrinter(queue, stdAttrs);
     }
     
-    private cups_dest_s getPrinter(String queue, String attrs){
-        /* TODO URL printerUrl = new URL(url.toString() + queue);
-        IppGetPrinterAttributesOperation op = new IppGetPrinterAttributesOperation();
-        HashMap<String,String> map = new HashMap<String, String>();
-        map.put("requested-attributes", attrs);
-        OperationResult result = op.getPrinterAttributes(printerUrl, userName, auth, map);
-        String status = result.getHttpStatusResult();
-        if (!(status.contains("200"))){
-            throw new Exception(status);
-        }
-        for (AttributeGroup group : result.getIppResult().getAttributeGroupList()) {
-            if (group.getTagName().equals("printer-attributes-tag")) {
-                return setPrinter(url, group);
-            }
-            else if (group.getTagName().equals("unsupported-attributes-tag")) {
-                throw new Exception(this.url + " is not a CUPS server");
-            }
-        }*/
-        return null;
+    @SuppressWarnings("deprecation")
+	private cups_dest_s getPrinter(String queue, String attrs){
+    	cups_dest_s.ByReference[] cds = new cups_dest_s.ByReference[1];
+    	cds[0] = new cups_dest_s.ByReference();
+    	int s = cups.cupsGetDests2(serv_conn_p, cds);
+    	Log.d("CUPSCLIENT","num dests:"+s);
+    	cups_dest_s ret = cups.cupsGetDest(queue, null, s, cds[0]);
+
+    	return ret;
     }
     
     public ipp_status_e print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
@@ -135,9 +156,15 @@ public class CupsClient {
     }
     
     public Pointer cupsGetPPD2(String name){
-    	return MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetPPD2(serv_conn, name);
+    	return MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetPPD2(serv_conn_p, name);
     }
     public Pointer cupsGetPPD(String name){
     	return MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetPPD(name);
+    }
+    
+    public String getOption(cups_dest_s printer, String option){
+    	Pointer p = cups.cupsGetOption("device-uri",printer.num_options, printer.options);
+    	if (p==null) return null;
+    	else return p.getString(0);
     }
 }

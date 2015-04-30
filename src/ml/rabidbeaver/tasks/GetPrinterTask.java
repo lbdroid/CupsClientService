@@ -4,6 +4,7 @@ import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.cups_dest_s;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 
 public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
@@ -41,6 +42,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 			this.printer = client.getPrinter(queue, extended);
 		}
 		catch (Exception e){
+			Log.d("GETPRINTERTASK","e.toString()");
 			exception = e;
 			System.err.println(e.toString());
 		}

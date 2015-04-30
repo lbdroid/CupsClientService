@@ -22,7 +22,7 @@ public class Util {
 	}
 	
 	public static String getQueue(PrintQueueConfig printConfig){
-		return "/printers/" + printConfig.queue;
+		return printConfig.queue;
 	}
 	
 	public static String getClientUrlStr(PrintQueueConfig printConfig){
