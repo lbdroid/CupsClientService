@@ -127,7 +127,6 @@ public class CupsClient {
             return getPrinter(queue, stdAttrs);
     }
     
-    @SuppressWarnings("deprecation")
 	private cups_dest_s getPrinter(String queue, String attrs){
     	cups_dest_s.ByReference[] cds = new cups_dest_s.ByReference[1];
     	cds[0] = new cups_dest_s.ByReference();
