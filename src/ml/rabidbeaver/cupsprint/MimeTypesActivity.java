@@ -11,6 +11,7 @@ import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
@@ -33,10 +34,13 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    	return;
 		}
 		CupsClient client;
+		Log.d("MIMETYPESACTIVITY",printConfig.host+":"+printConfig.port);
 	    try {
+	    	Log.d("MIMETYPESACTIVITY",Util.getClientURL(printConfig).getHost()+":"+Util.getClientURL(printConfig).getPort());
 	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort());
 	    }
 	    catch (Exception e){
+	    	Log.d("MIMETYPESACTIVITY",e.getMessage());
 	    	Util.showToast(this, e.getMessage());
 	    	finish();
 	    	return;

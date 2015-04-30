@@ -2,6 +2,8 @@ package ml.rabidbeaver.cupsjni;
 
 import java.net.URL;
 
+import android.util.Log;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -18,13 +20,13 @@ import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
 public class CupsClient {
 	private String userName = "anonymous";
 	private String password;
-	private MlRabidbeaverCupsjniLibrary cups;
 	private PointerByReference serv_conn;
 	
 	public static final int USER_AllOWED = 0;
 	public static final int USER_DENIED = 1;
 	public static final int USER_NOT_ALLOWED = 2;
-	public final int CUPS_WHICHJOBS_ACTIVE = cups.CUPS_WHICHJOBS_ACTIVE;
+	private MlRabidbeaverCupsjniLibrary cups = MlRabidbeaverCupsjniLibrary.INSTANCE;
+	public final int CUPS_WHICHJOBS_ACTIVE = 0;//MlRabidbeaverCupsjniLibrary.CUPS_WHICHJOBS_ACTIVE;
 	
 	private static final String listAttrs = 
 			"device-uri printer-name printer-info printer-location printer-make-and-model printer-uri-supported";
@@ -40,10 +42,12 @@ public class CupsClient {
 	// Constructors
 	public CupsClient(String host, int port, String userName){
 		this.userName=userName;
-		serv_conn=cups.httpConnect(host, port);
+		Log.d("CUPSCLIENT",cups==null?"NULL":"notnull");
+		//serv_conn=cups.httpConnect(host, port);
 	}
 	public CupsClient(String host, int port){
-		serv_conn=cups.httpConnect(host, port);
+		Log.d("CUPSCLIENT",cups==null?"NULL":"notnull");
+		//serv_conn=cups.httpConnect(host, port);
 	}
 	public CupsClient(){}
 	
@@ -53,20 +57,20 @@ public class CupsClient {
 	}
 	
 	public boolean isPrinterAccessible(String name, String queue){
-		if (cups.cupsGetDestWithURI(name, queue) == null) return false;
+		if (MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetDestWithURI(name, queue) == null) return false;
 		return true;
 	}
 	
 	public cups_dest_s.ByReference[] listPrinters(){
 		cups_dest_s.ByReference[] dests = null;
-		cups.cupsGetDests2(serv_conn, dests);
+		MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetDests2(serv_conn, dests);
 		return dests;
     }
 	
 
 	public ByReference[] getJobs(String queue, int whichJobs, boolean myJobs){    
         ByReference[] jobs = null;
-		cups.cupsGetJobs2(serv_conn, jobs, queue, myJobs?1:0, whichJobs);
+        MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetJobs2(serv_conn, jobs, queue, myJobs?1:0, whichJobs);
         return jobs;
     }
 	
@@ -131,9 +135,9 @@ public class CupsClient {
     }
     
     public Pointer cupsGetPPD2(String name){
-    	return cups.cupsGetPPD2(serv_conn, name);
+    	return MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetPPD2(serv_conn, name);
     }
     public Pointer cupsGetPPD(String name){
-    	return cups.cupsGetPPD(name);
+    	return MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetPPD(name);
     }
 }
