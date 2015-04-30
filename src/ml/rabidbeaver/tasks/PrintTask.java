@@ -2,8 +2,9 @@ package ml.rabidbeaver.tasks;
 
 import android.os.AsyncTask;
 import android.printservice.PrintJob;
-
+import ml.rabidbeaver.cupsjni.CupsPrintJob;
 import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
 
 public class PrintTask extends AsyncTask<Void, Void, Void>{
 	
@@ -11,7 +12,7 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 	private String queue;
 	private CupsPrintJob cupsPrintJob;
 	private Exception exception;
-	private PrintRequestResult result;
+	private ipp_status_e result;
 	private PrintTaskListener listener;	
 	private PrintJob servicePrintJob;
 	
@@ -42,7 +43,7 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 		return exception;
 	}
 	
-	public PrintRequestResult getResult(){
+	public ipp_status_e getResult(){
 		return result;
 	}
 	
@@ -53,7 +54,7 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 	@Override
 	protected Void doInBackground(Void... params) {
 		try {
-			result = client.print(queue, cupsPrintJob, auth);
+			result = client.print(queue, cupsPrintJob);
 		}catch (Exception e){
 			this.exception = e;
 		}

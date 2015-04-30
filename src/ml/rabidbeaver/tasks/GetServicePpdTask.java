@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import ml.rabidbeaver.cupsjni.CupsPpd;
+import ml.rabidbeaver.cupsjni.cups_dest_s;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 
 public class GetServicePpdTask implements Runnable{
@@ -28,10 +30,11 @@ public class GetServicePpdTask implements Runnable{
 	@Override
 	public void run() {
 		try {
-			CupsPrinter printer = new CupsPrinter(new URL(config.getPrintQueue()));
-			cupsPpd = new CupsPpd();
-			cupsPpd.createPpdRec(printer, md5);
-			cupsPpd.setServiceResolution(config.getResolution());
+			//TODO: WTF does this even do?
+			//cups_dest_s printer = new cups_dest_s(new URL(config.getPrintQueue()));
+			//cupsPpd = new CupsPpd();
+			//cupsPpd.createPpdRec(printer, md5);
+			//cupsPpd.setServiceResolution(config.getResolution());
 			latch.countDown();
 		}
 		catch (Exception e){

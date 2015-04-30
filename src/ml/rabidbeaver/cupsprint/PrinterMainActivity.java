@@ -55,10 +55,10 @@ public class PrinterMainActivity extends Activity {
 	    		intent.putExtra("printer", "");
 	    		startActivity(intent);
 	    		break;
-	    	case R.id.certificates:
+	    	/*case R.id.certificates:
 	    		intent = new Intent(this, CertificateActivity.class);
 	    		startActivity(intent);
-	    		break;
+	    		break;*/
 	    }
 	    return super.onContextItemSelected(item);
 	 }

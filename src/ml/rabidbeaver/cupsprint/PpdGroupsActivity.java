@@ -1,6 +1,7 @@
 package ml.rabidbeaver.cupsprint;
 
 import ml.rabidbeaver.printservice.ServicePrintJobActivity;
+import ml.rabidbeaver.cupsjni.PpdSectionList;
 
 import ml.rabidbeaver.cupsprintservice.R;
 

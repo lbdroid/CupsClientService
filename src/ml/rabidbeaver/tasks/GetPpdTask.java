@@ -3,16 +3,19 @@ package ml.rabidbeaver.tasks;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import ml.rabidbeaver.cupsjni.CupsPpd;
+import ml.rabidbeaver.cupsjni.cups_dest_s;
+
 public class GetPpdTask implements Runnable{
 
-	private CupsPrinter printer;
+	private cups_dest_s printer;
 	private Exception exception;
 	private byte[] md5;
 	private CountDownLatch latch;
 	private GetPpdListener taskListener;
 	private CupsPpd cupsPpd;
 
-	public GetPpdTask(CupsPrinter printer, CupsPpd cupsPpd, byte[] md5){
+	public GetPpdTask(cups_dest_s printer, CupsPpd cupsPpd, byte[] md5){
 		this.printer = printer;
 		this.cupsPpd = cupsPpd;
 		this.md5 = md5;

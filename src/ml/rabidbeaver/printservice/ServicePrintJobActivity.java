@@ -15,12 +15,14 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import ml.rabidbeaver.cupscontrols.CupsTableLayout;
+import ml.rabidbeaver.cupsjni.CupsPpd;
+import ml.rabidbeaver.cupsjni.PpdItemList;
+import ml.rabidbeaver.cupsjni.PpdSectionList;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PpdGroupsActivity;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
 import ml.rabidbeaver.cupsprint.Util;
-
 import ml.rabidbeaver.cupsprintservice.R;
 
 public class ServicePrintJobActivity extends Activity {

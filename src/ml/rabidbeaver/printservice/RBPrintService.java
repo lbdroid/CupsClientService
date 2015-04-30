@@ -11,9 +11,10 @@ import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
 import ml.rabidbeaver.tasks.PrintTask;
 import ml.rabidbeaver.tasks.PrintTaskListener;
-
 import ml.rabidbeaver.cupsjni.CupsClient;
-
+import ml.rabidbeaver.cupsjni.CupsPpd;
+import ml.rabidbeaver.cupsjni.CupsPrintJob;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
 import android.print.PrintAttributes;
@@ -208,14 +209,14 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 			return;
 		}
 		
-		PrintRequestResult result = task.getResult();
+		ipp_status_e result = task.getResult();
 		if (result == null){
 			Toast.makeText(this, errmsg + "Print job returned null", Toast.LENGTH_LONG).show();
 			servicePrintJob.cancel();
 	    	return;
 	    }
 		
-		Toast.makeText(this, errmsg + result.getResultDescription(), Toast.LENGTH_LONG).show();
+		Toast.makeText(this, errmsg + result.toString(), Toast.LENGTH_LONG).show();
 		servicePrintJob.complete();
 	}
 

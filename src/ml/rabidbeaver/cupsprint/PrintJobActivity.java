@@ -13,7 +13,12 @@ import ml.rabidbeaver.tasks.GetPpdTask;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.CupsPrintJob;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
+import ml.rabidbeaver.cupsjni.PpdItemList;
+import ml.rabidbeaver.cupsjni.PpdSectionList;
 import ml.rabidbeaver.cupsjni.cups_dest_s;
+import ml.rabidbeaver.cupsjni.CupsPpd;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.net.Uri;
 import android.os.Bundle;
@@ -144,12 +149,12 @@ public class PrintJobActivity extends Activity
 			return;
 		}
 
-		if (!cupsPrinter.mimeTypeSupported(mimeType)){
+		//TODO: if (!cupsPrinter.mimeTypeSupported(mimeType)){
 			setAcceptMimeType(mimeType, extension);
-		}
-		else {
+		//}
+		//else {
 			mimeTypeSupported = true;
-		}
+		//}
 		if (mimeType.contains("image"))
 			isImage = true;
 		else
@@ -380,8 +385,9 @@ public class PrintJobActivity extends Activity
 	        			job.setAttributes(attributes);
 	        		}
 	                System.setProperty("java.net.preferIPv4Stack" , "true"); 
-	    			PrintRequestResult printResult = cupsClient.print(cupsPrinter.getQueue(), job);
-	            	showToast("CupsPrint\n" + fileName + "\n" + printResult.getResultDescription());
+	                //TODO: this probably is bad:
+	                ipp_status_e printResult = cupsClient.print(cupsPrinter.name.toString(), job);
+	            	showToast("CupsPrint\n" + fileName + "\n" + printResult.toString());
 	                System.out.println("job printed");
 	        	}
 	            catch (Exception e){
@@ -403,7 +409,7 @@ public class PrintJobActivity extends Activity
 	}
 
 	@Override
-	public void onGetPrinterTaskDone(CupsPrinter printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
 	}
 
 	@Override

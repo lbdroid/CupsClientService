@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import ml.rabidbeaver.cupsjni.CupsPpd;
+import ml.rabidbeaver.cupsjni.CupsPpdRec;
+import ml.rabidbeaver.cupsjni.PpdServiceInfo;
+import ml.rabidbeaver.cupsjni.PpdServiceInfo.Dimension;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
@@ -12,7 +16,6 @@ import ml.rabidbeaver.discovery.PrinterDiscoveryInfo;
 import ml.rabidbeaver.discovery.PrinterDiscoveryListener;
 import ml.rabidbeaver.tasks.GetServicePpdListener;
 import ml.rabidbeaver.tasks.GetServicePpdTask;
-
 import android.os.Handler;
 import android.print.PrintAttributes;
 import android.print.PrinterCapabilitiesInfo;

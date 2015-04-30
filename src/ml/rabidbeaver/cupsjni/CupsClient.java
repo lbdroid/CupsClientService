@@ -1,8 +1,12 @@
 package ml.rabidbeaver.cupsjni;
 
+import java.net.URL;
+
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
 import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
 
 /*
@@ -41,6 +45,7 @@ public class CupsClient {
 	public CupsClient(String host, int port){
 		serv_conn=cups.httpConnect(host, port);
 	}
+	public CupsClient(){}
 	
 	public void setUserPass(String userName, String password){
 		this.userName=userName;
@@ -106,5 +111,29 @@ public class CupsClient {
             }
         }*/
         return null;
+    }
+    
+    public ipp_status_e print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
+        //TODO return print(printer.getPrinterUrl(), printJob);
+    	return null;
+    }
+    
+    public ipp_status_e print(String queue, CupsPrintJob printJob) throws Exception {
+         //TODO URL printerUrl = new URL(url.toString() + queue);
+         //return print(printerUrl, printJob);
+    	return null;
+    }
+   
+    private ipp_status_e print(URL printerUrl, CupsPrintJob printJob) throws Exception {
+        //TODO IppPrintJobOperation command = new IppPrintJobOperation();
+        //return command.print(printerUrl, userName, printJob);
+    	return null;
+    }
+    
+    public Pointer cupsGetPPD2(String name){
+    	return cups.cupsGetPPD2(serv_conn, name);
+    }
+    public Pointer cupsGetPPD(String name){
+    	return cups.cupsGetPPD(name);
     }
 }

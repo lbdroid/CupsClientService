@@ -10,15 +10,13 @@ import ml.rabidbeaver.detect.PrinterResult;
 import ml.rabidbeaver.detect.PrinterUpdater;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
-
 import ml.rabidbeaver.cupsjni.CupsClient;
-
+import ml.rabidbeaver.cupsjni.cups_dest_s;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.view.Menu;
@@ -149,12 +147,12 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    		intent.putExtra("printer", "");
 	    		startActivity(intent);
 	    		break;
-	    	case R.id.certificates:
+	    	/*case R.id.certificates:
 	    		intent = new Intent(this, CertificateActivity.class);
 	    		intent.putExtra("host", host.getText().toString());
 	    		intent.putExtra("port", port.getText().toString());
 	    		startActivity(intent);
-	    		break;
+	    		break;*/
 	    	case R.id.scanhost:
 	    	    String user = userName.getText().toString();
 	    	    if (user.equals("")){
@@ -275,7 +273,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	
 	
 	@Override
-	public void onGetPrinterTaskDone(CupsPrinter printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
 	    
 		if (exception != null){
 	    	showResult("Failed", exception.getMessage());
@@ -287,10 +285,10 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    	return;
 	    }
 	    
-	    String result = "Name: " + printer.getName() +
-				"\nDescription: " + printer.getDescription() +
-				"\nMake: " + printer.getMake() +
-				"\nLocation: " + printer.getLocation();
+	    String result = "Name: " + printer.name +
+				"\nDescription: " + printer.toString();// +
+				//"\nMake: " + printer. +
+				//"\nLocation: " + printer.getLocation();
 			    
 		showResult("Success", result);
 	}
