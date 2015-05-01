@@ -2,6 +2,8 @@ package ml.rabidbeaver.cupsjni;
 
 import java.nio.IntBuffer;
 
+import android.util.Log;
+
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
@@ -124,9 +126,10 @@ public class CupsClient {
     }
     
     public String[] getAttribute(cups_dest_s printer, String attribute){
+    	Log.d("CUPSCLIENT-GETATTRIBUTES",printer.name.getString(0));
     	String[] retval = null;
     	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
-    	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "ipp://127.0.0.1:631/printers/P1102w");
+    	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "/printers/"+printer.name.getString(0));
     	PointerByReference response = cups.cupsDoRequest(serv_conn_p, request, "/");
 
     	PointerByReference attr;
