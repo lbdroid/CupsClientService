@@ -79,11 +79,11 @@ public class CupsPpd{
         return cupsString;
     }
     
-    public void createPpdRec(cups_dest_s printer, byte[] md5) throws UnsupportedEncodingException, IOException, Exception{
+    public void createPpdRec(CupsClient client, cups_dest_s printer, byte[] md5) throws UnsupportedEncodingException, IOException, Exception{
         //URL printerUrl = printer.getPrinterUrl();
         //CupsGetPPDOperation getPpd = new CupsGetPPDOperation();
     	//TODO: look at this more
-        String ppdString = new CupsClient().cupsGetPPD(printer.name.toString()).toString();
+        String ppdString = client.cupsGetPPD(printer.name.toString()).toString();
         createPpdRec(ppdString, md5);
     }
     

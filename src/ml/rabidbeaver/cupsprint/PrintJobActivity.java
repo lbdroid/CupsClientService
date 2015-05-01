@@ -192,7 +192,7 @@ public class PrintJobActivity extends Activity
             }
         });
         byte[] md5 = null;
-        GetPpdTask getPpdTask = new GetPpdTask(cupsPrinter, cupsppd, md5);
+        GetPpdTask getPpdTask = new GetPpdTask(cupsClient, cupsPrinter, cupsppd, md5);
         getPpdTask.get(Thread.NORM_PRIORITY);
 		//should check exception here
 		setStdOpts();

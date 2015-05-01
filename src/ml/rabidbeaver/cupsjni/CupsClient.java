@@ -100,11 +100,8 @@ public class CupsClient {
     	return null;
     }
     
-    public Pointer cupsGetPPD2(String name){
-    	return MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetPPD2(serv_conn_p, name);
-    }
     public Pointer cupsGetPPD(String name){
-    	return MlRabidbeaverCupsjniLibrary.INSTANCE.cupsGetPPD(name);
+    	return cups.cupsGetPPD2(serv_conn_p, name);
     }
     
     public String getOption(cups_dest_s printer, String option){
