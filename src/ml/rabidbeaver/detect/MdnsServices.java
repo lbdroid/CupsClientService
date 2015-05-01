@@ -205,7 +205,7 @@ public class MdnsServices{
         	else {
         		try {
         			CupsClient client = new CupsClient(rec.getHost(), rec.getPort(), "");
-        			if (client.isPrinterAccessible(null, "")) // if this client is not an accessible printer on ssl, it will return false
+        			if (client.isPrinterAccessible("")) // if this client is not an accessible printer on ssl, it will return false
         				testMap.put(urlStr, true);
         			else throw new Exception("Printer Not Accessible");
         		}

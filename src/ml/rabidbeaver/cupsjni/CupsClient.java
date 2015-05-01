@@ -3,102 +3,49 @@ package ml.rabidbeaver.cupsjni;
 import java.net.URL;
 import java.nio.IntBuffer;
 
-import android.util.Log;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.cups_device_cb_t;
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_encryption_e;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_t;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_op_e;
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_tag_e;
 import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
-
-/*
- * Every time a native header in this file is added or altered, it is necessary to enter CupsClientService/jni/include and run the following command:
- * javah -classpath ../../bin/classes -o shim.h ml.rabidbeaver.cupsjni.CupsClient
- * to regenerate the shim.h
- */
 
 public class CupsClient {
 	private String userName = "anonymous";
 	private String password;
 	private PointerByReference serv_conn_p;
-	private http_t serv_conn;
 	private IntBuffer i_b = IntBuffer.allocate(1);
 	
 	public static final int USER_AllOWED = 0;
 	public static final int USER_DENIED = 1;
 	public static final int USER_NOT_ALLOWED = 2;
 	private MlRabidbeaverCupsjniLibrary cups = MlRabidbeaverCupsjniLibrary.INSTANCE;
-	public final int CUPS_WHICHJOBS_ACTIVE = 0;//MlRabidbeaverCupsjniLibrary.CUPS_WHICHJOBS_ACTIVE;
-	
-	private static final String listAttrs = 
-			"device-uri printer-name printer-info printer-location printer-make-and-model printer-uri-supported";
-	private static final String stdAttrs = 
-			"device-uri printer-name requesting-user-name-allowed requesting-user-name-denied printer-info printer-location printer-make-and-model printer-uri-supported";
-	private static final String extAttrs = "document-format-supported";
-	
-	// Load jni library
-	//static {
-	//	System.loadLibrary("cups_shim");
-	//}
+	public final int CUPS_WHICHJOBS_ACTIVE = MlRabidbeaverCupsjniLibrary.CUPS_WHICHJOBS_ACTIVE;
 	
 	// Constructors
 	public CupsClient(String host, int port, String userName){
 		this.userName=userName;
-		Log.d("CUPSCLIENT",cups==null?"NULL":"notnull");
 		serv_conn_p = cups.httpConnect2(host, port, null, 0, http_encryption_e.HTTP_ENCRYPTION_IF_REQUESTED, 0, 2500, i_b);
 	}
 	public CupsClient(String host, int port){
-		Log.d("CUPSCLIENT",cups==null?"NULL":"notnull");
-		//serv_conn=(http_t) cups.httpConnect(host, port).toNative();
 		serv_conn_p = cups.httpConnect(host, port);
-		//serv_conn_p = cups.httpConnect2(host, port, null, 0, http_encryption_e.HTTP_ENCRYPTION_IF_REQUESTED, 0, 2500, i_b);
-		//listPrinters();
-		//Log.d("CUPSCLIENT","SERVCONN:"+serv_conn.toString());
 	}
 	public CupsClient(){}
 	
 	public void setUserPass(String userName, String password){
+		//TODO: obviously, this needs to actually do something to actually set up authentication....
 		this.userName=userName;
 		this.password=password;
 	}
 	
-	public boolean isPrinterAccessible(String name, String queue){
-		if (cups.cupsGetDestWithURI(name, queue) == null) return false;
+	public boolean isPrinterAccessible(String queue){
+		if (getPrinter(queue) == null) return false;
 		return true;
 	}
 	
-	public cups_dest_s.ByReference[] listPrinters(){
-		cups_dest_s.ByReference[] dests = null;
-		//int num = cups.cupsGetDests2(serv_conn_p, dests);
-		//Log.d("CUPSCLIENT","listPrinters(), num:"+num);
-		//for (int i=0; i<num; i++){
-		//	Log.d("CUPSCLIENT","listprinters():"+dests[i].name);
-		//}
-		
-		int s;
-		DevCB a = new DevCB();
-		s=cups.cupsGetDevices(serv_conn_p, 100, "0", "0", a, null);
-		Log.d("CUPSCLIENT","listPrinters(), status:"+((s==ipp_status_e.IPP_STATUS_ERROR_INTERNAL)?"INTERNAL ERROR":"Not internal error"));
-		return dests;
-    }
-	
-	private class DevCB implements cups_device_cb_t {
-
-		@Override
-		public void apply(Pointer device_class, Pointer device_id,
-				Pointer device_info, Pointer device_make_and_model,
-				Pointer device_uri, Pointer device_location, Pointer user_data) {
-			// TODO Auto-generated method stub
-			Log.d("CUPSCLIENT","callback running");
-			
-		}
-		
-	}
-
 	public ByReference[] getJobs(String queue, int whichJobs, boolean myJobs){    
         ByReference[] jobs = null;
         cups.cupsGetJobs2(serv_conn_p, jobs, queue, myJobs?1:0, whichJobs);
@@ -120,22 +67,38 @@ public class CupsClient {
     	return true;
     }
     
-    public cups_dest_s getPrinter(String queue, boolean extended){
-        if (extended)
-            return getPrinter(queue, stdAttrs + " " + extAttrs);
-        else 
-            return getPrinter(queue, stdAttrs);
-    }
-    
-	private cups_dest_s getPrinter(String queue, String attrs){
-    	cups_dest_s.ByReference[] cds = new cups_dest_s.ByReference[1];
-    	cds[0] = new cups_dest_s.ByReference();
-    	int s = cups.cupsGetDests2(serv_conn_p, cds);
-    	Log.d("CUPSCLIENT","num dests:"+s);
-    	cups_dest_s ret = cups.cupsGetDest(queue, null, s, cds[0]);
+	public cups_dest_s getPrinter(String queue){
+    	cups_dest_s.ByReference[] dests = new cups_dest_s.ByReference[1];
+    	dests[0] = new cups_dest_s.ByReference();
+    	int s = cups.cupsGetDests2(serv_conn_p, dests);
+    	cups_dest_s ret = cups.cupsGetDest(queue, null, s, dests[0]);
 
     	return ret;
     }
+	
+	public cups_dest_s.ByReference[] listPrinters(){
+    	cups_dest_s.ByReference[] dests = new cups_dest_s.ByReference[1];
+    	dests[0] = new cups_dest_s.ByReference();
+    	cups.cupsGetDests2(serv_conn_p, dests);
+		return dests;
+	}
+		
+// NOTES on how to implement callback function...		
+		//DevCB a = new DevCB();
+		//s=cups.cupsGetDevices(serv_conn_p, 100, "0", "0", a, null);
+		//Log.d("CUPSCLIENT","listPrinters(), status:"+((s==ipp_status_e.IPP_STATUS_ERROR_INTERNAL)?"INTERNAL ERROR":"Not internal error"));
+		//return dests;
+    //}
+//	
+//	private class DevCB implements cups_device_cb_t {
+//	@Override
+//	public void apply(Pointer device_class, Pointer device_id,
+//			Pointer device_info, Pointer device_make_and_model,
+//			Pointer device_uri, Pointer device_location, Pointer user_data) {
+//		// TO.DO Auto-generated method stub
+//		Log.d("CUPSCLIENT","callback running");
+//	}
+//}
     
     public ipp_status_e print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
         //TODO return print(printer.getPrinterUrl(), printJob);
@@ -165,5 +128,25 @@ public class CupsClient {
     	Pointer p = cups.cupsGetOption("device-uri",printer.num_options, printer.options);
     	if (p==null) return null;
     	else return p.getString(0);
+    }
+    
+    public String[] getAttribute(cups_dest_s printer, String attribute){
+    	String[] retval = null;
+    	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
+    	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "ipp://127.0.0.1:631/printers/P1102w");
+    	PointerByReference response = cups.cupsDoRequest(serv_conn_p, request, "/");
+
+    	PointerByReference attr;
+    	PointerByReference lang = null;
+    	for (attr = cups.ippFirstAttribute(response); attr != null; attr = cups.ippNextAttribute(response)){
+    		if (cups.ippGetName(attr) != null){
+    			String[] cstring = new String[cups.ippGetCount(attr)];
+    			for (int i=0; i<cups.ippGetCount(attr); i++)
+    				cstring[i] = (cups.ippGetString(attr, i, lang)==null)?null:cups.ippGetString(attr, i, lang).getString(0);
+    			if (cups.ippGetName(attr).getString(0).equals(attribute)) retval = cstring;
+    		}
+    	}
+    	
+    	return retval;
     }
 }
