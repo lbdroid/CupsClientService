@@ -14,7 +14,6 @@ import ml.rabidbeaver.tasks.PrintTaskListener;
 import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.CupsPpd;
 import ml.rabidbeaver.cupsjni.CupsPrintJob;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
 import android.print.PrintAttributes;
@@ -119,28 +118,7 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 			cupsAttributes.put("job-attributes", cupsString);
 		}
 		PrintDocument document = job.getDocument();
-/*
-		FileInputStream infile = new ParcelFileDescriptor.AutoCloseInputStream(document.getData());
-		try {
-			File file = new File(Environment.getExternalStoragePublicDirectory(
-			            Environment.DIRECTORY_PICTURES), document.getInfo().getName());
-			FileOutputStream outfile = new FileOutputStream(file);
-			byte[] buffer = new byte[4096];
-			int offset = 0;
-			int bytesRead;
-			while ((bytesRead = infile.read(buffer))>0){
-				outfile.write(buffer, 0, bytesRead);
-				offset = offset + bytesRead;
-			}
-		    outfile.close();
-		      			
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		if (true){
-			return;
-		}*/
+
 		FileInputStream file = new ParcelFileDescriptor.AutoCloseInputStream(document.getData());
 		String fileName = document.getInfo().getName();
 	    CupsPrintJob cupsPrintJob = new CupsPrintJob(file, fileName);
@@ -194,7 +172,6 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	protected void onRequestCancelPrintJob(PrintJob job) {
 	}
 	
-
 	//@Override
 	public void onPrintTaskDone(PrintTask task) {
 		
@@ -209,16 +186,14 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 			return;
 		}
 		
-		ipp_status_e result = task.getResult();
-		if (result == null){
-			Toast.makeText(this, errmsg + "Print job returned null", Toast.LENGTH_LONG).show();
+		int result = task.getResult();
+		if (result == 0){
+			Toast.makeText(this, errmsg + "Print job returned 0", Toast.LENGTH_LONG).show();
 			servicePrintJob.cancel();
 	    	return;
 	    }
 		
-		Toast.makeText(this, errmsg + result.toString(), Toast.LENGTH_LONG).show();
+		Toast.makeText(this, errmsg, Toast.LENGTH_LONG).show();
 		servicePrintJob.complete();
 	}
-
-	
 }

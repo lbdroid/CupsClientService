@@ -14,7 +14,6 @@ import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.CupsPrintJob;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
 import ml.rabidbeaver.cupsjni.PpdItemList;
 import ml.rabidbeaver.cupsjni.PpdSectionList;
 import ml.rabidbeaver.cupsjni.cups_dest_s;
@@ -149,12 +148,15 @@ public class PrintJobActivity extends Activity
 			return;
 		}
 
-		//TODO: if (!cupsPrinter.mimeTypeSupported(mimeType)){
-			setAcceptMimeType(mimeType, extension);
-		//}
-		//else {
-			mimeTypeSupported = true;
-		//}
+		//TODO: Probably should create a printer data class to store more information about
+		// the printer than what is available in cups_dest_s structure.
+		String[] supportedMimeTypes = cupsClient.getAttribute(cupsPrinter,"document-format-supported");
+		for (int i=0; i<supportedMimeTypes.length && !mimeTypeSupported && mimeType != null && mimeType.length()>0; i++){
+			if (supportedMimeTypes[i].equals(mimeType))
+				mimeTypeSupported = true;
+		}
+		if (!mimeTypeSupported) setAcceptMimeType(mimeType, extension);
+
 		if (mimeType.contains("image"))
 			isImage = true;
 		else
@@ -384,11 +386,10 @@ public class PrintJobActivity extends Activity
 	        		if (attributes != null){
 	        			job.setAttributes(attributes);
 	        		}
-	                System.setProperty("java.net.preferIPv4Stack" , "true"); 
-	                //TODO: this probably is bad:
-	                ipp_status_e printResult = cupsClient.print(cupsPrinter.name.toString(), job);
-	            	showToast("CupsPrint\n" + fileName + "\n" + printResult.toString());
-	                System.out.println("job printed");
+
+	                int printResult = cupsClient.print(cupsPrinter, job);
+	                if (printResult < 1) throw new Exception("Print job failed");
+	            	showToast("CupsPrint\n" + fileName + "\n");
 	        	}
 	            catch (Exception e){
 	            	showToast("CupsPrint error:\n" + e.toString());

@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.printservice.PrintJob;
 import ml.rabidbeaver.cupsjni.CupsPrintJob;
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_status_e;
 
 public class PrintTask extends AsyncTask<Void, Void, Void>{
 	
@@ -12,7 +11,7 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 	private String queue;
 	private CupsPrintJob cupsPrintJob;
 	private Exception exception;
-	private ipp_status_e result;
+	private int result;
 	private PrintTaskListener listener;	
 	private PrintJob servicePrintJob;
 	
@@ -28,7 +27,6 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 	
 	public void setJob(CupsPrintJob job){
 		this.cupsPrintJob = job;
-        System.setProperty("java.net.preferIPv4Stack" , "true"); 
 	}
 	
 	public void setServicePrintJob(PrintJob servicePrintJob){
@@ -43,7 +41,7 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 		return exception;
 	}
 	
-	public ipp_status_e getResult(){
+	public int getResult(){
 		return result;
 	}
 	
