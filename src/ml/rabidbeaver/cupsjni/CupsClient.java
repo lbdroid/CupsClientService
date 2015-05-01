@@ -82,23 +82,6 @@ public class CupsClient {
     	cups.cupsGetDests2(serv_conn_p, dests);
 		return dests;
 	}
-		
-// NOTES on how to implement callback function...		
-		//DevCB a = new DevCB();
-		//s=cups.cupsGetDevices(serv_conn_p, 100, "0", "0", a, null);
-		//Log.d("CUPSCLIENT","listPrinters(), status:"+((s==ipp_status_e.IPP_STATUS_ERROR_INTERNAL)?"INTERNAL ERROR":"Not internal error"));
-		//return dests;
-    //}
-//	
-//	private class DevCB implements cups_device_cb_t {
-//	@Override
-//	public void apply(Pointer device_class, Pointer device_id,
-//			Pointer device_info, Pointer device_make_and_model,
-//			Pointer device_uri, Pointer device_location, Pointer user_data) {
-//		// TO.DO Auto-generated method stub
-//		Log.d("CUPSCLIENT","callback running");
-//	}
-//}
     
     public ipp_status_e print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
         //TODO return print(printer.getPrinterUrl(), printJob);
