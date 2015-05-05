@@ -136,7 +136,9 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	    }
 	    
 	    String nickname = jobInfo.getPrinterId().getLocalId();
-		PrintQueueConfig config = new PrintQueueConfHandler(CupsPrintApp.getContext()).getPrinter(nickname);
+	    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
+		PrintQueueConfig config = dbconf.getPrinter(nickname);
+		dbconf.close();
 		if (config == null){
 			job.fail("Printer Config not found");
 			return;

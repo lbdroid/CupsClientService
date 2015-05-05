@@ -82,7 +82,10 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		showIn.setAdapter(aa2);
 		if (!oldPrinter.contentEquals("")){
 			this.setTitle(R.string.title_activity_printer_edit);
-		     PrintQueueConfig conf = new PrintQueueConfHandler(getBaseContext()).getPrinter(oldPrinter);
+
+		     PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
+		     PrintQueueConfig conf = dbconf.getPrinter(oldPrinter);
+			 dbconf.close();
 		     if (conf != null){
 		    	 int size = EditControls.protocols.size();
 		    	 int pos = 0;

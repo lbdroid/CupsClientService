@@ -72,7 +72,9 @@ public class PrintJobActivity extends Activity
 		String sPrinter;
 		if (type.equals("static")){
 			sPrinter = intent.getStringExtra("printer");
-			printerConfig = new PrintQueueConfHandler(getBaseContext()).getPrinter(sPrinter);
+			PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
+			printerConfig = dbconf.getPrinter(sPrinter);
+			dbconf.close();
 		}
 		else {
 			sPrinter = intent.getStringExtra("name");

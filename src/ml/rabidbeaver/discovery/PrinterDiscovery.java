@@ -88,6 +88,7 @@ public class PrinterDiscovery{
 				pdInfo.setStatic();
 			}
 		}
+		confdb.close();
 	}
 	
 	private void notifyAddPrinter(PrinterDiscoveryInfo info){

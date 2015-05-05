@@ -80,8 +80,9 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 		else{
 			md5 = savedPpd.getPpdRec().getPpdMd5();
 		}
-		
-		PrintQueueConfig config = new PrintQueueConfHandler(CupsPrintApp.getContext()).getPrinter(nickName);
+		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
+		PrintQueueConfig config = dbconf.getPrinter(nickName);
+		dbconf.close();
 		if (config != null){
 			if (!(config.getPassword().equals(""))){
 				//TODO auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());

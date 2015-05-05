@@ -3,7 +3,6 @@ package ml.rabidbeaver.cupsprint;
 import java.util.ArrayList;
 
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -36,7 +35,10 @@ public class PrinterMainActivity extends Activity {
 	@Override
 	public void onStart(){
 		super.onStart();
-		printersArray = new PrintQueueConfHandler(getBaseContext()).getPrintQueueConfigs();
+		
+		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
+		printersArray = dbconf.getPrintQueueConfigs();
+		dbconf.close();
 		if (printersArray.size() == 0){
 			new AlertDialog.Builder(this)
 			.setTitle("")
@@ -107,6 +109,7 @@ public class PrinterMainActivity extends Activity {
 		PrintQueueConfHandler confdb = new PrintQueueConfHandler(getBaseContext());
 		confdb.removePrinter(printer);
 		printersArray = confdb.getPrintQueueConfigs();
+		confdb.close();
 		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, 
 				android.R.layout.simple_list_item_1, printersArray);
 		printersListView.setAdapter(aa);
