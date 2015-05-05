@@ -29,43 +29,12 @@
             <meta-data
                 android:name="android.printservice"
                 android:resource="@xml/printservice" />
-            </service>
+        </service>
 
         <activity
             android:name="ml.rabidbeaver.cupsprint.PrinterMainActivity"
             android:exported="true"
             android:label="@string/title_activity_printer_list" >
-        </activity>
-        <activity
-            android:name="ml.rabidbeaver.cupsprint.PrinterPrintToActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_printer_print_to" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="image/*" />
-                <data android:mimeType="text/*" />
-                <data android:mimeType="application/postscript" />
-                <data android:mimeType="application/pdf" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="ml.rabidbeaver.cupsprint.PrinterPrintDefaultActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_printer_print_default" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="image/*" />
-                <data android:mimeType="text/*" />
-                <data android:mimeType="application/postscript" />
-                <data android:mimeType="application/pdf" />
-            </intent-filter>
         </activity>
         <activity
             android:name="ml.rabidbeaver.cupsprint.PrinterAddEditActivity"
@@ -99,12 +68,6 @@
             android:name="ml.rabidbeaver.cupsprint.MimeTypesActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_mime_types" >
-        </activity>
-        <activity
-            android:name="ml.rabidbeaver.cupsprint.CertificateActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_certificate"
-            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="ml.rabidbeaver.printservice.ServicePrintJobActivity"
