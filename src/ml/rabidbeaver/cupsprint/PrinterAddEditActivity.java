@@ -79,8 +79,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
  				android.R.layout.simple_spinner_item, EditControls.showInOpts);
 		showIn.setAdapter(aa2);
 		if (!oldPrinter.contentEquals("")){
-		     PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
-		     PrintQueueConfig conf = ini.getPrinter(oldPrinter);
+		     PrintQueueConfig conf = new PrintQueueConfHandler(getBaseContext()).getPrinter(oldPrinter);
 		     if (conf != null){
 		    	 int size = EditControls.protocols.size();
 		    	 int pos = 0;
@@ -218,11 +217,11 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		return true;
 	}
 	
-	private boolean checkExists(String name, PrintQueueConfHandler ini){
+	private boolean checkExists(String name, PrintQueueConfHandler conf){
 		
 		if (oldPrinter.equals(name))
 			return false;
-		if (!ini.printerExists(name))
+		if (!conf.printerExists(name))
 			return false;
 		
 		alert("Duplicate nickname: " + name);
@@ -294,13 +293,13 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	}
 	
 	public void savePrinter(View view) {
-	     final PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
+	     final PrintQueueConfHandler confdb = new PrintQueueConfHandler(getBaseContext());
 	     String sNickname = nickname.getText().toString().trim();
 	     if (!checkEmpty("Nickname", sNickname)){
 	    	 nickname.requestFocus();
 	    	 return;
 	     }
-	     if (checkExists(sNickname, ini)){
+	     if (checkExists(sNickname, confdb)){
 	    	 nickname.requestFocus();
 	    	 return;
 	     }
@@ -336,7 +335,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	     }
 	     String sShowIn = (String) showIn.getSelectedItem();
 	     final PrintQueueConfig conf = new PrintQueueConfig(sNickname, sProtocol, sHost, sPort, sQueue);
-	     if (checkExists(conf.getPrintQueue(), ini)){
+	     if (checkExists(conf.getPrintQueue(), confdb)){
 	    	 host.requestFocus();
 	    	 return;
 	     }
@@ -357,7 +356,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	         				+ "Using the https protocol is reccomended for authentication.")
 	                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
 	                    public void onClick(DialogInterface dialog, int id) {
-	                    	doSave(ini, conf);
+	                    	doSave(confdb, conf);
 	                    }
 	                })
 	                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -367,11 +366,11 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	         builder.create().show();
 	    	 return;
 	     }
-	     doSave(ini, conf);
+	     doSave(confdb, conf);
 	}
 	     
-	public void doSave(PrintQueueConfHandler ini, PrintQueueConfig conf){
-	     ini.addPrinter(conf, oldPrinter);
+	public void doSave(PrintQueueConfHandler confdb, PrintQueueConfig conf){
+	     confdb.addOrUpdatePrinter(conf, oldPrinter);
 	     CupsPrintApp.getPrinterDiscovery().updateStaticConfig();
 		 Intent intent = new Intent(this, PrinterMainActivity.class);
 	     startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));

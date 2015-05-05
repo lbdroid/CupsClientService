@@ -66,8 +66,7 @@ public class PrinterMainActivity extends Activity {
 	@Override
 	public void onStart(){
 		super.onStart();
-		PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
-		printersArray = ini.getPrintQueueConfigs();
+		printersArray = new PrintQueueConfHandler(getBaseContext()).getPrintQueueConfigs();
 		if (printersArray.size() == 0){
 			new AlertDialog.Builder(this)
 			.setTitle("")
@@ -135,9 +134,9 @@ public class PrinterMainActivity extends Activity {
 
 	private void doDelete(String printer){
 		System.out.println("delete called");
-		PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
-		ini.removePrinter(printer);
-		printersArray = ini.getPrintQueueConfigs();
+		PrintQueueConfHandler confdb = new PrintQueueConfHandler(getBaseContext());
+		confdb.removePrinter(printer);
+		printersArray = confdb.getPrintQueueConfigs();
 		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, 
 				android.R.layout.simple_list_item_1, printersArray);
 		printersListView.setAdapter(aa);

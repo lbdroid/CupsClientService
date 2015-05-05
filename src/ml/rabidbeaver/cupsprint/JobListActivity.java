@@ -46,8 +46,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 			finish();
 			return;
 		}
-		PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
-		config = ini.getPrinter(nickname);
+		config = new PrintQueueConfHandler(getBaseContext()).getPrinter(nickname);
 		if (config == null){
 			Util.showToast(this, "Printer config not found");
 			finish();

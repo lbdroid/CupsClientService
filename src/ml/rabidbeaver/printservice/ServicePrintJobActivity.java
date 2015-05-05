@@ -53,9 +53,8 @@ public class ServicePrintJobActivity extends Activity {
 		//PrinterInfo.Builder builder = new PrinterInfo.Builder(printerInfo);
 		jobInfo = (PrintJobInfo) intent.getParcelableExtra("android.intent.extra.print.PRINT_JOB_INFO");
 		String nickname = jobInfo.getPrinterId().getLocalId();
-				
-		PrintQueueConfHandler ini = new PrintQueueConfHandler(CupsPrintApp.getContext());
-		PrintQueueConfig config = ini.getPrinter(nickname);
+
+		PrintQueueConfig config = new PrintQueueConfHandler(CupsPrintApp.getContext()).getPrinter(nickname);
 		if (config == null){
 			Util.showToast(this, "Printer configuration not found");
 			finish();

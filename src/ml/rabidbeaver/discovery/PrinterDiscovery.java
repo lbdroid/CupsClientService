@@ -42,14 +42,14 @@ public class PrinterDiscovery{
 	
 	private void readStaticConfig(){
 		
-		PrintQueueConfHandler ini = new PrintQueueConfHandler(CupsPrintApp.getContext());
-		ArrayList<String> iniPrintersArray = ini.getServiceConfigs();
+		PrintQueueConfHandler confdb = new PrintQueueConfHandler(CupsPrintApp.getContext());
+		ArrayList<String> iniPrintersArray = confdb.getServiceConfigs();
 		
 		synchronized(printerInfos){
 			Iterator<String> it = printerInfos.keySet().iterator();
 			while (it.hasNext()){
 				String key = it.next();
-				PrintQueueConfig test = ini.getPrinter(key);
+				PrintQueueConfig test = confdb.getPrinter(key);
 				if (test == null){
 					PrinterDiscoveryInfo info = printerInfos.get(key);
 					if (info != null){
@@ -76,7 +76,7 @@ public class PrinterDiscovery{
 		for(String nickname : iniPrintersArray){
 			PrinterDiscoveryInfo pdInfo = printerInfos.get(nickname);
 			if (pdInfo == null){
-				PrintQueueConfig config = ini.getPrinter(nickname);
+				PrintQueueConfig config = confdb.getPrinter(nickname);
 				if (config != null){
 					PrinterDiscoveryInfo newInfo = new PrinterDiscoveryInfo(nickname,config.getPrintQueue());
 					newInfo.setStatic();

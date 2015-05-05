@@ -1,194 +1,154 @@
 package ml.rabidbeaver.cupsprint;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.crypto.Cipher;
 
-import org.ini4j.Ini;
-
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Base64;
 
-//TODO: I dislike this file immensely. It is using idiotic config files instead of sqlite.
-
-public class PrintQueueConfHandler extends Ini{
-
-	private static final long serialVersionUID = 1L;
-	private static final String defaultPrinter = "cupsprintdefault"; 
+public class PrintQueueConfHandler extends SQLiteOpenHelper {
+	private static final int DATABASE_VERSION = 1;
+	private static final String DATABASE_NAME = "printers";
 
 	public PrintQueueConfHandler(Context context){
-    	super();
-    	try {
-    		String filePath = context.getFilesDir().getPath().toString() + "/printers.conf";
-    		File file = new File(filePath);
-    		file.createNewFile();
-    		setFile(file);
-    		load();
-    	}
-    	catch (Exception e){
-    		System.out.println(e.toString());
-        return;
-    	}
+    	super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-	
-	public String getDefaultPrinter(){
-		return getString(defaultPrinter, "default");
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		String create = "CREATE TABLE printers (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+				+ "name VARCHAR, host VARCHAR, protocol VARCHAR, port INTEGER, queue VARCHAR, "
+				+ "username VARCHAR, password VARCHAR, orientation VARCHAR, fittopage INTEGER, "
+				+ "nooptions INTEGER, extensions VARCHAR, resolution VARCHAR, showin VARCHAR, "
+				+ "def INTEGER DEFAULT 0);";
+		db.execSQL(create);
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		// Since this is the first version, there is nothing to upgrade.		
 	}
 	
-	public void setDefaultPrinter(String printer){
-		put (defaultPrinter, "default", printer);
-		try {
-			this.store();
-		} catch (IOException e) {
-			System.out.println(e.toString());
+	public String getDefaultPrinter(){
+		SQLiteDatabase db = this.getReadableDatabase();
+		// SELECT name FROM printers WHERE def = 1:
+		Cursor cursor = db.query("printers", new String[]{"name"}, "def = ?", new String[]{"1"}, null, null, null);
+		String defprinter=null;
+		if (cursor != null && cursor.getCount() > 0){
+			cursor.moveToFirst();
+			defprinter = cursor.getString(0);
+			cursor.close();
 		}
+		return defprinter;
+	}
+	
+	private void setDefaultPrinter(SQLiteDatabase db, String printer){
+		ContentValues values = new ContentValues();
+		values.put("def", 1);
+		db.update("printers", values, "name = ?", new String[]{printer});
+		values = new ContentValues();
+		values.put("def", 0);
+		db.update("printers", values, "name != ?", new String[]{printer});
 	}
 
 	public boolean printerExists(String name){
-		Section section = this.get(name);
-		return !(section == null);
+		SQLiteDatabase db = this.getReadableDatabase();
+		// SELECT id FROM printers WHERE name = name:
+		Cursor cursor = db.query("printers", new String[]{"id"}, "name = ?", new String[]{name}, null, null, null);
+		return (cursor != null && cursor.getCount() > 0);
 	}
 	
 	public void removePrinter(String printer){
-		Section section = this.get(printer);
-		if (section != null){
-			remove(section);
-			String currDefault = getDefaultPrinter();
-			if (currDefault.equals(printer))
-				setDefaultPrinter("");
-			try {
-				store();
-			} catch (IOException e) {
-				System.out.println(e.toString());
-			}
-		}
-		
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete("printers", "name = ?", new String[]{printer});
+		db.close();
 	}
-	public void addPrinter(PrintQueueConfig config, String oldConfig){
-		Section section = this.get(oldConfig);
-		if (section != null){
-			remove(section);
-		}
-		String nickname = config.nickname;
-		add(nickname);
-		put(nickname, "host", config.host);
-		put(nickname, "protocol", config.protocol);
-		put(nickname, "port", config.port);
-		put(nickname, "queue", config.queue);
-		put(nickname, "username", config.userName);
-		put(nickname, "password", encrypt(config.password));
-		put(nickname, "orientation", config.orientation);
-		putBoolean(nickname, "fittopage", config.imageFitToPage);
-		putBoolean(nickname, "nooptions", config.noOptions);
-		put(nickname, "extensions", config.extensions);
-		put(nickname, "resolution", config.resolution);
-		put(nickname, "showin", config.showIn);
-		if (config.isDefault)
-			put (defaultPrinter, "default", config.nickname);
+	
+	public void addOrUpdatePrinter(PrintQueueConfig config, String oldPrinter){
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put("name", config.nickname);
+		values.put("host", config.host);
+		values.put("protocol", config.protocol);
+		values.put("port", config.port);
+		values.put("queue", config.queue);
+		values.put("username", config.userName);
+		values.put("password", encrypt(config.password));
+		values.put("orientation", config.orientation);
+		values.put("fittopage", config.imageFitToPage);
+		values.put("nooptions", config.noOptions);
+		values.put("extensions", config.extensions);
+		values.put("resolution", config.resolution);
+		values.put("showin", config.showIn);
+		
+		if (printerExists(oldPrinter))
+			db.update("printers", values, "name = ?", new String[]{"oldPrinter"});
 		else {
-			String currDefault = getString(defaultPrinter, "default");
-			if (currDefault != null){
-				if (currDefault.equals(oldConfig))
-					put(defaultPrinter, "default", "");
-			}
+			db.insert("printers", null, values);			
+			if (config.isDefault) setDefaultPrinter(db,config.nickname);
 		}
-		try {
-			this.store();
-		} catch (IOException e) {
-			System.out.println(e.toString());
+	}
+	
+	private ArrayList<String> getPrinters(String selection, String[] args){
+		SQLiteDatabase db = this.getReadableDatabase();
+		// SELECT name FROM printers;
+		Cursor cursor = db.query("printers", new String[]{"name"}, selection, args, null, null, null);
+		ArrayList<String> printerList = new ArrayList<String>();
+		if (cursor.moveToFirst()){
+			do {
+				printerList.add(cursor.getString(0));
+			} while (cursor.moveToNext());
 		}
+		if (cursor != null) cursor.close();
+
+		Collections.sort(printerList);
+		return printerList;
 	}
 	
 	public ArrayList<String> getPrintQueueConfigs(){
-		
-		ArrayList<String> printerList = new ArrayList<String>();
-		for (String name: keySet()){
-			if (!name.equals(defaultPrinter)){
-				printerList.add(name);
-			}
-		}
-		Collections.sort(printerList);
-		return printerList;
-		
+		return getPrinters(null, null);
 	}
 	
 	public ArrayList<String> getShareConfigs(){
-		
-		ArrayList<String> printerList = new ArrayList<String>();
-		for (String name: keySet()){
-			if (!name.equals(defaultPrinter)){
-				String showin = this.getString(name, "showin");
-				if (!(showin.equals("Print Service"))){
-					printerList.add(name);
-				}
-			}
-		}
-		Collections.sort(printerList);
-		return printerList;
+		return getPrinters("showin != ?", new String[]{"Print Service"});
 	}
 	
 	public ArrayList<String> getServiceConfigs(){
-		
-		ArrayList<String> printerList = new ArrayList<String>();
-		for (String name: keySet()){
-			if (!name.equals(defaultPrinter)){
-				String showin = this.getString(name, "showin");
-				if (!(showin.equals("Shares"))){
-					printerList.add(name);
-				}
-			}
-		}
-		Collections.sort(printerList);
-		return printerList;
+		return getPrinters("showin != ?", new String[]{"Shares"});
 	}
 	
 	public PrintQueueConfig getPrinter(String name){
-		Section section = this.get(name);
-		if (section == null)
-			return null;
-		String host = this.getString(name, "host");
-		String protocol = this.getString(name, "protocol");
-		String port = this.getString(name, "port");
-		String queue = this.getString(name, "queue");
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.query("printers", new String[]{"host","protocol","port","queue",
+				"username","password","orientation","fittopage","nooptions","extensions",
+				"resolution","showin","def"}, "name = ?", new String[]{name}, null, null, null);
+		
+		if (cursor == null || cursor.getCount() < 1) return null;
+		
+		cursor.moveToFirst();
+		String host = cursor.getString(0);
+		String protocol = cursor.getString(1);
+		String port = Integer.toString(cursor.getInt(2));
+		String queue = cursor.getString(3);
 		PrintQueueConfig pqc = new PrintQueueConfig(name, protocol, host, port, queue);
-		pqc.userName = this.getString(name, "username");
-		pqc.password = decrypt(this.getString(name, "password"));
-		pqc.orientation = this.getString(name, "orientation");
-		pqc.imageFitToPage = this.getBoolean(name, "fittopage");
-		pqc.noOptions = this.getBoolean(name, "nooptions");
-		pqc.extensions = this.getString(name, "extensions");
-		pqc.resolution = this.getString(name, "resolution");
-		pqc.showIn = this.getString(name, "showin");
-		String currDefault = this.getString(defaultPrinter, "default");
-		pqc.isDefault = (pqc.nickname.equals(currDefault));
+		pqc.userName = cursor.getString(4);
+		pqc.password = decrypt(cursor.getString(5));
+		pqc.orientation = cursor.getString(6);
+		pqc.imageFitToPage = cursor.getInt(7)!=0;
+		pqc.noOptions = cursor.getInt(8)!=0;
+		pqc.extensions = cursor.getString(9);
+		pqc.resolution = cursor.getString(10);
+		pqc.showIn = cursor.getString(11);
+		pqc.isDefault = cursor.getInt(12)!=0;
 		return pqc;
 	}
-	
-	public String getString(String section, String key){
-		String val = this.get(section, key);
-		if (val == null)
-			return "";
-		return val;
-	}
-	
-	private Boolean getBoolean(String section, String key){
-		String value = get(section, key);
-		if (value == null)
-			return false;
-		return (value.equals("true"));
-	}
-	
-	private void putBoolean(String section, String key, boolean value){
-		if (value)
-			put(section, key, "true");
-		else
-			put(section, key, "false");
-			
-	}
-	
+
 	private String encrypt(String data){
 		if (data.equals("")){
 			return "";
@@ -219,6 +179,4 @@ public class PrintQueueConfHandler extends Ini{
 			return "";
 		}
 	}
-	
-
 }

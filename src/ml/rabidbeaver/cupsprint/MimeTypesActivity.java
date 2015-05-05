@@ -33,8 +33,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 		setContentView(R.layout.activity_mime_types);
 		Intent intent = getIntent();
 		String sPrinter = intent.getStringExtra("printer");
-		PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
-	    printConfig = ini.getPrinter(sPrinter);
+	    printConfig = new PrintQueueConfHandler(getBaseContext()).getPrinter(sPrinter);
 	    if (printConfig == null){
 			Util.showToast(this, "Config for " + sPrinter + " not found");
 			finish();

@@ -21,7 +21,6 @@ import ml.rabidbeaver.cupsjni.CupsPpd;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,8 +74,7 @@ public class PrintJobActivity extends Activity
 		String sPrinter;
 		if (type.equals("static")){
 			sPrinter = intent.getStringExtra("printer");
-			PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
-			printerConfig = ini.getPrinter(sPrinter);
+			printerConfig = new PrintQueueConfHandler(getBaseContext()).getPrinter(sPrinter);
 		}
 		else {
 			sPrinter = intent.getStringExtra("name");
