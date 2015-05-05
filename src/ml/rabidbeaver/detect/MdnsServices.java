@@ -12,9 +12,9 @@ import java.util.Map;
 
 import android.content.Context;
 
-import com.jmdns.ServiceInfo;
-import com.jmdns.impl.DNSIncoming;
-import com.jmdns.impl.DNSRecord;
+import javax.jmdns.ServiceInfo;
+import javax.jmdns.impl.DNSIncoming;
+import javax.jmdns.impl.DNSRecord;
 
 import ml.rabidbeaver.cupsjni.CupsClient;
 
