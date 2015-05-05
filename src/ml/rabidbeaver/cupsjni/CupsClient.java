@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.IntBuffer;
+import java.util.Map;
+
+import android.util.Log;
 
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
@@ -101,9 +104,23 @@ public class CupsClient {
     public int print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
     	Pointer m = new Memory(printJob.getJobName().length() + 1);
     	m.setString(0, printJob.getJobName());
+
+    	int num_options = 0;
+    	cups_option_s.ByReference[] options = new cups_option_s.ByReference[1];
+    	options[0] = new cups_option_s.ByReference();
+    	//cups_option_s options;
+    	Map<String, String> attrs = printJob.getAttributes();
+    	Object[] keys = attrs.keySet().toArray();
+    	for (int i=0; i<keys.length; i++){
+    		Log.d("CUPSCLIENT-PRINT", "key: "+keys[i]+", value: "+attrs.get(keys[i]));
+    		try {
+    			num_options = cups.cupsAddOption(keys[i].toString(), attrs.get(keys[i]), num_options, options);
+    		} catch (Exception e){ e.printStackTrace(); }
+    	}
     	
-    	//TODO: probably should be job options instead of printer options....
-    	int job_id = cups.cupsCreateJob(serv_conn_p, printer.name, m, printer.num_options, printer.options);
+    	cups_option_s opts = options[0];
+    	
+    	int job_id = cups.cupsCreateJob(serv_conn_p, printer.name, m, num_options, opts);
     	if (job_id == 0) return 0;
 
     	//http_status_t
@@ -112,7 +129,6 @@ public class CupsClient {
     	NativeSize length = new NativeSize(printJob.getDocumentLength());
     	
     	//http_status_t
-    	//TODO: can actually break this into multiple runs of cupsWriteRequestData of sensible length, like 1024.
     	Pointer buffer = new Memory(printJob.getDocumentLength());
     	buffer.write(0, printJob.getBytes(), 0, (int) printJob.getDocumentLength());
     	if (cups.cupsWriteRequestData(serv_conn_p, buffer, length) != http_status_e.HTTP_STATUS_CONTINUE)
