@@ -3,7 +3,6 @@ package ml.rabidbeaver.cupsprint;
 import java.util.ArrayList;
 
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -26,7 +25,7 @@ public class PrinterPrintDefaultActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		final PrintQueueIniHandler ini = new PrintQueueIniHandler(getBaseContext());
+		final PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
 		Intent intent = getIntent();
 		String action = intent.getAction();
 		String type = intent.getType();

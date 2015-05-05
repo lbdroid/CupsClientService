@@ -4,9 +4,9 @@ public class PrintQueueConfig {
 
 	String nickname;
 	String protocol;
-	String host;
-	String port;
-	String queue;
+	public String host;
+	public String port;
+	public String queue;
 	String userName;
 	String password;
 	String orientation;
@@ -51,7 +51,7 @@ public class PrintQueueConfig {
 	}
 	
 	public String getResolution(){
-		return resolution;
+		return resolution; //TODO: apparently, nothing here actually SETS the resolution....
 	}
 	
 	public boolean showInPrintService(){

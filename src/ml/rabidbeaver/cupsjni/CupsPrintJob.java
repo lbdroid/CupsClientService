@@ -1,64 +1,51 @@
 package ml.rabidbeaver.cupsjni;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Map;
 
 public class CupsPrintJob {
-    private ByteArrayInputStream document;
+    private byte[] document;
     private String jobName;
     private Map<String, String> attributes;
-    private String mime = "application/octet-stream";
+    private long length;
+    private String mime = "application/octet-stream"; // I think this doesn't actually matter.
 
     public CupsPrintJob(byte[] document, String jobName) {
-        this.document = new ByteArrayInputStream(document);
+        this.document = document;
         this.jobName = jobName;
+        this.length = document.length;
     }
 
     public CupsPrintJob(InputStream document, String jobName) {
-        this.document = (ByteArrayInputStream) document;
+        try {
+			this.document = readBytes(document);
+		} catch (IOException e1) {}
+        this.length=this.document.length;
         this.jobName = jobName;
     }
     
- // convert InputStream to String
- 	private String getStringFromInputStream(InputStream is) {
-  
- 		BufferedReader br = null;
- 		StringBuilder sb = new StringBuilder();
-  
- 		String line;
- 		try {
-  
- 			br = new BufferedReader(new InputStreamReader(is));
- 			while ((line = br.readLine()) != null) {
- 				sb.append(line);
- 			}
-  
- 		} catch (IOException e) {
- 			e.printStackTrace();
- 		} finally {
- 			if (br != null) {
- 				try {
- 					br.close();
- 				} catch (IOException e) {
- 					e.printStackTrace();
- 				}
- 			}
- 		}
-  
- 		return sb.toString();
-  
- 	}
+    private byte[] readBytes(InputStream inputStream) throws IOException {
+    	// this dynamically extends to take the bytes you read
+    	ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+
+    	// this is storage overwritten on each iteration with bytes
+    	int bufferSize = 1024;
+    	byte[] buffer = new byte[bufferSize];
+
+    	// we need to know how may bytes were read to write them to the byteBuffer
+    	int len = 0;
+    	while ((len = inputStream.read(buffer)) != -1) {
+    		byteBuffer.write(buffer, 0, len);
+    	}
+
+    	// and then we can return your byte array.
+    	return byteBuffer.toByteArray();
+    }
 
     public Map<String, String> getAttributes() {
         return attributes;
-    }
-
-    public InputStream getDocument() {
-        return document;
     }
 
     public void setAttributes(Map<String, String> printJobAttributes) {
@@ -69,7 +56,7 @@ public class CupsPrintJob {
         return jobName;
     }
     
-    public void setMimeType(String mime){
+    public void xsetMimeType(String mime){
     	this.mime=mime;
     }
     
@@ -77,7 +64,11 @@ public class CupsPrintJob {
     	return mime;
     }
     
-    public String getDocumentString(){
-    	return getStringFromInputStream(document);
+    public byte[] getBytes(){
+    	return document;
+    }
+    
+    public long getDocumentLength(){
+    	return length;
     }
 }

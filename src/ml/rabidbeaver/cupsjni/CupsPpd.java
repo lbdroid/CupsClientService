@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -80,11 +79,9 @@ public class CupsPpd{
     }
     
     public void createPpdRec(CupsClient client, cups_dest_s printer, byte[] md5) throws UnsupportedEncodingException, IOException, Exception{
-        //URL printerUrl = printer.getPrinterUrl();
-        //CupsGetPPDOperation getPpd = new CupsGetPPDOperation();
     	//TODO: look at this more
-        String ppdString = client.cupsGetPPD(printer.name.toString()).toString();
-        createPpdRec(ppdString, md5);
+    	String ppd = client.cupsGetPPD(printer.name.getString(0));
+        createPpdRec(ppd, md5);
     }
     
     public void createPpdRec(String ppdString, byte[] md5) throws IOException{

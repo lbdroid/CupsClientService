@@ -11,7 +11,7 @@ import ml.rabidbeaver.cupsjni.PpdServiceInfo;
 import ml.rabidbeaver.cupsjni.PpdServiceInfo.Dimension;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
-import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
+import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.discovery.PrinterDiscoveryInfo;
 import ml.rabidbeaver.discovery.PrinterDiscoveryListener;
 import ml.rabidbeaver.tasks.GetServicePpdListener;
@@ -81,7 +81,7 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 			md5 = savedPpd.getPpdRec().getPpdMd5();
 		}
 		
-		PrintQueueIniHandler ini = new PrintQueueIniHandler(CupsPrintApp.getContext());
+		PrintQueueConfHandler ini = new PrintQueueConfHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = ini.getPrinter(nickName);
 		if (config != null){
 			if (!(config.getPassword().equals(""))){

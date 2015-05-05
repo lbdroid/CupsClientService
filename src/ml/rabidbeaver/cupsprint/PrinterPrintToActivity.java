@@ -8,9 +8,7 @@ import ml.rabidbeaver.detect.MdnsScanTask;
 import ml.rabidbeaver.detect.PrinterRec;
 import ml.rabidbeaver.detect.PrinterResult;
 import ml.rabidbeaver.detect.PrinterUpdater;
-
 import ml.rabidbeaver.cupsprintservice.R;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -98,7 +96,7 @@ public class PrinterPrintToActivity extends Activity implements PrinterUpdater{
 	@Override
 	public void onStart(){
 		super.onStart();
-		PrintQueueIniHandler ini = new PrintQueueIniHandler(getBaseContext());
+		PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
 		printersArray = ini.getShareConfigs();
 		//if (printersArray.size() == 0){
 		//	 Intent intent = new Intent(this, PrinterMainActivity.class);

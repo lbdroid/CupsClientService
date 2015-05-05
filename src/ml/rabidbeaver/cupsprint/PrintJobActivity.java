@@ -21,6 +21,7 @@ import ml.rabidbeaver.cupsjni.CupsPpd;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,7 +75,7 @@ public class PrintJobActivity extends Activity
 		String sPrinter;
 		if (type.equals("static")){
 			sPrinter = intent.getStringExtra("printer");
-			PrintQueueIniHandler ini = new PrintQueueIniHandler(getBaseContext());
+			PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
 			printerConfig = ini.getPrinter(sPrinter);
 		}
 		else {
@@ -161,7 +162,7 @@ public class PrintJobActivity extends Activity
 			isImage = true;
 		else
 			isImage = false;
-		
+
 		if (!(printerConfig.password.equals(""))){
 			cupsClient.setUserPass(printerConfig.userName, printerConfig.password);
 		}

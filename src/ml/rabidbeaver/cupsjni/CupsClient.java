@@ -1,5 +1,12 @@
 package ml.rabidbeaver.cupsjni;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.IntBuffer;
 
 import android.util.Log;
@@ -50,7 +57,7 @@ public class CupsClient {
 	}
 	
 	public ByReference[] getJobs(String queue, int whichJobs, boolean myJobs){    
-        ByReference[] jobs = null;
+		cups_job_s.ByReference[] jobs = new cups_job_s.ByReference[1];
         cups.cupsGetJobs2(serv_conn_p, jobs, queue, myJobs?1:0, whichJobs);
         return jobs;
     }
@@ -75,7 +82,6 @@ public class CupsClient {
     	dests[0] = new cups_dest_s.ByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, dests);
     	cups_dest_s ret = cups.cupsGetDest(queue, null, s, dests[0]);
-
     	return ret;
     }
 	
@@ -87,8 +93,6 @@ public class CupsClient {
 	}
     
     public int print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
-        //TODO return print(printer.getPrinterUrl(), printJob);
-
     	Pointer m = new Memory(printJob.getJobName().length() + 1);
     	m.setString(0, printJob.getJobName());
     	
@@ -98,12 +102,14 @@ public class CupsClient {
 
     	//http_status_t
     	cups.cupsStartDocument(serv_conn_p, printer.name.getString(0), job_id, printJob.getJobName(), printJob.getMimeType(), 1);
-    	String document = printJob.getDocumentString();
-    	NativeSize length = new NativeSize(document.length());
+    	
+    	NativeSize length = new NativeSize(printJob.getDocumentLength());
     	
     	//http_status_t
     	//TODO: can actually break this into multiple runs of cupsWriteRequestData of sensible length, like 1024.
-    	if (cups.cupsWriteRequestData(serv_conn_p, document, length) != http_status_e.HTTP_STATUS_CONTINUE)
+    	Pointer buffer = new Memory(printJob.getDocumentLength());
+    	buffer.write(0, printJob.getBytes(), 0, (int) printJob.getDocumentLength());
+    	if (cups.cupsWriteRequestData(serv_conn_p, buffer, length) != http_status_e.HTTP_STATUS_CONTINUE)
     		return 0;
     	
     	//ipp_status_t
@@ -115,8 +121,28 @@ public class CupsClient {
     	return print(getPrinter(queue), printJob);
     }
 
-    public Pointer cupsGetPPD(String name){
-    	return cups.cupsGetPPD2(serv_conn_p, name);
+    public String cupsGetPPD(String name){
+    	//TODO: This does not appear to be reading the entire file into the String....
+    	Log.d("CUPSCLIENT-CUPSGETPPD-1",name);
+    	Pointer p = cups.cupsGetPPD2(serv_conn_p, name);
+    	Log.d("CUPSCLIENT-CUPSGETPPD-2","ppd==null?"+p==null?"NULL":"notnull");
+    	String s = p.getString(0);
+    	Log.d("CUPSCLIENT-CUPSGETPPD-3",s);
+    	String ret = "";
+    	try {
+			InputStream ppdIS = new FileInputStream(new File(s));
+			InputStreamReader ppdReader = new InputStreamReader(ppdIS);
+			BufferedReader bufferedReader = new BufferedReader(ppdReader);
+            String receiveString = "";
+            char[] buffer = new char[1024];
+            while (bufferedReader.read(buffer) >= 0){
+            	receiveString += new String(buffer);
+            }
+            ppdReader.close();
+            ret = receiveString;
+		} catch (FileNotFoundException e) {} catch (IOException e) {}
+    	Log.d("CUPSCLIENT-CUPSGETPPD-4",ret);
+    	return ret;
     }
     
     public String getOption(cups_dest_s printer, String option){
@@ -126,7 +152,6 @@ public class CupsClient {
     }
     
     public String[] getAttribute(cups_dest_s printer, String attribute){
-    	Log.d("CUPSCLIENT-GETATTRIBUTES",printer.name.getString(0));
     	String[] retval = null;
     	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
     	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "/printers/"+printer.name.getString(0));

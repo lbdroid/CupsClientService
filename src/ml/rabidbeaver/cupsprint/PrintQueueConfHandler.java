@@ -12,12 +12,14 @@ import org.ini4j.Ini;
 import android.content.Context;
 import android.util.Base64;
 
-public class PrintQueueIniHandler extends Ini{
+//TODO: I dislike this file immensely. It is using idiotic config files instead of sqlite.
+
+public class PrintQueueConfHandler extends Ini{
 
 	private static final long serialVersionUID = 1L;
 	private static final String defaultPrinter = "cupsprintdefault"; 
 
-	public PrintQueueIniHandler(Context context){
+	public PrintQueueConfHandler(Context context){
     	super();
     	try {
     		String filePath = context.getFilesDir().getPath().toString() + "/printers.conf";

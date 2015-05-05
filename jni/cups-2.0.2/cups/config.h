@@ -118,16 +118,16 @@
  */
 
 #define CUPS_BINDIR	"/usr/bin"
-#define CUPS_CACHEDIR	"/var/cache/cups"
+#define CUPS_CACHEDIR	"/data/data/ml.rabidbeaver.cupsprintservice/files/cache"
 #define CUPS_DATADIR    "/usr/share/cups"
 #define CUPS_DOCROOT	"/usr/share/doc/cups"
 #define CUPS_FONTPATH	"/usr/share/cups/fonts"
 #define CUPS_LOCALEDIR	"/usr/share/locale"
-#define CUPS_LOGDIR	"/var/logs/cups"
+#define CUPS_LOGDIR	"/data/data/ml.rabidbeaver.cupsprintservice/files/logs"
 #define CUPS_REQUESTS	"/var/spool/cups"
 #define CUPS_SBINDIR	"/usr/sbin"
 #define CUPS_SERVERBIN	"/usr/lib/cups"
-#define CUPS_SERVERROOT	"/etc/cups"
+#define CUPS_SERVERROOT	"/data/data/ml.rabidbeaver.cupsprintservice/files"
 #define CUPS_STATEDIR	"/var/run/cups"
 
 

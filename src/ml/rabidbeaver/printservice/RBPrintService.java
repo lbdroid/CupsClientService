@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
-import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
+import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.tasks.PrintTask;
 import ml.rabidbeaver.tasks.PrintTaskListener;
 import ml.rabidbeaver.cupsjni.CupsClient;
@@ -24,6 +24,7 @@ import android.printservice.PrintDocument;
 import android.printservice.PrintJob;
 import android.printservice.PrintService;
 import android.printservice.PrinterDiscoverySession;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -62,6 +63,7 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 			advString = "fit-to-page:boolean:true";
 		}
 		cupsString = addAttribute(cupsString, advString);
+
 		PrintJobInfo jobInfo = job.getInfo();
 		int copies = jobInfo.getCopies();
 		cupsString = addAttribute(cupsString, "copies:integer:" + String.valueOf(copies));
@@ -117,16 +119,24 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 			cupsAttributes = new HashMap<String, String>();
 			cupsAttributes.put("job-attributes", cupsString);
 		}
-		PrintDocument document = job.getDocument();
 
+		PrintDocument document = job.getDocument();
 		FileInputStream file = new ParcelFileDescriptor.AutoCloseInputStream(document.getData());
 		String fileName = document.getInfo().getName();
 	    CupsPrintJob cupsPrintJob = new CupsPrintJob(file, fileName);
 	    if (attributes != null){
 	    	cupsPrintJob.setAttributes(cupsAttributes);
 	    }
+	    
+	    //TODO: This set of attributes needs to be handed to the CupsPrintJob as job attributes
+	    String[] keys = new String[100];
+	    cupsAttributes.keySet().toArray(keys);
+	    for (int i=0; i<cupsAttributes.size(); i++){
+	    	Log.d("RBPRINTSERVICE",keys[i]+"/"+cupsAttributes.get(keys[i]));
+	    }
+	    
 	    String nickname = jobInfo.getPrinterId().getLocalId();
-		PrintQueueIniHandler ini = new PrintQueueIniHandler(CupsPrintApp.getContext());
+		PrintQueueConfHandler ini = new PrintQueueConfHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = ini.getPrinter(nickname);
 		if (config == null){
 			job.fail("Printer Config not found");
@@ -144,7 +154,7 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	    if (!(config.getPassword().equals(""))){
 	    	cupsClient.setUserPass(config.getUserName(), config.getPassword());
 	    }
-	    PrintTask printTask = new PrintTask(cupsClient, config.getQueuePath());
+	    PrintTask printTask = new PrintTask(cupsClient, config.queue);
 		printTask.setJob(cupsPrintJob);
 		printTask.setServicePrintJob(job);
 		printTask.setListener(this);

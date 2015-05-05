@@ -74,7 +74,8 @@ cupsTempFd(char *filename,		/* I - Pointer to buffer */
 #  ifdef __APPLE__
     tmpdir = "/private/tmp";		/* /tmp is a symlink to /private/tmp */
 #  else
-    tmpdir = "/tmp";
+//    tmpdir = "/tmp";
+    tmpdir="/data/data/ml.rabidbeaver.cupsprintservice/files/tmp";
 #  endif /* __APPLE__ */
 #endif /* WIN32 */
 

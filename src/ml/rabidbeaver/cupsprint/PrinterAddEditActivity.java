@@ -79,7 +79,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
  				android.R.layout.simple_spinner_item, EditControls.showInOpts);
 		showIn.setAdapter(aa2);
 		if (!oldPrinter.contentEquals("")){
-		     PrintQueueIniHandler ini = new PrintQueueIniHandler(getBaseContext());
+		     PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
 		     PrintQueueConfig conf = ini.getPrinter(oldPrinter);
 		     if (conf != null){
 		    	 int size = EditControls.protocols.size();
@@ -218,7 +218,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		return true;
 	}
 	
-	private boolean checkExists(String name, PrintQueueIniHandler ini){
+	private boolean checkExists(String name, PrintQueueConfHandler ini){
 		
 		if (oldPrinter.equals(name))
 			return false;
@@ -294,7 +294,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	}
 	
 	public void savePrinter(View view) {
-	     final PrintQueueIniHandler ini = new PrintQueueIniHandler(getBaseContext());
+	     final PrintQueueConfHandler ini = new PrintQueueConfHandler(getBaseContext());
 	     String sNickname = nickname.getText().toString().trim();
 	     if (!checkEmpty("Nickname", sNickname)){
 	    	 nickname.requestFocus();
@@ -370,7 +370,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	     doSave(ini, conf);
 	}
 	     
-	public void doSave(PrintQueueIniHandler ini, PrintQueueConfig conf){
+	public void doSave(PrintQueueConfHandler ini, PrintQueueConfig conf){
 	     ini.addPrinter(conf, oldPrinter);
 	     CupsPrintApp.getPrinterDiscovery().updateStaticConfig();
 		 Intent intent = new Intent(this, PrinterMainActivity.class);

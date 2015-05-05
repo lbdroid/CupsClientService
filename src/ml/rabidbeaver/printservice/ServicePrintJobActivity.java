@@ -21,7 +21,7 @@ import ml.rabidbeaver.cupsjni.PpdSectionList;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PpdGroupsActivity;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
-import ml.rabidbeaver.cupsprint.PrintQueueIniHandler;
+import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.cupsprint.Util;
 import ml.rabidbeaver.cupsprintservice.R;
 
@@ -54,7 +54,7 @@ public class ServicePrintJobActivity extends Activity {
 		jobInfo = (PrintJobInfo) intent.getParcelableExtra("android.intent.extra.print.PRINT_JOB_INFO");
 		String nickname = jobInfo.getPrinterId().getLocalId();
 				
-		PrintQueueIniHandler ini = new PrintQueueIniHandler(CupsPrintApp.getContext());
+		PrintQueueConfHandler ini = new PrintQueueConfHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = ini.getPrinter(nickname);
 		if (config == null){
 			Util.showToast(this, "Printer configuration not found");
