@@ -39,7 +39,8 @@
         <activity
             android:name="ml.rabidbeaver.cupsprint.PrinterAddEditActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_printer_add_edit"
+            android:exported="true"
+            android:label="@string/title_activity_printer_add"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
@@ -57,12 +58,6 @@
             android:name="ml.rabidbeaver.cupsprint.PpdSectionsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_ppd_sections" >
-        </activity>
-        <activity
-            android:name="ml.rabidbeaver.cupsprint.AboutActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_about"
-            android:theme="@android:style/Theme.Holo.Light.Dialog" >
         </activity>
         <activity
             android:name="ml.rabidbeaver.cupsprint.MimeTypesActivity"

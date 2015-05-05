@@ -39,8 +39,6 @@ public class PrinterMainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.addprintermenu, menu);
-		getMenuInflater().inflate(R.menu.certificatemenu, menu);
-		getMenuInflater().inflate(R.menu.aboutmenu, menu);
 		return true;
 	}
 	
@@ -50,15 +48,6 @@ public class PrinterMainActivity extends Activity {
 	    	case R.id.addprinter:
 	    		addPrinter();
 	    		break;
-	    	case R.id.about:
-	    		Intent intent = new Intent(this, AboutActivity.class);
-	    		intent.putExtra("printer", "");
-	    		startActivity(intent);
-	    		break;
-	    	/*case R.id.certificates:
-	    		intent = new Intent(this, CertificateActivity.class);
-	    		startActivity(intent);
-	    		break;*/
 	    }
 	    return super.onContextItemSelected(item);
 	 }

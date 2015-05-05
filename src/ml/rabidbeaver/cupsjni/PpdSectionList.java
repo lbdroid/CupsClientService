@@ -3,7 +3,8 @@ package ml.rabidbeaver.cupsjni;
 import java.util.ArrayList;
 
 public class PpdSectionList extends ArrayList<PpdItemList>{
-    String name;
+	private static final long serialVersionUID = 1L;
+	String name;
     String text;
     
     public String getName(){

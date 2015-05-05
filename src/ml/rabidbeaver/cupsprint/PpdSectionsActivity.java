@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -51,25 +49,6 @@ public class PpdSectionsActivity extends Activity {
 			setControls();
 		}
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.aboutmenu, menu);
-		return true;
-	}
-
-	@Override
-	  public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    	case R.id.about:
-	    		Intent intent = new Intent(this, AboutActivity.class);
-	    		intent.putExtra("printer", "");
-	    		startActivity(intent);
-	    		break;
-	    }
-	    return super.onContextItemSelected(item);
-	 }
 
 	private void setControls(){
 		final CupsTableLayout layout = (CupsTableLayout) findViewById(R.id.sectionsViewLayout);

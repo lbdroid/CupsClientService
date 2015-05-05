@@ -51,9 +51,11 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_printer_add_edit);
+		
 		Intent intent = getIntent();
 		
 		oldPrinter = intent.getStringExtra("printer");
+		if (oldPrinter == null) oldPrinter="";
 		nickname = (EditText) findViewById(R.id.editNickname);
 		protocol = (Spinner) findViewById(R.id.editProtocol);
 		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, 
@@ -79,6 +81,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
  				android.R.layout.simple_spinner_item, EditControls.showInOpts);
 		showIn.setAdapter(aa2);
 		if (!oldPrinter.contentEquals("")){
+			this.setTitle(R.string.title_activity_printer_edit);
 		     PrintQueueConfig conf = new PrintQueueConfHandler(getBaseContext()).getPrinter(oldPrinter);
 		     if (conf != null){
 		    	 int size = EditControls.protocols.size();
@@ -133,25 +136,12 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.scanmenu, menu);
-		getMenuInflater().inflate(R.menu.certificatemenu, menu);
-		getMenuInflater().inflate(R.menu.aboutmenu, menu);
 		return true;
 	}
 
 	@Override
 	  public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-	    	case R.id.about:
-	    		Intent intent = new Intent(this, AboutActivity.class);
-	    		intent.putExtra("printer", "");
-	    		startActivity(intent);
-	    		break;
-	    	/*case R.id.certificates:
-	    		intent = new Intent(this, CertificateActivity.class);
-	    		intent.putExtra("host", host.getText().toString());
-	    		intent.putExtra("port", port.getText().toString());
-	    		startActivity(intent);
-	    		break;*/
 	    	case R.id.scanhost:
 	    	    String user = userName.getText().toString();
 	    	    if (user.equals("")){

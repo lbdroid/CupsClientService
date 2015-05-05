@@ -40,8 +40,8 @@ public class PpdServiceInfo{
     private Map<String, Dimension> resolutions;
 
     public PpdServiceInfo(){
-        paperDimensions = new LinkedHashMap();
-        resolutions = new LinkedHashMap();
+        paperDimensions = new LinkedHashMap<String, Dimension>();
+        resolutions = new LinkedHashMap<String, Dimension>();
     }
     
     public boolean getMD5Match(){

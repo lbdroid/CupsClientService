@@ -8,8 +8,6 @@ import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,25 +47,6 @@ public class PpdGroupsActivity extends Activity {
 			}
 		});
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.aboutmenu, menu);
-		return true;
-	}
-
-	@Override
-	  public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    	case R.id.about:
-	    		Intent intent = new Intent(this, AboutActivity.class);
-	    		intent.putExtra("printer", "");
-	    		startActivity(intent);
-	    		break;
-	    }
-	    return super.onContextItemSelected(item);
-	 }
 
 	private void doSection(int index){
 		Intent intent = new Intent(this, PpdSectionsActivity.class);
