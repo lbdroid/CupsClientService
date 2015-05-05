@@ -1,15 +1,12 @@
 package ml.rabidbeaver.cupsjni;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.IntBuffer;
-
-import android.util.Log;
 
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
@@ -131,26 +128,24 @@ public class CupsClient {
     }
 
     public String cupsGetPPD(String name){
-    	//TODO: This does not appear to be reading the entire file into the String....
-    	Log.d("CUPSCLIENT-CUPSGETPPD-1",name);
     	Pointer p = cups.cupsGetPPD2(serv_conn_p, name);
-    	Log.d("CUPSCLIENT-CUPSGETPPD-2","ppd==null?"+p==null?"NULL":"notnull");
     	String s = p.getString(0);
-    	Log.d("CUPSCLIENT-CUPSGETPPD-3",s);
     	String ret = "";
     	try {
-			InputStream ppdIS = new FileInputStream(new File(s));
-			InputStreamReader ppdReader = new InputStreamReader(ppdIS);
-			BufferedReader bufferedReader = new BufferedReader(ppdReader);
-            String receiveString = "";
-            char[] buffer = new char[1024];
-            while (bufferedReader.read(buffer) >= 0){
-            	receiveString += new String(buffer);
-            }
-            ppdReader.close();
-            ret = receiveString;
+    		File file = new File(s);
+			InputStream ppdIS = new FileInputStream(file);
+			ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+			int bufferSize = 1024;
+			byte[] buffer = new byte[bufferSize];
+			int len = 0;
+			while ((len = ppdIS.read(buffer)) != -1) {
+				byteBuffer.write(buffer, 0, len);
+			}
+			ret = byteBuffer.toString();
+			byteBuffer.close();
+			ppdIS.close();
+			file.delete();
 		} catch (FileNotFoundException e) {} catch (IOException e) {}
-    	Log.d("CUPSCLIENT-CUPSGETPPD-4",ret);
     	return ret;
     }
     

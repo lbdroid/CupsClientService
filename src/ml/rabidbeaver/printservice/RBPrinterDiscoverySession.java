@@ -163,6 +163,7 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 	
 	@Override
 	public void onGetServicePpdTaskDone(CupsPpd cupsPpd, PrintQueueConfig config, Exception exception) {
+		if (cupsPpd == null) return;
 		final String nicknameId = config.getNickname();
 		if (exception != null){
 			RBPrintService.capabilities.remove(nicknameId);
