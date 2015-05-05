@@ -17,6 +17,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary;
+import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.cups_password_cb_t;
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_encryption_e;
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_status_e;
 import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_op_e;
@@ -45,10 +46,18 @@ public class CupsClient {
 	}
 	public CupsClient(){}
 	
-	public void setUserPass(String userName, String password){
-		//TODO: obviously, this needs to actually do something to actually set up authentication....
-		this.userName=userName;
-		this.password=password;
+	public void setUserPass(String user, String pass){
+		this.userName=user;
+		this.password=pass;
+		if (userName != null && userName.length() > 0 && password != null && password.length() > 0){
+			cups.cupsSetPasswordCB(new cups_password_cb_t(){
+				@Override
+				public String apply(Pointer prompt) {
+					cups.cupsSetUser(userName);
+					return password;
+				}
+			});
+		}
 	}
 	
 	public boolean isPrinterAccessible(String queue){
