@@ -1,11 +1,11 @@
 package ml.rabidbeaver.printservice;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
@@ -14,6 +14,7 @@ import ml.rabidbeaver.tasks.PrintTaskListener;
 import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.CupsPpd;
 import ml.rabidbeaver.cupsjni.CupsPrintJob;
+import android.annotation.SuppressLint;
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
 import android.print.PrintAttributes;
@@ -34,9 +35,15 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	static CupsPpd jobPpd;
 	static PrintJobId ppdJobId;
 
+	@SuppressLint("SdCardPath")
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		Log.d("CUPSCLIENT-SETUPDIRS","WTF????!?!");
+		for (String path: new String[]{"/data/data/ml.rabidbeaver.cupsprintservice/files/cache","/data/data/ml.rabidbeaver.cupsprintservice/files/tmp","/data/data/ml.rabidbeaver.cupsprintservice/files/logs"}){;
+			File directory = new File(path);
+			if (!directory.exists()) directory.mkdirs();
+		}
 		capabilities = new ConcurrentHashMap<String, CupsPpd>();
 	}
 	
