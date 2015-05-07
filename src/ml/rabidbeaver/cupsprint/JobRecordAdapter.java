@@ -1,6 +1,7 @@
 package ml.rabidbeaver.cupsprint;
 
 import ml.rabidbeaver.cupsprintservice.R;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_jstate_e;
 import ml.rabidbeaver.jna.cups_job_s;
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -42,6 +43,9 @@ public class JobRecordAdapter extends BaseAdapter{
 	public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater inflater = activity.getLayoutInflater();
+            
+            //TODO: activity_job_list_row is far too short to be touch clickable.
+            //  make it taller.
             convertView = inflater.inflate(R.layout.activity_job_list_row, null);
         }
         try {
@@ -52,9 +56,30 @@ public class JobRecordAdapter extends BaseAdapter{
         	
         	String jobId = String.valueOf(record.id);
         	id.setText(jobId);
-        	name.setText(record.toString());
-        	//TODO ??? status.setText(record.getJobState().getText());
-        	status.setText(record.state);
+        	name.setText(record.title.getString(0));
+        	switch(record.state){
+        	case ipp_jstate_e.IPP_JSTATE_PENDING:
+        		status.setText("PENDING");
+        		break;
+        	case ipp_jstate_e.IPP_JSTATE_HELD:
+        		status.setText("HELD");
+        		break;
+        	case ipp_jstate_e.IPP_JSTATE_PROCESSING:
+        		status.setText("PROCESSING");
+        		break;
+        	case ipp_jstate_e.IPP_JSTATE_STOPPED:
+        		status.setText("STOPPED");
+        		break;
+        	case ipp_jstate_e.IPP_JSTATE_CANCELED:
+        		status.setText("CANCELED");
+        		break;
+        	case ipp_jstate_e.IPP_JSTATE_ABORTED:
+        		status.setText("ABORTED");
+        		break;
+        	case ipp_jstate_e.IPP_JSTATE_COMPLETED:
+        		status.setText("COMPLETED");
+        		break;
+        	}
         }catch (Exception e){
         	System.err.println(e.toString());
         }

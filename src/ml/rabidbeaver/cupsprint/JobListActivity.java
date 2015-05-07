@@ -8,6 +8,7 @@ import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.CupsPrintJobAttributes;
 import ml.rabidbeaver.cupsprintservice.R;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
 import ml.rabidbeaver.jna.cups_dest_s;
 import ml.rabidbeaver.jna.cups_job_s;
 import android.os.Bundle;
@@ -170,7 +171,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 					cups_job_s[] jobList;
 					try {
 						jobList = 
-								client.getJobs(config.queue, client.CUPS_WHICHJOBS_ACTIVE, false);
+								client.getJobs(config.queue, MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ALL, false);
 					}
 					catch (Exception e){
 						Util.showToast(activity, "CupsPrintService Jobs List\n" + e.toString());

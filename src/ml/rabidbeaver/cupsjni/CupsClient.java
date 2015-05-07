@@ -36,7 +36,6 @@ public class CupsClient {
 	public static final int USER_DENIED = 1;
 	public static final int USER_NOT_ALLOWED = 2;
 	private MlRabidbeaverJnaLibrary cups = MlRabidbeaverJnaLibrary.INSTANCE;
-	public final int CUPS_WHICHJOBS_ACTIVE = MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ACTIVE;
 	
 	// Constructors
 	public CupsClient(String host, int port, String userName){
@@ -70,15 +69,11 @@ public class CupsClient {
 
 	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){
 		PointerByReference p = new PointerByReference();
-		int num = cups.cupsGetJobs2(serv_conn_p, p, queue, myJobs?1:0, MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ALL);//whichJobs);
+		int num = cups.cupsGetJobs2(serv_conn_p, p, queue, myJobs?1:0, whichJobs);
 		Pointer ptr = p.getValue();
 		cups_job_s cjob = new cups_job_s(ptr);
 		cjob.read();
 		cups_job_s[] jobarr = (cups_job_s[]) cjob.toArray(num);
-		
-		for (int i=0; i<num; i++){
-			Log.d("CUPSCLIENT-GETJOBS",jobarr[i].title.getString(0));
-		}
 		
 		return jobarr;
     }
@@ -90,24 +85,23 @@ public class CupsClient {
 	public cups_dest_s getPrinter(String queue){
 		PointerByReference p = new PointerByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, p);
-    	
 		Pointer ptr = p.getValue();
 		cups_dest_s cdest = new cups_dest_s(ptr);
 		cdest.read();
 		cups_dest_s[] dests = (cups_dest_s[]) cdest.toArray(s);
-    	
     	cups_dest_s ret = cups.cupsGetDest(queue, null, s, dests[0]);
+    	
     	return ret;
     }
 	
 	public cups_dest_s[] listPrinters(){
 		PointerByReference p = new PointerByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, p);
-    	
 		Pointer ptr = p.getValue();
 		cups_dest_s cdest = new cups_dest_s(ptr);
 		cdest.read();
 		cups_dest_s[] dests = (cups_dest_s[]) cdest.toArray(s);
+		
 		return dests;
 	}
     
