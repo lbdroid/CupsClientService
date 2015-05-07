@@ -6,7 +6,6 @@ import ml.rabidbeaver.tasks.CancelJobTask;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.CupsPrintJobAttributes;
 import ml.rabidbeaver.cupsprintservice.R;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
 import ml.rabidbeaver.jna.cups_dest_s;
@@ -84,7 +83,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 		jobsListView.setOnItemClickListener(new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view,
                 int position, long id) {
-        	CupsPrintJobAttributes record = (CupsPrintJobAttributes) recordAdapter.getItem(position);
+        	cups_job_s record = (cups_job_s) recordAdapter.getItem(position);
         	setOperation(record);
         	}
 		});
@@ -107,9 +106,9 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 		new Thread(updater).start();;
 	}
 	
-	public void setOperation(final CupsPrintJobAttributes record){
+	public void setOperation(final cups_job_s record){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    String jobId = String.valueOf(record.getJobID());
+	    String jobId = String.valueOf(record.id);
 	    String[] items = {"Cancel Job"}; 
 	    builder.setTitle("Job Id: " + jobId)
 	           .setItems(items, new DialogInterface.OnClickListener() {
@@ -121,7 +120,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	    dialog.show();
 	}
 	
-	public void doOperation(CupsPrintJobAttributes record, int operation){
+	public void doOperation(cups_job_s record, int operation){
 	    CancelJobTask.Operation taskOp = null;
 	    switch (operation){
 	    	case 0:
@@ -130,7 +129,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	    }
 	    if (taskOp != null){
 	    	CancelJobTask task = 
-	    			new CancelJobTask(this, client, config, taskOp, record.getJobID());
+	    			new CancelJobTask(this, client, config, taskOp, record.id);
 	    	task.execute();
 	    }
 	}
