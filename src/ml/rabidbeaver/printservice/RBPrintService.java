@@ -39,7 +39,6 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	@Override
 	public void onCreate(){
 		super.onCreate();
-		Log.d("CUPSCLIENT-SETUPDIRS","WTF????!?!");
 		for (String path: new String[]{"/data/data/ml.rabidbeaver.cupsprintservice/files/cache","/data/data/ml.rabidbeaver.cupsprintservice/files/tmp","/data/data/ml.rabidbeaver.cupsprintservice/files/logs"}){;
 			File directory = new File(path);
 			if (!directory.exists()) directory.mkdirs();

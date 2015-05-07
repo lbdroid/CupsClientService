@@ -66,26 +66,19 @@ public class CupsClient {
 	}
 	
 	public ByReference[] getJobs(String queue, int whichJobs, boolean myJobs){    
-		cups_job_s.ByReference[] jobs = new cups_job_s.ByReference[1];
-        cups.cupsGetJobs2(serv_conn_p, jobs, queue, myJobs?1:0, whichJobs);
+		Log.d("CUPSCLIENT-GETJOBS","STARTING");
+		cups_job_s.ByReference[] jobs = new cups_job_s.ByReference[100];
+		for (int i=0; i<100; i++) jobs[i] = new cups_job_s.ByReference(){};
+		
+		cups.cupsGetJobs2(serv_conn_p, jobs, queue, myJobs?1:0, whichJobs);
+		Log.d("CUPSCLIENT-GETJOBS",""+jobs.length);
         return jobs;
     }
 	
-	public boolean /*PrintRequestResult*/ cancelJob(int jobID){
-        //TODO: return new IppCancelJobOperation().cancelJob(url, auth, userName, jobID);
-		return true;
+	public boolean cancelJob(String queue, int jobID){
+		return cups.cupsCancelJob(queue, jobID) == 1;
     }
 
-    public boolean /*PrintRequestResult*/ holdJob(int jobID){
-    	//TODO: return new IppHoldJobOperation().holdJob(url, auth, userName, jobID);
-    	return true;
-    }
-
-    public boolean /*PrintRequestResult*/ releaseJob(int jobID){
-    	//TODO: return new IppReleaseJobOperation().releaseJob(url, auth, userName, jobID);
-    	return true;
-    }
-    
 	public cups_dest_s getPrinter(String queue){
     	cups_dest_s.ByReference[] dests = new cups_dest_s.ByReference[1];
     	dests[0] = new cups_dest_s.ByReference();

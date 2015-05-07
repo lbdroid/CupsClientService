@@ -24,6 +24,7 @@ public class JobRecordAdapter extends BaseAdapter{
 	
 	@Override
 	public int getCount() {
+		if (records == null) return 0;
 		return records.length;
 	}
 

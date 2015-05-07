@@ -112,7 +112,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	public void setOperation(final CupsPrintJobAttributes record){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    String jobId = String.valueOf(record.getJobID());
-	    String[] items = {"Cancel Job", "Hold Job", "Release Job"}; 
+	    String[] items = {"Cancel Job"}; 
 	    builder.setTitle("Job Id: " + jobId)
 	           .setItems(items, new DialogInterface.OnClickListener() {
 	               public void onClick(DialogInterface dialog, int which) {
@@ -129,16 +129,10 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	    	case 0:
 	    		taskOp = CancelJobTask.Operation.CANCEL;
 	    		break;
-	    	case 1:
-	    		taskOp = CancelJobTask.Operation.HOLD;
-	    		break;
-	    	case 2:
-	    		taskOp = CancelJobTask.Operation.RELEASE;
-	    		break;
 	    }
 	    if (taskOp != null){
 	    	CancelJobTask task = 
-	    			new CancelJobTask(this, client, taskOp, record.getJobID());
+	    			new CancelJobTask(this, client, config, taskOp, record.getJobID());
 	    	task.execute();
 	    }
 	}
@@ -179,14 +173,14 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 					ByReference[] jobList;
 					try {
 						jobList = 
-								client.getJobs(config.getQueuePath(), client.CUPS_WHICHJOBS_ACTIVE, false);
+								client.getJobs(config.queue, client.CUPS_WHICHJOBS_ACTIVE, false);
 					}
 					catch (Exception e){
 						Util.showToast(activity, "CupsPrintService Jobs List\n" + e.toString());
 						activity.finish();
 						return;
 					}
-					if (!stop){
+					if (!stop && jobList != null){
 						updateUI(jobList);
 					}
 				}
