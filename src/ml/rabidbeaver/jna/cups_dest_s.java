@@ -1,6 +1,7 @@
 package ml.rabidbeaver.jna;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+
 import java.util.Arrays;
 import java.util.List;
 /**

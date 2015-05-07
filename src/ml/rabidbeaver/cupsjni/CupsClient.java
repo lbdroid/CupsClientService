@@ -67,57 +67,20 @@ public class CupsClient {
 		return true;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){    
-		Log.d("CUPSCLIENT-GETJOBS","STARTING");
 
+	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){
 		PointerByReference p = new PointerByReference();
-		Pointer q = new Memory(queue.length()+1);
-		q.setString(0, queue);
-		//p.
-		
-		//cups_job_s.ByReference[] jobs = new cups_job_s.ByReference[100];
-		//for (int i=0; i<100; i++) jobs[i] = new cups_job_s.ByReference(){};
-		
-		//cups.cupsGetJobs2
-		int num = cups.cupsGetJobs2(serv_conn_p.getPointer(), p, q, myJobs?1:0, MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ALL);//whichJobs);
-		
-		Log.d("CUPSCLIENT-GETJOBS","NUM:"+num);
-		
-		//cups_job_s j = new cups_job_s(p.getValue()){};
-		Log.d("CUPSCLIENT-GETJOBS","1");
-
-		Log.d("CUPSCLIENT-GETJOBS","2");
-
+		int num = cups.cupsGetJobs2(serv_conn_p, p, queue, myJobs?1:0, MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ALL);//whichJobs);
 		Pointer ptr = p.getValue();
-		Log.d("CUPSCLIENT-GETJOBS","2a");
-		cups_job_s cjob = new cups_job_s(ptr){};
-		Log.d("CUPSCLIENT-GETJOBS","2b");
+		cups_job_s cjob = new cups_job_s(ptr);
 		cjob.read();
-		Log.d("CUPSCLIENT-GETJOBS","2c");
-		cups_job_s[] jobarr = (cups_job_s[])cjob.toArray(num);
+		cups_job_s[] jobarr = (cups_job_s[]) cjob.toArray(num);
 		
-		//Pointer[] parr = p.getValue().getPointerArray(0,num);
-		Log.d("CUPSCLIENT-GETJOBS","3");
-		//jarr = new cups_job_s[num];
-		
-		
-		
-		Log.d("CUPSCLIENT-GETJOBS","4");
 		for (int i=0; i<num; i++){
-			Log.d("CUPSCLIENT-GETJOBS","5");
-			//Pointer pt = jarr[i].getPointer();
-			//pt = parr[i];
-			
-			//jarr[i] = new cups_job_s(parr[i].getPointer(0)){};
 			Log.d("CUPSCLIENT-GETJOBS",jobarr[i].title.getString(0));
 		}
 		
-		Log.d("CUPSCLIENT-GETJOBS","ABOUT TO EXIT");
-		
 		return jobarr;
-		//Log.d("CUPSCLIENT-GETJOBS",""+jobs.length);
-        //return jobs;
     }
 	
 	public boolean cancelJob(String queue, int jobID){
@@ -125,17 +88,26 @@ public class CupsClient {
     }
 
 	public cups_dest_s getPrinter(String queue){
-    	cups_dest_s.ByReference[] dests = new cups_dest_s.ByReference[1];
-    	dests[0] = new cups_dest_s.ByReference();
-    	int s = cups.cupsGetDests2(serv_conn_p, dests);
+		PointerByReference p = new PointerByReference();
+    	int s = cups.cupsGetDests2(serv_conn_p, p);
+    	
+		Pointer ptr = p.getValue();
+		cups_dest_s cdest = new cups_dest_s(ptr);
+		cdest.read();
+		cups_dest_s[] dests = (cups_dest_s[]) cdest.toArray(s);
+    	
     	cups_dest_s ret = cups.cupsGetDest(queue, null, s, dests[0]);
     	return ret;
     }
 	
-	public cups_dest_s.ByReference[] listPrinters(){
-    	cups_dest_s.ByReference[] dests = new cups_dest_s.ByReference[1];
-    	dests[0] = new cups_dest_s.ByReference();
-    	cups.cupsGetDests2(serv_conn_p, dests);
+	public cups_dest_s[] listPrinters(){
+		PointerByReference p = new PointerByReference();
+    	int s = cups.cupsGetDests2(serv_conn_p, p);
+    	
+		Pointer ptr = p.getValue();
+		cups_dest_s cdest = new cups_dest_s(ptr);
+		cdest.read();
+		cups_dest_s[] dests = (cups_dest_s[]) cdest.toArray(s);
 		return dests;
 	}
     

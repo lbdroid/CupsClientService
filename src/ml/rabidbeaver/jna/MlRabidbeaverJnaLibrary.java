@@ -6719,33 +6719,14 @@ public interface MlRabidbeaverJnaLibrary extends Library {
 	Pointer cupsGetDefault2(PointerByReference http);
 	/**
 	 * Original signature : <code>int cupsGetDests2(http_t*, cups_dest_t**)</code><br>
-	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:176</i><br>
-	 * @deprecated use the safer method {@link #cupsGetDests2(com.sun.jna.ptr.PointerByReference, ml.rabidbeaver.jna.cups_dest_s.ByReference[])} instead
-	 */
-	@Deprecated 
-	int cupsGetDests2(Pointer http, PointerByReference dests);
-	/**
-	 * Original signature : <code>int cupsGetDests2(http_t*, cups_dest_t**)</code><br>
 	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:176</i>
 	 */
-	int cupsGetDests2(PointerByReference http, cups_dest_s.ByReference dests[]);
+	int cupsGetDests2(PointerByReference http, PointerByReference dests);
 	/**
 	 * Original signature : <code>int cupsGetJobs2(http_t*, cups_job_t**, const char*, int, int)</code><br>
 	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:178</i><br>
-	 * @deprecated use the safer methods {@link #cupsGetJobs2(com.sun.jna.ptr.PointerByReference, ml.rabidbeaver.jna.cups_job_s.ByReference[], java.lang.String, int, int)} and {@link #cupsGetJobs2(com.sun.jna.ptr.PointerByReference, ml.rabidbeaver.jna.cups_job_s.ByReference[], com.sun.jna.Pointer, int, int)} instead
 	 */
-	@Deprecated 
-	int cupsGetJobs2(Pointer http, PointerByReference jobs, Pointer name, int myjobs, int whichjobs);
-	/**
-	 * Original signature : <code>int cupsGetJobs2(http_t*, cups_job_t**, const char*, int, int)</code><br>
-	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:178</i>
-	 */
-	int cupsGetJobs2(PointerByReference http, cups_job_s.ByReference jobs[], String name, int myjobs, int whichjobs);
-	/**
-	 * Original signature : <code>int cupsGetJobs2(http_t*, cups_job_t**, const char*, int, int)</code><br>
-	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:178</i>
-	 */
-	int cupsGetJobs2(PointerByReference http, cups_job_s.ByReference jobs[], Pointer name, int myjobs, int whichjobs);
+	int cupsGetJobs2(PointerByReference http, PointerByReference jobs, String name, int myjobs, int whichjobs);
 	/**
 	 * Original signature : <code>char* cupsGetPPD2(http_t*, const char*)</code><br>
 	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:180</i><br>

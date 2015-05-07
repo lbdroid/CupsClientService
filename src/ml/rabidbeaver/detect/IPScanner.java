@@ -44,7 +44,7 @@ public class IPScanner implements Runnable{
                     	if (!(password.equals(""))){
                     		cupsClient.setUserPass(username, password);
                     	}
-                    	cups_dest_s.ByReference[] pList = cupsClient.listPrinters();
+                    	cups_dest_s[] pList = cupsClient.listPrinters();
                     	for (cups_dest_s p: pList){
                     		PrinterRec rec = new PrinterRec(
                     			p.name.toString(),
@@ -62,7 +62,7 @@ public class IPScanner implements Runnable{
                     	if (!(password.equals(""))){
                     		cupsClient.setUserPass(username, password);
                     	}
-                    	cups_dest_s.ByReference[] pList = cupsClient.listPrinters();
+                    	cups_dest_s[] pList = cupsClient.listPrinters();
                     	for (cups_dest_s p: pList){
                     		PrinterRec rec = new PrinterRec(
                     			p.name.toString(),
