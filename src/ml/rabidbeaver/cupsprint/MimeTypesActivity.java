@@ -10,7 +10,6 @@ import ml.rabidbeaver.jna.cups_dest_s;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
 import android.widget.TextView;
 
 public class MimeTypesActivity extends Activity implements GetPrinterListener {
@@ -95,14 +94,6 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	    }
 		mimeList.setText(S);
 	}
-
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.aboutmenu, menu);
-		return true;
-	}
-
 
 	@Override
 	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
