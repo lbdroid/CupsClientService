@@ -74,7 +74,7 @@ disabled_src_files:= \
 
 LOCAL_C_INCLUDES := cups
 LOCAL_CFLAGS := -D_PPD_DEPRECATED=
-LOCAL_MODULE := ml.rabidbeaver.cupsjni
+LOCAL_MODULE := ml.rabidbeaver.jna
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDLIBS += -lz
 

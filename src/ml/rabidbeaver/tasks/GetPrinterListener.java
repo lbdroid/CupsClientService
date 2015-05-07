@@ -1,6 +1,6 @@
 package ml.rabidbeaver.tasks;
 
-import ml.rabidbeaver.cupsjni.cups_dest_s;
+import ml.rabidbeaver.jna.cups_dest_s;
 
 public interface GetPrinterListener {
 	

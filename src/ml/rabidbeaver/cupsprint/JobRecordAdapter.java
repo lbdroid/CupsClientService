@@ -1,7 +1,7 @@
 package ml.rabidbeaver.cupsprint;
 
-import ml.rabidbeaver.cupsjni.cups_job_s;
 import ml.rabidbeaver.cupsprintservice.R;
+import ml.rabidbeaver.jna.cups_job_s;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +12,13 @@ import android.widget.TextView;
 public class JobRecordAdapter extends BaseAdapter{
 
 	Activity activity;
-	cups_job_s.ByReference[] records;
+	cups_job_s[] records;
 	
 	public JobRecordAdapter(Activity activity){
 		this.activity = activity;
 	}
 	
-	public void setRecords(cups_job_s.ByReference[] jobList){
+	public void setRecords(cups_job_s[] jobList){
 		this.records = jobList;
 	}
 	
@@ -48,7 +48,7 @@ public class JobRecordAdapter extends BaseAdapter{
         	TextView id = (TextView) convertView.findViewById(R.id.jobJobId);
         	TextView name = (TextView) convertView.findViewById(R.id.jobJobName);
         	TextView status = (TextView) convertView.findViewById(R.id.jobJobStatus);
-        	cups_job_s.ByReference record = records[position];
+        	cups_job_s record = records[position];
         	
         	String jobId = String.valueOf(record.id);
         	id.setText(jobId);

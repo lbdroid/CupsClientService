@@ -5,14 +5,11 @@ import java.util.concurrent.TimeUnit;
 import ml.rabidbeaver.tasks.CancelJobTask;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
-
 import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.CupsPrintJobAttributes;
-
-
-import ml.rabidbeaver.cupsjni.cups_dest_s;
-import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
 import ml.rabidbeaver.cupsprintservice.R;
+import ml.rabidbeaver.jna.cups_dest_s;
+import ml.rabidbeaver.jna.cups_job_s;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -137,7 +134,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	    }
 	}
 	
-	public void updateUI(final ByReference[] jobList){
+	public void updateUI(final cups_job_s[] jobList){
 		
 		runOnUiThread(new Runnable(){
 			
@@ -170,7 +167,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 			int passes = 0;
 			while (!stop){
 				if (passes == 0){
-					ByReference[] jobList;
+					cups_job_s[] jobList;
 					try {
 						jobList = 
 								client.getJobs(config.queue, client.CUPS_WHICHJOBS_ACTIVE, false);

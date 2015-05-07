@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.CupsPpd;
-import ml.rabidbeaver.cupsjni.cups_dest_s;
+import ml.rabidbeaver.jna.cups_dest_s;
 
 public class GetPpdTask implements Runnable{
 

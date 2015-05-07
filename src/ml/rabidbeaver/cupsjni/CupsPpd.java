@@ -8,6 +8,8 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import ml.rabidbeaver.jna.cups_dest_s;
+
 public class CupsPpd{
     
     CupsPpdRec ppdRec;

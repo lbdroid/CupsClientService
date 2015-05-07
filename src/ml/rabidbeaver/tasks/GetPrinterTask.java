@@ -1,7 +1,7 @@
 package ml.rabidbeaver.tasks;
 
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.cups_dest_s;
+import ml.rabidbeaver.jna.cups_dest_s;
 import android.content.Context;
 import android.os.AsyncTask;
 

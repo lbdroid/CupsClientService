@@ -4,7 +4,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.cups_dest_s;
+import ml.rabidbeaver.jna.cups_dest_s;
 import android.content.Context;
 
 public class IPScanner implements Runnable{

@@ -57,7 +57,7 @@ extern "C" {
 #  define CUPS_BC_FD			3
 					/* Back-channel file descriptor for
 					 * select/poll */
-#  define CUPS_DATE_ANY			(time_t)-1
+#  define CUPS_DATE_ANY			(long)-1
 #  define CUPS_EXCLUDE_NONE		(const char *)0
 #  define CUPS_FORMAT_AUTO		"application/octet-stream"
 #  define CUPS_FORMAT_COMMAND		"application/vnd.cups-command"
@@ -276,9 +276,9 @@ typedef struct cups_job_s		/**** Job ****/
   ipp_jstate_t	state;			/* Job state */
   int		size;			/* Size in kilobytes */
   int		priority;		/* Priority (1-100) */
-  time_t	completed_time;		/* Time the job was completed */
-  time_t	creation_time;		/* Time the job was created */
-  time_t	processing_time;	/* Time the job was processed */
+  long		completed_time;		/* Time the job was completed */
+  long		creation_time;		/* Time the job was created */
+  long		processing_time;	/* Time the job was processed */
 } cups_job_t;
 
 typedef struct cups_size_s		/**** Media Size @since CUPS 1.6/OS X 10.8@ ****/
@@ -478,7 +478,7 @@ extern const char	*cupsGetPassword2(const char *prompt, http_t *http,
 					  const char *method,
 					  const char *resource) _CUPS_API_1_4;
 extern http_status_t	cupsGetPPD3(http_t *http, const char *name,
-			            time_t *modtime, char *buffer,
+			            long *modtime, char *buffer,
 				    size_t bufsize) _CUPS_API_1_4;
 extern ipp_t		*cupsGetResponse(http_t *http,
 			                 const char *resource) _CUPS_API_1_4;
@@ -618,7 +618,7 @@ extern const char	*cupsUserAgent(void) _CUPS_API_1_7;
 /* New in CUPS 2.0/OS X 10.10 */
 extern cups_dest_t	*cupsGetDestWithURI(const char *name, const char *uri) _CUPS_API_2_0;
 extern const char	*cupsLocalizeDestMedia(http_t *http, cups_dest_t *dest, cups_dinfo_t *info, unsigned flags, cups_size_t *size) _CUPS_API_2_0;
-extern int		cupsMakeServerCredentials(const char *path, const char *common_name, int num_alt_names, const char **alt_names, time_t expiration_date) _CUPS_API_2_0;
+extern int		cupsMakeServerCredentials(const char *path, const char *common_name, int num_alt_names, const char **alt_names, long expiration_date) _CUPS_API_2_0;
 extern int		cupsSetServerCredentials(const char *path, const char *common_name, int auto_create) _CUPS_API_2_0;
 
 #  ifdef __cplusplus

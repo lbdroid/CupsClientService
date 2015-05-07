@@ -16,13 +16,15 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.cups_password_cb_t;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_encryption_e;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.http_status_e;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_op_e;
-import ml.rabidbeaver.cupsjni.MlRabidbeaverCupsjniLibrary.ipp_tag_e;
-import ml.rabidbeaver.cupsjni.cups_job_s.ByReference;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.cups_password_cb_t;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_encryption_e;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_status_e;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_op_e;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_tag_e;
+import ml.rabidbeaver.jna.cups_dest_s;
+import ml.rabidbeaver.jna.cups_job_s;
+import ml.rabidbeaver.jna.cups_option_s;
 
 public class CupsClient {
 	private String userName = "anonymous";
@@ -33,8 +35,8 @@ public class CupsClient {
 	public static final int USER_AllOWED = 0;
 	public static final int USER_DENIED = 1;
 	public static final int USER_NOT_ALLOWED = 2;
-	private MlRabidbeaverCupsjniLibrary cups = MlRabidbeaverCupsjniLibrary.INSTANCE;
-	public final int CUPS_WHICHJOBS_ACTIVE = MlRabidbeaverCupsjniLibrary.CUPS_WHICHJOBS_ACTIVE;
+	private MlRabidbeaverJnaLibrary cups = MlRabidbeaverJnaLibrary.INSTANCE;
+	public final int CUPS_WHICHJOBS_ACTIVE = MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ACTIVE;
 	
 	// Constructors
 	public CupsClient(String host, int port, String userName){
@@ -65,14 +67,57 @@ public class CupsClient {
 		return true;
 	}
 	
-	public ByReference[] getJobs(String queue, int whichJobs, boolean myJobs){    
+	@SuppressWarnings("deprecation")
+	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){    
 		Log.d("CUPSCLIENT-GETJOBS","STARTING");
-		cups_job_s.ByReference[] jobs = new cups_job_s.ByReference[100];
-		for (int i=0; i<100; i++) jobs[i] = new cups_job_s.ByReference(){};
+
+		PointerByReference p = new PointerByReference();
+		Pointer q = new Memory(queue.length()+1);
+		q.setString(0, queue);
+		//p.
 		
-		cups.cupsGetJobs2(serv_conn_p, jobs, queue, myJobs?1:0, whichJobs);
-		Log.d("CUPSCLIENT-GETJOBS",""+jobs.length);
-        return jobs;
+		//cups_job_s.ByReference[] jobs = new cups_job_s.ByReference[100];
+		//for (int i=0; i<100; i++) jobs[i] = new cups_job_s.ByReference(){};
+		
+		//cups.cupsGetJobs2
+		int num = cups.cupsGetJobs2(serv_conn_p.getPointer(), p, q, myJobs?1:0, MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ALL);//whichJobs);
+		
+		Log.d("CUPSCLIENT-GETJOBS","NUM:"+num);
+		
+		//cups_job_s j = new cups_job_s(p.getValue()){};
+		Log.d("CUPSCLIENT-GETJOBS","1");
+
+		Log.d("CUPSCLIENT-GETJOBS","2");
+
+		Pointer ptr = p.getValue();
+		Log.d("CUPSCLIENT-GETJOBS","2a");
+		cups_job_s cjob = new cups_job_s(ptr){};
+		Log.d("CUPSCLIENT-GETJOBS","2b");
+		cjob.read();
+		Log.d("CUPSCLIENT-GETJOBS","2c");
+		cups_job_s[] jobarr = (cups_job_s[])cjob.toArray(num);
+		
+		//Pointer[] parr = p.getValue().getPointerArray(0,num);
+		Log.d("CUPSCLIENT-GETJOBS","3");
+		//jarr = new cups_job_s[num];
+		
+		
+		
+		Log.d("CUPSCLIENT-GETJOBS","4");
+		for (int i=0; i<num; i++){
+			Log.d("CUPSCLIENT-GETJOBS","5");
+			//Pointer pt = jarr[i].getPointer();
+			//pt = parr[i];
+			
+			//jarr[i] = new cups_job_s(parr[i].getPointer(0)){};
+			Log.d("CUPSCLIENT-GETJOBS",jobarr[i].title.getString(0));
+		}
+		
+		Log.d("CUPSCLIENT-GETJOBS","ABOUT TO EXIT");
+		
+		return jobarr;
+		//Log.d("CUPSCLIENT-GETJOBS",""+jobs.length);
+        //return jobs;
     }
 	
 	public boolean cancelJob(String queue, int jobID){
