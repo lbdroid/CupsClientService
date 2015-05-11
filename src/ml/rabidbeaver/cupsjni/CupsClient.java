@@ -14,13 +14,16 @@ import android.util.Log;
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.cups_password_cb_t;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_encryption_e;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_status_e;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_attribute_t;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_op_e;
+import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_t;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_tag_e;
 import ml.rabidbeaver.jna.cups_dest_s;
 import ml.rabidbeaver.jna.cups_job_s;
@@ -91,6 +94,9 @@ public class CupsClient {
 		cups_dest_s[] dests = (cups_dest_s[]) cdest.toArray(s);
     	cups_dest_s ret = cups.cupsGetDest(queue, null, s, dests[0]);
     	
+    	//cupsGetPPD(queue);
+    	dumpPrinterAttrs(ret);
+    	
     	return ret;
     }
 	
@@ -158,9 +164,8 @@ public class CupsClient {
 			int bufferSize = 1024;
 			byte[] buffer = new byte[bufferSize];
 			int len = 0;
-			while ((len = ppdIS.read(buffer)) != -1) {
+			while ((len = ppdIS.read(buffer)) != -1)
 				byteBuffer.write(buffer, 0, len);
-			}
 			ret = byteBuffer.toString();
 			byteBuffer.close();
 			ppdIS.close();
@@ -193,5 +198,70 @@ public class CupsClient {
     	}
     	
     	return retval;
+    }
+    
+    public void dumpPrinterAttrs(cups_dest_s printer){
+    	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
+    	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "/printers/"+printer.name.getString(0));
+    	PointerByReference response = cups.cupsDoRequest(serv_conn_p, request, "/");
+
+    	PointerByReference attr;
+
+    	for (attr = cups.ippFirstAttribute(response); attr != null; attr = cups.ippNextAttribute(response)){
+    		dumpAttrs(attr);
+    	}
+    }
+    
+    private void dumpAttrs(PointerByReference attr){
+    	PointerByReference lang = null;
+    	int type = cups.ippGetValueTag(attr);
+		if (cups.ippGetName(attr) != null){
+			String[] cstring = new String[cups.ippGetCount(attr)];
+
+			for (int i=0; i<cups.ippGetCount(attr); i++){
+				switch (type){
+				case ipp_tag_e.IPP_TAG_INTEGER:
+				case ipp_tag_e.IPP_TAG_ENUM:
+					cstring[i] = Integer.toString(cups.ippGetInteger(attr, i));
+					break;
+				case ipp_tag_e.IPP_TAG_BOOLEAN:
+					cstring[i] = Boolean.toString(cups.ippGetBoolean(attr, i)==1);
+					break;
+				case ipp_tag_e.IPP_TAG_DATE:
+					cstring[i] = null;
+					break;
+				case ipp_tag_e.IPP_TAG_RESOLUTION:
+					IntByReference vres = new IntByReference();
+					IntByReference units = new IntByReference();
+					int hres = cups.ippGetResolution(attr, i, vres, units);
+					cstring[i] = Integer.toString(hres)+"x"+Integer.toString(vres.getValue());
+					break;
+				case ipp_tag_e.IPP_TAG_RANGE:
+					IntByReference upper = new IntByReference();
+					int lower = cups.ippGetRange(attr, i, upper);
+					cstring[i] = Integer.toString(lower)+"-"+Integer.toString(upper.getValue());
+					break;
+
+				case ipp_tag_e.IPP_TAG_TEXT:
+				case ipp_tag_e.IPP_TAG_NAME:
+				case ipp_tag_e.IPP_TAG_KEYWORD:
+				case ipp_tag_e.IPP_TAG_URI:
+				case ipp_tag_e.IPP_TAG_CHARSET:
+				case ipp_tag_e.IPP_TAG_LANGUAGE:
+				case ipp_tag_e.IPP_TAG_MIMETYPE:
+					cstring[i] = cups.ippGetString(attr, i, lang).getString(0);
+					break;
+
+				default:
+					break;
+				}
+			}
+			for (int j=0; j<cstring.length; j++){
+				String attrname;
+				if (cups.ippGetName(attr) ==null) attrname="nullname";
+				else attrname = cups.ippGetName(attr).getString(0);
+				if (cstring[j] != null) Log.d("CUPSCLIENT-DUMPPRINTERATTRS",attrname+" : "+ cstring[j]);
+			}
+		}
     }
 }
