@@ -118,7 +118,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query("printers", new String[]{"host","protocol","port","queue",
 				"username","password","orientation","fittopage","nooptions","extensions",
-				"resolution","showin","def"}, "name = ?", new String[]{name}, null, null, null);
+				"resolution","def"}, "name = ?", new String[]{name}, null, null, null);
 		
 		if (cursor == null || cursor.getCount() < 1) return null;
 		
@@ -135,7 +135,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		pqc.noOptions = cursor.getInt(8)!=0;
 		pqc.extensions = cursor.getString(9);
 		pqc.resolution = cursor.getString(10);
-		pqc.isDefault = cursor.getInt(12)!=0;
+		pqc.isDefault = cursor.getInt(11)!=0;
 		return pqc;
 	}
 
