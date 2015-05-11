@@ -30,7 +30,7 @@
     <string name="showin">Show In</string>
 	<string name="status">Status</string>
     <string name="title_activity_print_job">Print Settings</string>
-    <string name="test">Test</string>
+    <string name="test">Scan Printer</string>
     <string name="title_activity_ppd_groups">Ppd Groups</string>
     <string name="title_activity_ppd_sections">Ppd Items</string>
     <string name="title_activity_mime_types">Mime Types</string>

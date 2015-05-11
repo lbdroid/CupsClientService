@@ -6,7 +6,6 @@ public class EditControls {
 	
 	public final static ArrayList<Pair> orientationOpts;
 	public final static ArrayList<String>protocols;
-	public final static ArrayList<String>showInOpts;
 	
 	static{
 		orientationOpts = new ArrayList<Pair>();
@@ -18,11 +17,6 @@ public class EditControls {
 		protocols = new ArrayList<String>();
 		protocols.add("http");
 		protocols.add("https");
-		
-		showInOpts = new ArrayList<String>();
-		showInOpts.add("Both");
-		showInOpts.add("Shares");
-		showInOpts.add("Print Service");
 	}
 
 }

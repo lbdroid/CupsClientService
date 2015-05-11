@@ -31,7 +31,7 @@ public class GetServicePpdTask implements Runnable{
 	public void run() {
 		try {
 			CupsClient c = new CupsClient(config.host,Integer.valueOf(config.port));
-			cups_dest_s printer = c.getPrinter(config.queue);
+			cups_dest_s printer = c.getPrinter(config.queue, false);
 			cupsPpd = new CupsPpd();
 			cupsPpd.createPpdRec(c, printer, md5);
 			cupsPpd.setServiceResolution(config.getResolution());

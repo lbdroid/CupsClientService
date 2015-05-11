@@ -9,6 +9,7 @@ import ml.rabidbeaver.detect.PrinterRec;
 import ml.rabidbeaver.detect.PrinterResult;
 import ml.rabidbeaver.detect.PrinterUpdater;
 import ml.rabidbeaver.jna.cups_dest_s;
+import ml.rabidbeaver.jna.cups_option_s;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
@@ -27,7 +28,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-
 public class PrinterAddEditActivity extends Activity implements PrinterUpdater, GetPrinterListener{
 
 	Spinner  protocol;
@@ -44,7 +44,6 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	CheckBox fitPlot;
 	CheckBox noOptions;
 	CheckBox isDefault;
-	Spinner showIn;
 	String oldPrinter;
 
 	@Override
@@ -76,10 +75,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		fitToPage = (CheckBox) findViewById(R.id.editFitToPage);
 		noOptions = (CheckBox) findViewById(R.id.editNoOptions);
 		isDefault = (CheckBox) findViewById(R.id.editIsDefault);
-		showIn = (Spinner) findViewById(R.id.editShowIn);
-		ArrayAdapter<String> aa2 = new ArrayAdapter<String>(this, 
- 				android.R.layout.simple_spinner_item, EditControls.showInOpts);
-		showIn.setAdapter(aa2);
+
 		if (!oldPrinter.contentEquals("")){
 			this.setTitle(R.string.title_activity_printer_edit);
 
@@ -114,15 +110,6 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		 		 fitToPage.setChecked(conf.imageFitToPage);
 		 		 noOptions.setChecked(conf.noOptions);
 		 		 isDefault.setChecked(conf.isDefault);
-		    	 size = EditControls.showInOpts.size();
-		 		 for (pos=0; pos<size; pos++){
-		 			 String test = EditControls.showInOpts.get(pos);
-		 			 if (test.equals(conf.showIn)){
-		 				 showIn.setSelection(pos);
-		 				 break;
-		 			 }
-		 		 }
-
 		 		 extensions.setText(conf.extensions);
 		 		 resolution.setText(conf.resolution);
 		     }
@@ -277,10 +264,14 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    	return;
 	    }
 	    
-	    String result = "Name: " + printer.name +
-				"\nDescription: " + printer.toString();// +
-				//"\nMake: " + printer. +
-				//"\nLocation: " + printer.getLocation();
+	    cups_option_s opts = printer.options;
+	    opts.read();
+	    cups_option_s[] optsarr = (cups_option_s[]) opts.toArray(printer.num_options);
+	    
+	    String result = "queue: " + printer.name.getString(0);
+	    for (int i=0; i<printer.num_options; i++){
+	    	result += "\n"+ optsarr[i].name.getString(0) + ": " + optsarr[i].value.getString(0);
+	    }
 			    
 		showResult("Success", result);
 	}
@@ -326,7 +317,6 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    	 resolution.requestFocus();
 	    	 return;
 	     }
-	     String sShowIn = (String) showIn.getSelectedItem();
 	     final PrintQueueConfig conf = new PrintQueueConfig(sNickname, sProtocol, sHost, sPort, sQueue);
 	     if (checkExists(conf.getPrintQueue(), confdb)){
 	    	 host.requestFocus();
@@ -341,7 +331,6 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	     conf.noOptions = noOptions.isChecked();
 	     conf.isDefault = isDefault.isChecked();
 	     conf.resolution = sResolution;
-	     conf.showIn = sShowIn;
 	     if ((conf.protocol.equals("http")) && (!(conf.password.equals("")))){
 	         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	         builder.setTitle("Warning: Using password with http protocol")

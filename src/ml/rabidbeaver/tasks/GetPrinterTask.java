@@ -37,7 +37,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 	@Override
 	protected Void doInBackground(Void... params){
 		try {
-			this.printer = client.getPrinter(queue);
+			this.printer = client.getPrinter(queue, extended);
 		}
 		catch (Exception e){
 			exception = e;

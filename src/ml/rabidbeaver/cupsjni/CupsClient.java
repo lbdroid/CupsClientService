@@ -62,7 +62,7 @@ public class CupsClient {
 	}
 	
 	public boolean isPrinterAccessible(String queue){
-		if (getPrinter(queue) == null) return false;
+		if (getPrinter(queue, false) == null) return false;
 		return true;
 	}
 	
@@ -82,7 +82,7 @@ public class CupsClient {
 		return cups.cupsCancelJob(queue, jobID) == 1;
     }
 
-	public cups_dest_s getPrinter(String queue){
+	public cups_dest_s getPrinter(String queue, boolean extended){
 		PointerByReference p = new PointerByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, p);
 		Pointer ptr = p.getValue();
@@ -144,7 +144,7 @@ public class CupsClient {
     }
     
     public int print(String queue, CupsPrintJob printJob) throws Exception {
-    	return print(getPrinter(queue), printJob);
+    	return print(getPrinter(queue, false), printJob);
     }
 
     public String cupsGetPPD(String name){

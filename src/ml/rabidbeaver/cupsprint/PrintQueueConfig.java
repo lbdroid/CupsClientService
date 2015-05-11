@@ -13,7 +13,6 @@ public class PrintQueueConfig {
 	boolean imageFitToPage;
 	boolean noOptions;
 	boolean isDefault;
-	String showIn;
 	String extensions;
 	String resolution;
 	
@@ -52,9 +51,5 @@ public class PrintQueueConfig {
 	
 	public String getResolution(){
 		return resolution; //TODO: apparently, nothing here actually SETS the resolution....
-	}
-	
-	public boolean showInPrintService(){
-		return (!(showIn.equals("Shares")));
 	}
 }

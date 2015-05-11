@@ -186,35 +186,40 @@
         	android:inputType="text"
 			android:layout_weight="1"
         	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
-    
-    <TableRow>
-    	<TextView
-        	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-        	android:text="@string/showin" />
-
-    	<Spinner
-        	android:id="@+id/editShowIn"
-        	android:inputType="text"
-        	android:maxLines="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
+        	android:text="600x600"/>
     </TableRow>
+
     <TableRow>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
     	<Button
         	android:id="@+id/editTest"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:text="@string/test" 
      		android:onClick="testPrinter" />
-        	<Button
+    </TableRow>
+        <TableRow>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+    	<View
+            android:layout_width="1dp"
+            android:layout_height="25dp" />
+    </TableRow>
+    <TableRow>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+       	<Button
         	android:id="@+id/editSave"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:text="@string/save" 
-     		android:onClick="savePrinter" />
+     		android:onClick="savePrinter"
+     		android:enabled="false" />
     </TableRow>
     <TableRow>
     	<TextView

@@ -43,7 +43,7 @@ public class PrinterDiscovery{
 	private void readStaticConfig(){
 		
 		PrintQueueConfHandler confdb = new PrintQueueConfHandler(CupsPrintApp.getContext());
-		ArrayList<String> iniPrintersArray = confdb.getServiceConfigs();
+		ArrayList<String> iniPrintersArray = confdb.getPrintQueueConfigs();
 		
 		synchronized(printerInfos){
 			Iterator<String> it = printerInfos.keySet().iterator();
@@ -56,17 +56,6 @@ public class PrinterDiscovery{
 						if (info.setRemoveStatic()){
 							it.remove();
 							notifyRemovePrinter(info);
-						}
-					}
-				}
-				else {
-					if (!test.showInPrintService()){
-						PrinterDiscoveryInfo info = printerInfos.get(key);
-						if (info != null){
-							if (info.setRemoveStatic()){
-								it.remove();
-								notifyRemovePrinter(info);
-							}
 						}
 					}
 				}

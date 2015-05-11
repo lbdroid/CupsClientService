@@ -25,7 +25,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		String create = "CREATE TABLE printers (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 				+ "name VARCHAR, host VARCHAR, protocol VARCHAR, port INTEGER, queue VARCHAR, "
 				+ "username VARCHAR, password VARCHAR, orientation VARCHAR, fittopage INTEGER, "
-				+ "nooptions INTEGER, extensions VARCHAR, resolution VARCHAR, showin VARCHAR, "
+				+ "nooptions INTEGER, extensions VARCHAR, resolution VARCHAR, "
 				+ "def INTEGER DEFAULT 0);";
 		db.execSQL(create);
 	}
@@ -85,7 +85,6 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		values.put("nooptions", config.noOptions);
 		values.put("extensions", config.extensions);
 		values.put("resolution", config.resolution);
-		values.put("showin", config.showIn);
 		
 		if (printerExists(oldPrinter))
 			db.update("printers", values, "name = ?", new String[]{"oldPrinter"});
@@ -95,10 +94,10 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		}
 	}
 	
-	private ArrayList<String> getPrinters(String selection, String[] args){
+	private ArrayList<String> getPrinters(){
 		SQLiteDatabase db = this.getReadableDatabase();
 		// SELECT name FROM printers;
-		Cursor cursor = db.query("printers", new String[]{"name"}, selection, args, null, null, null);
+		Cursor cursor = db.query("printers", new String[]{"name"}, null, null, null, null, null);
 		ArrayList<String> printerList = new ArrayList<String>();
 		if (cursor.moveToFirst()){
 			do {
@@ -112,17 +111,9 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 	}
 	
 	public ArrayList<String> getPrintQueueConfigs(){
-		return getPrinters(null, null);
+		return getPrinters();
 	}
-	
-	public ArrayList<String> getShareConfigs(){
-		return getPrinters("showin != ?", new String[]{"Print Service"});
-	}
-	
-	public ArrayList<String> getServiceConfigs(){
-		return getPrinters("showin != ?", new String[]{"Shares"});
-	}
-	
+
 	public PrintQueueConfig getPrinter(String name){
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query("printers", new String[]{"host","protocol","port","queue",
@@ -144,7 +135,6 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		pqc.noOptions = cursor.getInt(8)!=0;
 		pqc.extensions = cursor.getString(9);
 		pqc.resolution = cursor.getString(10);
-		pqc.showIn = cursor.getString(11);
 		pqc.isDefault = cursor.getInt(12)!=0;
 		return pqc;
 	}
