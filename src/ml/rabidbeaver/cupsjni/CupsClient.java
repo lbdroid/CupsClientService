@@ -21,9 +21,7 @@ import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.cups_password_cb_t;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_encryption_e;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_status_e;
-import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_attribute_t;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_op_e;
-import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_t;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_tag_e;
 import ml.rabidbeaver.jna.cups_dest_s;
 import ml.rabidbeaver.jna.cups_job_s;
@@ -231,6 +229,7 @@ public class CupsClient {
 					cstring[i] = null;
 					break;
 				case ipp_tag_e.IPP_TAG_RESOLUTION:
+					//NOTE: our output string is NOT a valid way to set resolution to create a job.
 					IntByReference vres = new IntByReference();
 					IntByReference units = new IntByReference();
 					int hres = cups.ippGetResolution(attr, i, vres, units);
