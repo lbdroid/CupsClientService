@@ -159,20 +159,6 @@
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"/>
     </TableRow>
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editExtensions"
-        	android:text="@string/extensions" />
-
-    	<EditText
-        	android:id="@+id/editExtensions"
-        	android:inputType="text"
-			android:layout_weight="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
     
     <TableRow>
     	<TextView
@@ -181,13 +167,11 @@
         	android:labelFor="@+id/editResolution"
         	android:text="@string/resolution" />
 
-    	<EditText
+    	<Spinner
         	android:id="@+id/editResolution"
-        	android:inputType="text"
-			android:layout_weight="1"
+        	android:maxLines="1"
         	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="600x600"/>
+        	android:layout_height="wrap_content"/>
     </TableRow>
 
     <TableRow>
@@ -198,8 +182,7 @@
         	android:id="@+id/editTest"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-        	android:text="@string/test" 
-     		android:onClick="testPrinter" />
+        	android:text="@string/test" />
     </TableRow>
         <TableRow>
         <View
@@ -217,8 +200,7 @@
         	android:id="@+id/editSave"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-        	android:text="@string/save" 
-     		android:onClick="savePrinter"
+        	android:text="@string/save"
      		android:enabled="false" />
     </TableRow>
     <TableRow>

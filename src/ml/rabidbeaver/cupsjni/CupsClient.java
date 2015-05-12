@@ -1,15 +1,8 @@
 package ml.rabidbeaver.cupsjni;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.IntBuffer;
-import java.util.Map;
-
-import android.util.Log;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
@@ -71,6 +64,7 @@ public class CupsClient {
 	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){
 		PointerByReference p = new PointerByReference();
 		int num = cups.cupsGetJobs2(serv_conn_p, p, queue, myJobs?1:0, whichJobs);
+		if (num == 0) return null;
 		Pointer ptr = p.getValue();
 		cups_job_s cjob = new cups_job_s(ptr);
 		cjob.read();
@@ -91,10 +85,7 @@ public class CupsClient {
 		cdest.read();
 		cups_dest_s[] dests = (cups_dest_s[]) cdest.toArray(s);
     	cups_dest_s ret = cups.cupsGetDest(queue, null, s, dests[0]);
-    	
-    	//cupsGetPPD(queue);
-    	dumpPrinterAttrs(ret);
-    	
+
     	return ret;
     }
 	
@@ -117,12 +108,11 @@ public class CupsClient {
     	cups_option_s.ByReference[] options = new cups_option_s.ByReference[1];
     	options[0] = new cups_option_s.ByReference();
     	//cups_option_s options;
-    	Map<String, String> attrs = printJob.getAttributes();
-    	Object[] keys = attrs.keySet().toArray();
-    	for (int i=0; i<keys.length; i++){
-    		Log.d("CUPSCLIENT-PRINT", "key: "+keys[i]+", value: "+attrs.get(keys[i]));
+    	List<JobOptions> attrs = printJob.getAttributes();
+    	for (int i=0; i<attrs.size(); i++){
+    		JobOptions j = attrs.get(i);
     		try {
-    			num_options = cups.cupsAddOption(keys[i].toString(), attrs.get(keys[i]), num_options, options);
+    			num_options = cups.cupsAddOption(j.name, j.value, num_options, options);
     		} catch (Exception e){ e.printStackTrace(); }
     	}
     	
@@ -149,27 +139,6 @@ public class CupsClient {
     
     public int print(String queue, CupsPrintJob printJob) throws Exception {
     	return print(getPrinter(queue, false), printJob);
-    }
-
-    public String cupsGetPPD(String name){
-    	Pointer p = cups.cupsGetPPD2(serv_conn_p, name);
-    	String s = p.getString(0);
-    	String ret = "";
-    	try {
-    		File file = new File(s);
-			InputStream ppdIS = new FileInputStream(file);
-			ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-			int bufferSize = 1024;
-			byte[] buffer = new byte[bufferSize];
-			int len = 0;
-			while ((len = ppdIS.read(buffer)) != -1)
-				byteBuffer.write(buffer, 0, len);
-			ret = byteBuffer.toString();
-			byteBuffer.close();
-			ppdIS.close();
-			file.delete();
-		} catch (FileNotFoundException e) {} catch (IOException e) {}
-    	return ret;
     }
     
     public String getOption(cups_dest_s printer, String option){
@@ -198,69 +167,68 @@ public class CupsClient {
     	return retval;
     }
     
-    public void dumpPrinterAttrs(cups_dest_s printer){
+    public List<JobOptions> getPrinterOptions(cups_dest_s printer){
+    	List<JobOptions> printerOptions = new ArrayList<JobOptions>();
     	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
     	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "/printers/"+printer.name.getString(0));
     	PointerByReference response = cups.cupsDoRequest(serv_conn_p, request, "/");
 
     	PointerByReference attr;
-
-    	for (attr = cups.ippFirstAttribute(response); attr != null; attr = cups.ippNextAttribute(response)){
-    		dumpAttrs(attr);
-    	}
-    }
-    
-    private void dumpAttrs(PointerByReference attr){
     	PointerByReference lang = null;
-    	int type = cups.ippGetValueTag(attr);
-		if (cups.ippGetName(attr) != null){
-			String[] cstring = new String[cups.ippGetCount(attr)];
+    	
+    	for (attr = cups.ippFirstAttribute(response); attr != null; attr = cups.ippNextAttribute(response)){
+    		int type = cups.ippGetValueTag(attr);
+    		if (cups.ippGetName(attr) != null){
+    			String[] cstring = new String[cups.ippGetCount(attr)];
 
-			for (int i=0; i<cups.ippGetCount(attr); i++){
-				switch (type){
-				case ipp_tag_e.IPP_TAG_INTEGER:
-				case ipp_tag_e.IPP_TAG_ENUM:
-					cstring[i] = Integer.toString(cups.ippGetInteger(attr, i));
-					break;
-				case ipp_tag_e.IPP_TAG_BOOLEAN:
-					cstring[i] = Boolean.toString(cups.ippGetBoolean(attr, i)==1);
-					break;
-				case ipp_tag_e.IPP_TAG_DATE:
-					cstring[i] = null;
-					break;
-				case ipp_tag_e.IPP_TAG_RESOLUTION:
-					//NOTE: our output string is NOT a valid way to set resolution to create a job.
-					IntByReference vres = new IntByReference();
-					IntByReference units = new IntByReference();
-					int hres = cups.ippGetResolution(attr, i, vres, units);
-					cstring[i] = Integer.toString(hres)+"x"+Integer.toString(vres.getValue());
-					break;
-				case ipp_tag_e.IPP_TAG_RANGE:
-					IntByReference upper = new IntByReference();
-					int lower = cups.ippGetRange(attr, i, upper);
-					cstring[i] = Integer.toString(lower)+"-"+Integer.toString(upper.getValue());
-					break;
+    			for (int i=0; i<cups.ippGetCount(attr); i++){
+    				switch (type){
+    				case ipp_tag_e.IPP_TAG_INTEGER:
+    				case ipp_tag_e.IPP_TAG_ENUM:
+    					cstring[i] = Integer.toString(cups.ippGetInteger(attr, i));
+    					break;
+    				case ipp_tag_e.IPP_TAG_BOOLEAN:
+    					cstring[i] = Boolean.toString(cups.ippGetBoolean(attr, i)==1);
+    					break;
+    				case ipp_tag_e.IPP_TAG_DATE:
+    					cstring[i] = null;
+    					break;
+    				case ipp_tag_e.IPP_TAG_RESOLUTION:
+    					//NOTE: our output string is NOT a valid way to set resolution to create a job.
+    					IntByReference vres = new IntByReference();
+    					IntByReference units = new IntByReference();
+    					int hres = cups.ippGetResolution(attr, i, vres, units);
+    					cstring[i] = Integer.toString(hres)+"x"+Integer.toString(vres.getValue());
+    					break;
+    				case ipp_tag_e.IPP_TAG_RANGE:
+    					IntByReference upper = new IntByReference();
+    					int lower = cups.ippGetRange(attr, i, upper);
+    					cstring[i] = Integer.toString(lower)+"-"+Integer.toString(upper.getValue());
+    					break;
 
-				case ipp_tag_e.IPP_TAG_TEXT:
-				case ipp_tag_e.IPP_TAG_NAME:
-				case ipp_tag_e.IPP_TAG_KEYWORD:
-				case ipp_tag_e.IPP_TAG_URI:
-				case ipp_tag_e.IPP_TAG_CHARSET:
-				case ipp_tag_e.IPP_TAG_LANGUAGE:
-				case ipp_tag_e.IPP_TAG_MIMETYPE:
-					cstring[i] = cups.ippGetString(attr, i, lang).getString(0);
-					break;
+    				case ipp_tag_e.IPP_TAG_TEXT:
+    				case ipp_tag_e.IPP_TAG_NAME:
+    				case ipp_tag_e.IPP_TAG_KEYWORD:
+    				case ipp_tag_e.IPP_TAG_URI:
+    				case ipp_tag_e.IPP_TAG_CHARSET:
+    				case ipp_tag_e.IPP_TAG_LANGUAGE:
+    				case ipp_tag_e.IPP_TAG_MIMETYPE:
+    					cstring[i] = cups.ippGetString(attr, i, lang).getString(0);
+    					break;
 
-				default:
-					break;
-				}
-			}
-			for (int j=0; j<cstring.length; j++){
-				String attrname;
-				if (cups.ippGetName(attr) ==null) attrname="nullname";
-				else attrname = cups.ippGetName(attr).getString(0);
-				if (cstring[j] != null) Log.d("CUPSCLIENT-DUMPPRINTERATTRS",attrname+" : "+ cstring[j]);
-			}
-		}
+    				default:
+    					break;
+    				}
+    			}
+    			for (int j=0; j<cstring.length; j++){
+    				String attrname;
+    				if (cups.ippGetName(attr) ==null) attrname="nullname";
+    				else attrname = cups.ippGetName(attr).getString(0);
+    				if (cstring[j] != null)
+    					printerOptions.add(new JobOptions(attrname, cstring[j]));
+    			}
+    		}
+    	}
+		return printerOptions;
     }
 }

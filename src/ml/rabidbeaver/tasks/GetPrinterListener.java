@@ -1,9 +1,10 @@
 package ml.rabidbeaver.tasks;
 
+import java.util.List;
+
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.jna.cups_dest_s;
 
 public interface GetPrinterListener {
-	
-	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception);
-
+	void onGetPrinterTaskDone(cups_dest_s printer, List<JobOptions> printerOptions, Exception exception);
 }

@@ -3,12 +3,12 @@ package ml.rabidbeaver.cupsjni;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.List;
 
 public class CupsPrintJob {
     private byte[] document;
     private String jobName;
-    private Map<String, String> attributes;
+    private List<JobOptions> attributes;
     private long length;
     private String mime = "application/octet-stream"; // I think this doesn't actually matter.
 
@@ -44,11 +44,11 @@ public class CupsPrintJob {
     	return byteBuffer.toByteArray();
     }
 
-    public Map<String, String> getAttributes() {
+    public List<JobOptions> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Map<String, String> printJobAttributes) {
+    public void setAttributes(List<JobOptions> printJobAttributes) {
         this.attributes = printJobAttributes;
     }
 
@@ -56,7 +56,7 @@ public class CupsPrintJob {
         return jobName;
     }
     
-    public void xsetMimeType(String mime){
+    public void setMimeType(String mime){
     	this.mime=mime;
     }
     

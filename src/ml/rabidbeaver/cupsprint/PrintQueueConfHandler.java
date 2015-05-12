@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import javax.crypto.Cipher;
 
+import ml.rabidbeaver.cupsjni.JobOptions;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,11 +14,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Base64;
 
 public class PrintQueueConfHandler extends SQLiteOpenHelper {
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "printers.db";
 
 	public PrintQueueConfHandler(Context context){
     	super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    	this.getWritableDatabase();
     }
 
 	@Override
@@ -28,11 +30,18 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 				+ "nooptions INTEGER, extensions VARCHAR, resolution VARCHAR, "
 				+ "def INTEGER DEFAULT 0);";
 		db.execSQL(create);
+		create = "CREATE TABLE printer_opts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+				+ "printername VARCHAR, option VARCHAR, value VARCHAR);";
+		db.execSQL(create);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// Since this is the first version, there is nothing to upgrade.		
+		if (newVersion == 2){
+			String create = "CREATE TABLE printer_opts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+					+ "printername VARCHAR, option VARCHAR, value VARCHAR);";
+			db.execSQL(create);
+		}
 	}
 	
 	public String getDefaultPrinter(){
@@ -87,10 +96,20 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		values.put("resolution", config.resolution);
 		
 		if (printerExists(oldPrinter))
-			db.update("printers", values, "name = ?", new String[]{"oldPrinter"});
+			db.update("printers", values, "name = ?", new String[]{oldPrinter});
 		else {
 			db.insert("printers", null, values);			
 			if (config.isDefault) setDefaultPrinter(db,config.nickname);
+		}
+		
+		db.delete("printer_opts", "printername = ?", new String[]{config.nickname});
+		for (int i=0; i<config.printerAttributes.size(); i++){
+			JobOptions j = config.printerAttributes.get(i);
+			values = new ContentValues();
+			values.put("printername", config.nickname);
+			values.put("option", j.name);
+			values.put("value", j.value);
+			db.insert("printer_opts", null, values);
 		}
 	}
 	
@@ -136,6 +155,15 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		pqc.extensions = cursor.getString(9);
 		pqc.resolution = cursor.getString(10);
 		pqc.isDefault = cursor.getInt(11)!=0;
+		
+		pqc.printerAttributes = new ArrayList<JobOptions>();
+		cursor = db.query("printer_opts", new String[]{"option","value"}, "printername = ?", new String[]{name}, null, null, null);
+		if (cursor.moveToFirst()){
+			do {
+				pqc.printerAttributes.add(new JobOptions(cursor.getString(0), cursor.getString(1)));
+			} while (cursor.moveToNext());
+		}
+		
 		return pqc;
 	}
 

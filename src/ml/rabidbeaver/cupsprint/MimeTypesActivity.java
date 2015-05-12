@@ -1,10 +1,12 @@
 package ml.rabidbeaver.cupsprint;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import ml.rabidbeaver.jna.cups_dest_s;
 import android.os.Bundle;
@@ -96,7 +98,7 @@ public class MimeTypesActivity extends Activity implements GetPrinterListener {
 	}
 
 	@Override
-	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_s printer, List<JobOptions> jobOptions, Exception exception) {
 	}
 
 }

@@ -1,6 +1,6 @@
 package ml.rabidbeaver.printservice;
 
-import java.util.Iterator;
+import java.util.List;
 
 import android.os.Bundle;
 import android.print.PrintJobInfo;
@@ -10,16 +10,10 @@ import android.content.res.Configuration;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TableLayout;
 import android.widget.TableRow;
-import ml.rabidbeaver.cupscontrols.CupsTableLayout;
-import ml.rabidbeaver.cupsjni.CupsPpd;
-import ml.rabidbeaver.cupsjni.PpdItemList;
-import ml.rabidbeaver.cupsjni.PpdSectionList;
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
-import ml.rabidbeaver.cupsprint.PpdGroupsActivity;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.cupsprint.Util;
@@ -27,11 +21,8 @@ import ml.rabidbeaver.cupsprintservice.R;
 
 public class ServicePrintJobActivity extends Activity {
 
-	private CupsTableLayout layout;
-	private static CupsPpd cupsPpd;
+	private static List<JobOptions> cupsJobOptions;
 	Button oKButton;
-	Button moreButton;
-	boolean moreClicked = false;
 	PrintJobInfo jobInfo;
 	boolean uiSet = false;
 	TableRow buttonRow;
@@ -61,19 +52,20 @@ public class ServicePrintJobActivity extends Activity {
 			finish();
 			return;
 		}
-		if (RBPrintService.ppdJobId == jobInfo.getId()){
-			cupsPpd = RBPrintService.jobPpd;
+		if (CupsPrintService.jobId == jobInfo.getId()){
+			cupsJobOptions = CupsPrintService.jobOptions;
 		}
 		else {
-			CupsPpd ppd = RBPrintService.capabilities.get(nickname);
-			if (ppd != null){
+			List<JobOptions> jobOptions = CupsPrintService.capabilities.get(nickname);
+			if (jobOptions != null){
 				if (!(config.getPassword().equals(""))){
 					//TODO ?? auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 				}
-				cupsPpd = new CupsPpd();
-				cupsPpd.setPpdRec(ppd.getPpdRec().deepCloneUILists());
-				RBPrintService.ppdJobId = jobInfo.getId();
-				RBPrintService.jobPpd = cupsPpd;
+				//cupsJobOptions = new ArrayList<JobOptions>();
+				//cupsJobOptions.setPpdRec(jobOptions.getPpdRec().deepCloneUILists());
+				cupsJobOptions = jobOptions;
+				CupsPrintService.jobId = jobInfo.getId();
+				CupsPrintService.jobOptions = cupsJobOptions;
 			}
 			else {
 				Util.showToast(this, "Unable to create advanced options");
@@ -88,21 +80,21 @@ public class ServicePrintJobActivity extends Activity {
             public void onClick(View v) {
             	oKButton.setFocusableInTouchMode(true);
             	oKButton.requestFocus();
-            	if (!layout.update())
-                	return;
-                String stdAttrs = cupsPpd.getCupsStdString();
-        		setCupsString(stdAttrs);
+            	//if (!layout.update())
+                //	return;
+                // TODO String stdAttrs = cupsJobOptions.getCupsStdString();
+        		setCupsString(null);//stdAttrs);
             }
         });
-        moreButton = getButton("More...");
+        /*moreButton = getButton("More...");
 		moreButton.setEnabled(true);
         moreButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	doGroup();
             }
-        });
+        });*/
 		buttonRow = new TableRow(this);
-		buttonRow.addView(moreButton);
+		//buttonRow.addView(moreButton);
 		buttonRow.addView(oKButton);
         setControls();
 	}
@@ -133,13 +125,13 @@ public class ServicePrintJobActivity extends Activity {
 	    return super.onKeyDown(keyCode, event);
 	}	
 	
-	public static CupsPpd getPpd(){
-		return cupsPpd;
+	public static List<JobOptions> getJobOptions(){
+		return cupsJobOptions;
 	}
 	
 	private void setStdOpts(){
 		
-		for (PpdSectionList group: cupsPpd.getPpdRec().getStdList()){
+		/* TODO for (PpdSectionList group: cupsJobOptions.getPpdRec().getStdList()){
 		
 			Iterator<PpdItemList> it = group.iterator();
 			while(it.hasNext()){
@@ -163,27 +155,28 @@ public class ServicePrintJobActivity extends Activity {
 					it.remove();
 				}
 			}
-		}
+		}*/
 		
 	}
 
 	private void setControls(){
-		layout = (CupsTableLayout) findViewById(R.id.advancedSettingsLayout);
+		/* TODO layout = (CupsTableLayout) findViewById(R.id.advancedSettingsLayout);
 		layout.setShowName(false);
 		layout.reset();
-		for (PpdSectionList group: cupsPpd.getPpdRec().getStdList()){
+		for (PpdSectionList group: cupsJobOptions.getPpdRec().getStdList()){
 			layout.addSection(group);
 		}
 		layout.addView(buttonRow,new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		*/
 		uiSet = true;
 	}
 	
 	private void setCupsString(String stdAttrs){
 		String ppdAttrs = "";
-        if (moreClicked){
-        	if (cupsPpd != null)
-        		ppdAttrs = cupsPpd.getCupsExtraString();
-        }
+        //if (moreClicked){
+        	// TODO if (cupsJobOptions != null)
+        		//ppdAttrs = cupsJobOptions.getCupsExtraString();
+        //}
         if (!(stdAttrs.equals("")) && !(ppdAttrs.equals(""))){
         	stdAttrs = stdAttrs + "#" + ppdAttrs;
         }
@@ -200,12 +193,12 @@ public class ServicePrintJobActivity extends Activity {
 	    finish();        
 	}
 	
-	private void doGroup(){
+	/*private void doGroup(){
 		Intent intent = new Intent(this, PpdGroupsActivity.class);
 		intent.putExtra("op", "service");
 		startActivity(intent);
 		moreClicked = true;
-	}
+	}*/
 	
 	private Button getButton(String defaultVal){
 		Button btn = new Button(this);

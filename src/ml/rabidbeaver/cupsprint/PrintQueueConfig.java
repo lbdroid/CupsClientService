@@ -1,5 +1,9 @@
 package ml.rabidbeaver.cupsprint;
 
+import java.util.List;
+
+import ml.rabidbeaver.cupsjni.JobOptions;
+
 public class PrintQueueConfig {
 
 	String nickname;
@@ -15,6 +19,7 @@ public class PrintQueueConfig {
 	boolean isDefault;
 	String extensions;
 	String resolution;
+	List<JobOptions> printerAttributes;
 	
 	
 	public PrintQueueConfig(String nickname, String protocol, String host, String port, String queue){

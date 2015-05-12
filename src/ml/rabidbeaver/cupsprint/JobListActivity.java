@@ -1,11 +1,13 @@
 package ml.rabidbeaver.cupsprint;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ml.rabidbeaver.tasks.CancelJobTask;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
 import ml.rabidbeaver.jna.cups_dest_s;
@@ -139,7 +141,10 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 		runOnUiThread(new Runnable(){
 			
 			public void run() {
-				jobPrinter.setText(config.nickname + ": " + jobList.length + " " + "jobs");
+				int length;
+				if (jobList == null) length=0;
+				else length = jobList.length;
+				jobPrinter.setText(config.nickname + ": " + length + " " + "jobs");
 				recordAdapter.setRecords(jobList);
 				recordAdapter.notifyDataSetChanged();
 			}
@@ -169,15 +174,14 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 				if (passes == 0){
 					cups_job_s[] jobList;
 					try {
-						jobList = 
-								client.getJobs(config.queue, MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ALL, false);
+						jobList = client.getJobs(config.queue, MlRabidbeaverJnaLibrary.CUPS_WHICHJOBS_ALL, false);
 					}
 					catch (Exception e){
 						Util.showToast(activity, "CupsPrintService Jobs List\n" + e.toString());
 						activity.finish();
 						return;
 					}
-					if (!stop && jobList != null){
+					if (!stop){
 						updateUI(jobList);
 					}
 				}
@@ -190,15 +194,12 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 				}catch (Exception e){
 					return;
 				}
-				
 			}
-			
 		}
-		
 	}
 
 	@Override
-	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_s printer, List<JobOptions> jobOptions, Exception exception) {
 		// do nothing
 	}
 

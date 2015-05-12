@@ -5,17 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import ml.rabidbeaver.cupsjni.CupsPpd;
-import ml.rabidbeaver.cupsjni.CupsPpdRec;
-import ml.rabidbeaver.cupsjni.PpdServiceInfo;
-import ml.rabidbeaver.cupsjni.PpdServiceInfo.Dimension;
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.discovery.PrinterDiscoveryInfo;
 import ml.rabidbeaver.discovery.PrinterDiscoveryListener;
-import ml.rabidbeaver.tasks.GetServicePpdListener;
-import ml.rabidbeaver.tasks.GetServicePpdTask;
 import android.os.Handler;
 import android.print.PrintAttributes;
 import android.print.PrinterCapabilitiesInfo;
@@ -24,12 +19,11 @@ import android.print.PrinterInfo;
 import android.printservice.PrinterDiscoverySession;
 import android.widget.Toast;
 
-public class RBPrinterDiscoverySession extends PrinterDiscoverySession 
-		implements PrinterDiscoveryListener, GetServicePpdListener{
+public class CupsPrinterDiscoverySession extends PrinterDiscoverySession implements PrinterDiscoveryListener {
 
-	private RBPrintService printService;
+	private CupsPrintService printService;
 	
-	public RBPrinterDiscoverySession(RBPrintService printService){
+	public CupsPrinterDiscoverySession(CupsPrintService printService){
 		this.printService = printService;
 	}
 	
@@ -54,12 +48,11 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 		for (PrinterInfo printerInfo : this.getPrinters()){
 			PrinterDiscoveryInfo info = printerMap.get(printerInfo.getName());
 			if (info == null){
-				RBPrintService.capabilities.remove(printerInfo.getName());
+				CupsPrintService.capabilities.remove(printerInfo.getName());
 				printerIds.add(printerInfo.getId());
 			}
 		}
 		this.removePrinters(printerIds);
-		
 	
 	 }
 
@@ -70,15 +63,11 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 	
 	@Override
 	public void onStartPrinterStateTracking(PrinterId printerId) {
-		byte[] md5 = null;
 		String nickName = printerId.getLocalId();
-		CupsPpd savedPpd = RBPrintService.capabilities.get(nickName);
-		if (savedPpd == null){
-			savedPpd = new CupsPpd();
-			RBPrintService.capabilities.put(nickName, savedPpd);
-		}
-		else{
-			md5 = savedPpd.getPpdRec().getPpdMd5();
+		List<JobOptions> savedJobOptions = CupsPrintService.capabilities.get(nickName);
+		if (savedJobOptions == null){
+			savedJobOptions = new ArrayList<JobOptions>();
+			CupsPrintService.capabilities.put(nickName, savedJobOptions);
 		}
 		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = dbconf.getPrinter(nickName);
@@ -87,9 +76,11 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 			if (!(config.getPassword().equals(""))){
 				//TODO auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 			}
+			/* TODO READ options from server HERE:
 			GetServicePpdTask task = new GetServicePpdTask(config, md5);
 			task.setPpdTaskListener(this);
-			task.get(true, Thread.NORM_PRIORITY);
+			task.get(true, Thread.NORM_PRIORITY);*/
+			setPrinterCapabilities(nickName);
 		}
 	
 	}
@@ -146,7 +137,7 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 		PrinterId id = printService.generatePrinterId(info.getNickname());
 		ids.add(id);
 		this.removePrinters(ids);
-		RBPrintService.capabilities.remove(id.getLocalId());
+		CupsPrintService.capabilities.remove(id.getLocalId());
 	
 	}
 	
@@ -162,24 +153,24 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 	}
 
 	
-	@Override
-	public void onGetServicePpdTaskDone(CupsPpd cupsPpd, PrintQueueConfig config, Exception exception) {
-		if (cupsPpd == null) return;
+	/*@Override
+	public void onGetServiceOptionsTaskDone(List<JobOptions> cupsJobOptions, PrintQueueConfig config, Exception exception) {
+		if (cupsJobOptions == null) return;
 		final String nicknameId = config.getNickname();
 		if (exception != null){
-			RBPrintService.capabilities.remove(nicknameId);
+			CupsPrintService.capabilities.remove(nicknameId);
 			//Toast.makeText(this.printService, exception.toString(), Toast.LENGTH_LONG).show();
 			return;
 		}
-		CupsPpdRec ppdRec = cupsPpd.getPpdRec();
+		CupsPpdRec ppdRec = cupsJobOptions.getPpdRec();
 		//cupsPpd.setServiceResolution(config.getResolution());
 		if (ppdRec.getIsUpdated()){
-			RBPrintService.capabilities.put(nicknameId, cupsPpd);
+			CupsPrintService.capabilities.put(nicknameId, cupsJobOptions);
 		}
 		else{
-			cupsPpd = RBPrintService.capabilities.get(nicknameId);
-			if (cupsPpd != null){
-				cupsPpd.setServiceResolution(config.getResolution());
+			cupsJobOptions = CupsPrintService.capabilities.get(nicknameId);
+			if (cupsJobOptions != null){
+				cupsJobOptions.setServiceResolution(config.getResolution());
 			}
 		}
 		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
@@ -193,31 +184,31 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 		handler.post(runnable);
 
 	
-	}
+	}*/
 	
+	// * TODO
 	private void setPrinterCapabilities(String nickname){
 		
-		CupsPpd cupsPpd = RBPrintService.capabilities.get(nickname);
-		if (cupsPpd == null){
+		List<JobOptions> cupsJobOptions = CupsPrintService.capabilities.get(nickname);
+		if (cupsJobOptions == null){
 			return;
 		}
 
-		PpdServiceInfo serviceInfo = null; 
+		List<JobOptions> serviceInfo = null; 
 		try {
-			serviceInfo = cupsPpd.getPpdRec().getPpdServiceInfo();
+			serviceInfo = cupsJobOptions;//.getPpdRec().getPpdServiceInfo();
 		}catch (Exception e){
 			System.err.println(e.toString());
 		}
-		if (serviceInfo == null){
-			return;
-		}
+		//if (serviceInfo == null){
+		//	return;
+		//}
 		
 		PrinterId id = printService.generatePrinterId(nickname);
-		PrinterInfo.Builder infoBuilder =
-				new PrinterInfo.Builder(id, nickname, PrinterInfo.STATUS_IDLE);
+		PrinterInfo.Builder infoBuilder = new PrinterInfo.Builder(id, nickname, PrinterInfo.STATUS_IDLE);
 		PrinterCapabilitiesInfo.Builder capBuilder = new PrinterCapabilitiesInfo.Builder(id);
 		
-		Map<String, PpdServiceInfo.Dimension> mediaSizes = serviceInfo.getPaperDimensions();
+		/* TODO Map<String, PpdServiceInfo.Dimension> mediaSizes = serviceInfo.getPaperDimensions();
 		String defaultVal = serviceInfo.getDefaultPaperDimension();
 		for (Map.Entry<String, PpdServiceInfo.Dimension> entry : mediaSizes.entrySet()) {
 			Dimension dim = entry.getValue();
@@ -233,17 +224,17 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 			capBuilder.addMediaSize(
 					new PrintAttributes.MediaSize(entry.getKey(), dim.getText(),
 								  dim.getWidth(), dim.getHeight()) , isDefault);
-		}
+		}*/
 		
-		//capBuilder.addMediaSize(new PrintAttributes.MediaSize("ISO_A4", "ISO_A4", 210, 297), true);
+		capBuilder.addMediaSize(new PrintAttributes.MediaSize("ISO_A4", "ISO_A4", 210, 297), true);
 		//capBuilder.addMediaSize(MediaSize.ISO_A4, true);
 		//String defaultVal;
 		//PrintAttributes.MediaSize builtIn = PrintAttributes.MediaSize.ISO_A4;
 		//PrintAttributes.MediaSize custom = new PrintAttributes.MediaSize("Letter", "Letter", 612, 792);
 		//String s = builtIn.getLabel(CupsPrintApp.getContext().getPackageManager());
 		
-		Map<String, PpdServiceInfo.Dimension> resolutions = serviceInfo.getResolutions();
-		boolean ppdDefault = cupsPpd.getServiceResolution().equals("");
+		/* TODO Map<String, PpdServiceInfo.Dimension> resolutions = serviceInfo.getResolutions();
+		boolean ppdDefault = cupsJobOptions.getServiceResolution().equals("");
 
 		defaultVal = serviceInfo.getDefaultResolution();
 		for (Map.Entry<String, PpdServiceInfo.Dimension> entry : resolutions.entrySet()) {
@@ -263,7 +254,7 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 			
 		}
 		if (!ppdDefault) {
-			String res = cupsPpd.getServiceResolution();
+			String res = cupsJobOptions.getServiceResolution();
 			String[] dpis = res.split("x");
 			int x = 360; int y = 360;
 			try {
@@ -271,9 +262,11 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 				y = Integer.parseInt(dpis[1]);
 			}catch (Exception e){}
 			capBuilder.addResolution(new PrintAttributes.Resolution("App default", "App default", x, y), true);	
-		}
+		}*/
 		
-		//capBuilder.addResolution(new PrintAttributes.Resolution("4x4", "5x5", 360, 360), true);
+		capBuilder.addResolution(new PrintAttributes.Resolution("4x4", "5x5", 300, 300), true);
+		capBuilder.addResolution(new PrintAttributes.Resolution("6x4", "6x5", 600, 600), false);
+		capBuilder.addResolution(new PrintAttributes.Resolution("7x4", "7x5", 1200, 1200), false);
 		/*
 		 * 
 		 */
@@ -302,6 +295,6 @@ public class RBPrinterDiscoverySession extends PrinterDiscoverySession
 			System.err.println(e.toString());
 		}
 		
-	}
+	} // * /
 	
 }

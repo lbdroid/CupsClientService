@@ -1,7 +1,7 @@
 package ml.rabidbeaver.cupsprint;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ml.rabidbeaver.detect.HostScanTask;
 import ml.rabidbeaver.detect.MdnsScanTask;
@@ -13,6 +13,7 @@ import ml.rabidbeaver.jna.cups_option_s;
 import ml.rabidbeaver.tasks.GetPrinterListener;
 import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.Activity;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -37,14 +39,14 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	EditText queue;
 	EditText userName;
 	EditText password;
-	EditText extensions;
-	EditText resolution;
+	Spinner resolution;
 	Spinner orientation;
 	CheckBox fitToPage;
 	CheckBox fitPlot;
 	CheckBox noOptions;
 	CheckBox isDefault;
 	String oldPrinter;
+	List<JobOptions> printerOptions;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,52 +68,79 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		userName = (EditText) findViewById(R.id.editUserName);
 		password = (EditText) findViewById(R.id.editPassword);
 		orientation = (Spinner) findViewById(R.id.editOrientation);
-		extensions = (EditText) findViewById(R.id.editExtensions);
-		resolution = (EditText) findViewById(R.id.editResolution);
-		ArrayAdapter<Pair> aa1 = new ArrayAdapter<Pair>(this, 
+		resolution = (Spinner) findViewById(R.id.editResolution);
+		ArrayAdapter<EditControls.Pair> aa1 = new ArrayAdapter<EditControls.Pair>(this, 
 	 				android.R.layout.simple_spinner_item, EditControls.orientationOpts);
 	 	orientation.setAdapter(aa1);
 
 		fitToPage = (CheckBox) findViewById(R.id.editFitToPage);
 		noOptions = (CheckBox) findViewById(R.id.editNoOptions);
 		isDefault = (CheckBox) findViewById(R.id.editIsDefault);
+		
+		Button saveBtn = (Button) findViewById(R.id.editSave);
+		saveBtn.setOnClickListener(new Button.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				savePrinter(v);
+			}
+		});
+		
+		Button testBtn = (Button) findViewById(R.id.editTest);
+		testBtn.setOnClickListener(new Button.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				testPrinter(v);
+			}
+		});
 
 		if (!oldPrinter.contentEquals("")){
 			this.setTitle(R.string.title_activity_printer_edit);
 
-		     PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
-		     PrintQueueConfig conf = dbconf.getPrinter(oldPrinter);
-			 dbconf.close();
-		     if (conf != null){
-		    	 int size = EditControls.protocols.size();
-		    	 int pos = 0;
-		 		 for (pos=0; pos<size; pos++){
-		 			 String test = EditControls.protocols.get(pos);
-		 			 if (test.equals(conf.protocol)){
-		 				 protocol.setSelection(pos);
-		 				 break;
-		 			 }
-		 		 }
-		 		 nickname.setText(conf.nickname);
-		    	 host.setText(conf.host);
-		    	 port.setText(conf.port);
-		    	 queue.setText(conf.queue);
-		    	 userName.setText(conf.userName);
-		    	 password.setText(conf.password);
-		    	 size = EditControls.orientationOpts.size();
-		    	 pos = 0;
-		 		 for (pos=0; pos<size; pos++){
-		 			 Pair opt = EditControls.orientationOpts.get(pos);
-		 			 if (opt.option.equals(conf.orientation)){
-		 				 orientation.setSelection(pos);
-		 				 break;
-		 			 }
-		 		 }
-		 		 fitToPage.setChecked(conf.imageFitToPage);
-		 		 noOptions.setChecked(conf.noOptions);
-		 		 isDefault.setChecked(conf.isDefault);
-		 		 extensions.setText(conf.extensions);
-		 		 resolution.setText(conf.resolution);
+		    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
+		    PrintQueueConfig conf = dbconf.getPrinter(oldPrinter);
+			dbconf.close();
+		    if (conf != null){
+		    	int size = EditControls.protocols.size();
+		    	int pos = 0;
+		 		for (pos=0; pos<size; pos++){
+		 			String test = EditControls.protocols.get(pos);
+		 			if (test.equals(conf.protocol)){
+		 				protocol.setSelection(pos);
+		 				break;
+		 			}
+		 		}
+		 		nickname.setText(conf.nickname);
+		    	host.setText(conf.host);
+		    	port.setText(conf.port);
+		    	queue.setText(conf.queue);
+		    	userName.setText(conf.userName);
+		    	password.setText(conf.password);
+		    	size = EditControls.orientationOpts.size();
+		    	pos = 0;
+		 		for (pos=0; pos<size; pos++){
+		 			EditControls.Pair opt = EditControls.orientationOpts.get(pos);
+		 			if (opt.option.equals(conf.orientation)){
+		 				orientation.setSelection(pos);
+		 				break;
+		 			}
+		 		}
+		 		fitToPage.setChecked(conf.imageFitToPage);
+		 		noOptions.setChecked(conf.noOptions);
+		 		isDefault.setChecked(conf.isDefault);
+		 		 
+		 		printerOptions = conf.printerAttributes; 
+		 		List<String> resolutions = new ArrayList<String>();
+				String defaultResolution = conf.resolution;
+				JobOptions j;
+				for (int i=0; i<printerOptions.size(); i++){
+					j = printerOptions.get(i);
+					if (j.name.equals("printer-resolution-supported")) resolutions.add(j.value);
+				}
+				ArrayAdapter<String> ab = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, resolutions);
+				resolution.setAdapter(ab);
+				resolution.setSelection(resolutions.indexOf(defaultResolution));
+				
+				findViewById(R.id.editSave).setEnabled(true);
 		     }
 		}
 		if (oldPrinter.equals("")){
@@ -250,9 +279,23 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    task.execute();
 	}
 	
-	
 	@Override
-	public void onGetPrinterTaskDone(cups_dest_s printer, Exception exception) {
+	public void onGetPrinterTaskDone(cups_dest_s printer, List<JobOptions> printerOptions, Exception exception) {
+		this.printerOptions = printerOptions;
+		
+		List<String> resolutions = new ArrayList<String>();
+		String defaultResolution = null;
+		JobOptions j;
+		for (int i=0; i<printerOptions.size(); i++){
+			j = printerOptions.get(i);
+			if (j.name.equals("printer-resolution-supported")) resolutions.add(j.value);
+			if (j.name.equals("printer-resolution-default")) defaultResolution = j.value;
+		}
+		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, resolutions);
+		resolution.setAdapter(aa);
+		resolution.setSelection(resolutions.indexOf(defaultResolution));
+		
+		findViewById(R.id.editSave).setEnabled(true);
 	    
 		if (exception != null){
 	    	showResult("Failed", exception.getMessage());
@@ -312,7 +355,8 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	     }
 	     String sProtocol = (String) protocol.getSelectedItem();
 	     String sPassword = password.getText().toString().trim();
-	     String sResolution = resolution.getText().toString().trim().toLowerCase(Locale.US);
+	     //String sResolution = resolution.getText().toString().trim().toLowerCase(Locale.US);
+	     String sResolution = (String)resolution.getSelectedItem();
 	     if (!checkResolution("Resolution", sResolution)){
 	    	 resolution.requestFocus();
 	    	 return;
@@ -324,13 +368,14 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	     }
 	     conf.userName = sUserName;
 	     conf.password = sPassword;
-	     Pair opt = (Pair) orientation.getSelectedItem();
+	     EditControls.Pair opt = (EditControls.Pair) orientation.getSelectedItem();
 	     conf.orientation = opt.option;
-	     conf.extensions = extensions.getText().toString().trim();
+	     conf.extensions = "";
 	     conf.imageFitToPage = fitToPage.isChecked();
 	     conf.noOptions = noOptions.isChecked();
 	     conf.isDefault = isDefault.isChecked();
 	     conf.resolution = sResolution;
+	     conf.printerAttributes = printerOptions;
 	     if ((conf.protocol.equals("http")) && (!(conf.password.equals("")))){
 	         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	         builder.setTitle("Warning: Using password with http protocol")
@@ -384,36 +429,65 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		}
 			
 	public void chooseDetectedPrinter(List<PrinterRec> printers){
-			if (printers.size() < 1){
-				showResult("", "No printers found");
-				return;
-			}
-			final ArrayAdapter<PrinterRec> aa = new ArrayAdapter<PrinterRec>(
-					this, android.R.layout.simple_list_item_1,printers); 
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Select printer");
-			builder.setAdapter(aa, new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					PrinterRec printer = aa.getItem(which);
-					int size = protocol.getCount();
-					int i;
-					for (i=0; i<size; i++){
-						if (protocol.getItemAtPosition(i).equals(printer.getProtocol())){
-							protocol.setSelection(i);
-							break;
-						}
-					}
-					nickname.setText(printer.getNickname());
-					protocol.setSelection(i);
-					host.setText(printer.getHost());
-					port.setText(String.valueOf(printer.getPort()));
-					queue.setText(printer.getQueue());					
-				}
-			});
-			AlertDialog dialog = builder.create();
-			dialog.show();
+		if (printers.size() < 1){
+			showResult("", "No printers found");
+			return;
 		}
+		final ArrayAdapter<PrinterRec> aa = new ArrayAdapter<PrinterRec>(
+				this, android.R.layout.simple_list_item_1,printers); 
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Select printer");
+		builder.setAdapter(aa, new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				PrinterRec printer = aa.getItem(which);
+				int size = protocol.getCount();
+				int i;
+				for (i=0; i<size; i++){
+					if (protocol.getItemAtPosition(i).equals(printer.getProtocol())){
+						protocol.setSelection(i);
+						break;
+					}
+				}
+				nickname.setText(printer.getNickname());
+				protocol.setSelection(i);
+				host.setText(printer.getHost());
+				port.setText(String.valueOf(printer.getPort()));
+				queue.setText(printer.getQueue());					
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+	
+	private static class EditControls {
 		
+		public final static ArrayList<Pair> orientationOpts;
+		public final static ArrayList<String>protocols;
+		
+		static {
+			orientationOpts = new ArrayList<Pair>();
+			orientationOpts.add(new Pair("3", "Portrait"));
+			orientationOpts.add(new Pair("4", "Landscape"));
+			orientationOpts.add(new Pair("5", "Reverse Portrait"));
+			orientationOpts.add(new Pair("6", "Reverse Landscape"));
+			
+			protocols = new ArrayList<String>();
+			protocols.add("http");
+			protocols.add("https");
+		}
+		private static class Pair {
+			String option;
+			String name;
+			public Pair(String option, String name){
+				this.option = option;
+				this.name = name;
+			}
+			public String toString(){
+				return name;
+			}
+		}
+	}
+
 }

@@ -1,6 +1,9 @@
 package ml.rabidbeaver.tasks;
 
+import java.util.List;
+
 import ml.rabidbeaver.cupsjni.CupsClient;
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.jna.cups_dest_s;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -13,6 +16,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 	protected Exception exception;
 	protected GetPrinterListener listener;
 	protected cups_dest_s printer;
+	protected List<JobOptions> printerOptions;
 	protected Context ctx;
 	
 	public GetPrinterTask(CupsClient client, String queue, boolean extended){
@@ -38,6 +42,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 	protected Void doInBackground(Void... params){
 		try {
 			this.printer = client.getPrinter(queue, extended);
+			this.printerOptions = client.getPrinterOptions(this.printer);
 		}
 		catch (Exception e){
 			exception = e;
@@ -49,7 +54,7 @@ public class GetPrinterTask extends AsyncTask<Void, Void, Void>{
 	@Override
 	protected void onPostExecute(Void v){
 		if (!this.isCancelled()){
-			listener.onGetPrinterTaskDone(printer, exception);
+			listener.onGetPrinterTaskDone(printer, printerOptions, exception);
 		}
 	}
 }

@@ -1,20 +1,19 @@
 package ml.rabidbeaver.printservice;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.tasks.PrintTask;
 import ml.rabidbeaver.tasks.PrintTaskListener;
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.CupsPpd;
 import ml.rabidbeaver.cupsjni.CupsPrintJob;
-import android.annotation.SuppressLint;
+import ml.rabidbeaver.cupsjni.JobOptions;
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
 import android.print.PrintAttributes;
@@ -25,25 +24,18 @@ import android.printservice.PrintDocument;
 import android.printservice.PrintJob;
 import android.printservice.PrintService;
 import android.printservice.PrinterDiscoverySession;
-import android.util.Log;
 import android.widget.Toast;
 
-
-public class RBPrintService extends PrintService implements PrintTaskListener{
+public class CupsPrintService extends PrintService implements PrintTaskListener{
 	
-	static ConcurrentHashMap<String, CupsPpd> capabilities;
-	static CupsPpd jobPpd;
-	static PrintJobId ppdJobId;
-
-	@SuppressLint("SdCardPath")
+	static ConcurrentHashMap<String, List<JobOptions>> capabilities;
+	static PrintJobId jobId;
+	static List<JobOptions> jobOptions;
+	
 	@Override
 	public void onCreate(){
 		super.onCreate();
-		for (String path: new String[]{"/data/data/ml.rabidbeaver.cupsprintservice/files/cache","/data/data/ml.rabidbeaver.cupsprintservice/files/tmp","/data/data/ml.rabidbeaver.cupsprintservice/files/logs"}){;
-			File directory = new File(path);
-			if (!directory.exists()) directory.mkdirs();
-		}
-		capabilities = new ConcurrentHashMap<String, CupsPpd>();
+		capabilities = new ConcurrentHashMap<String, List<JobOptions>>();
 	}
 	
 	@Override
@@ -54,7 +46,7 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 	
 	@Override
 	protected PrinterDiscoverySession onCreatePrinterDiscoverySession() {
-		return new RBPrinterDiscoverySession(this);
+		return new CupsPrinterDiscoverySession(this);
 	}
 
 	@Override
@@ -120,26 +112,21 @@ public class RBPrintService extends PrintService implements PrintTaskListener{
 		}
 		//Resolution resolution = attributes.getResolution();
 		//int colorModel = attributes.getColorMode();
-		Map<String, String>cupsAttributes = null;
+		List<JobOptions> cupsAttributes = null;
 		if (!(cupsString.equals(""))){
-			cupsAttributes = new HashMap<String, String>();
-			cupsAttributes.put("job-attributes", cupsString);
+			cupsAttributes = new ArrayList<JobOptions>();
+			cupsAttributes.add(new JobOptions("job-attributes", cupsString));
 		}
 
 		PrintDocument document = job.getDocument();
 		FileInputStream file = new ParcelFileDescriptor.AutoCloseInputStream(document.getData());
 		String fileName = document.getInfo().getName();
 	    CupsPrintJob cupsPrintJob = new CupsPrintJob(file, fileName);
-	    if (attributes != null){
+	    if (cupsAttributes != null && !cupsAttributes.isEmpty()){
 	    	cupsPrintJob.setAttributes(cupsAttributes);
 	    }
 	    
 	    //TODO: This set of attributes needs to be handed to the CupsPrintJob as job attributes
-	    String[] keys = new String[100];
-	    cupsAttributes.keySet().toArray(keys);
-	    for (int i=0; i<cupsAttributes.size(); i++){
-	    	Log.d("RBPRINTSERVICE",keys[i]+"/"+cupsAttributes.get(keys[i]));
-	    }
 	    
 	    String nickname = jobInfo.getPrinterId().getLocalId();
 	    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
