@@ -57,4 +57,8 @@ public class PrintQueueConfig {
 	public String getResolution(){
 		return resolution;
 	}
+	
+	public List<JobOptions> getPrinterAttributes(){
+		return printerAttributes;
+	}
 }

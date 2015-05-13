@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
@@ -48,7 +47,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		for (PrinterInfo printerInfo : this.getPrinters()){
 			PrinterDiscoveryInfo info = printerMap.get(printerInfo.getName());
 			if (info == null){
-				CupsPrintService.capabilities.remove(printerInfo.getName());
+				//CupsPrintService.capabilities.remove(printerInfo.getName());
 				printerIds.add(printerInfo.getId());
 			}
 		}
@@ -64,11 +63,11 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 	@Override
 	public void onStartPrinterStateTracking(PrinterId printerId) {
 		String nickName = printerId.getLocalId();
-		List<JobOptions> savedJobOptions = CupsPrintService.capabilities.get(nickName);
-		if (savedJobOptions == null){
-			savedJobOptions = new ArrayList<JobOptions>();
-			CupsPrintService.capabilities.put(nickName, savedJobOptions);
-		}
+		//List<JobOptions> savedJobOptions = CupsPrintService.capabilities.get(nickName);
+		//if (savedJobOptions == null){
+		//	savedJobOptions = new ArrayList<JobOptions>();
+		//	CupsPrintService.capabilities.put(nickName, savedJobOptions);
+		//}
 		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = dbconf.getPrinter(nickName);
 		dbconf.close();
@@ -137,7 +136,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		PrinterId id = printService.generatePrinterId(info.getNickname());
 		ids.add(id);
 		this.removePrinters(ids);
-		CupsPrintService.capabilities.remove(id.getLocalId());
+		//CupsPrintService.capabilities.remove(id.getLocalId());
 	
 	}
 	
@@ -189,17 +188,17 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 	// * TODO
 	private void setPrinterCapabilities(String nickname){
 		
-		List<JobOptions> cupsJobOptions = CupsPrintService.capabilities.get(nickname);
-		if (cupsJobOptions == null){
-			return;
-		}
+		//List<JobOptions> cupsJobOptions = CupsPrintService.capabilities.get(nickname);
+		//if (cupsJobOptions == null){
+		//	return;
+		//}
 
-		List<JobOptions> serviceInfo = null; 
-		try {
-			serviceInfo = cupsJobOptions;//.getPpdRec().getPpdServiceInfo();
-		}catch (Exception e){
-			System.err.println(e.toString());
-		}
+		//List<JobOptions> serviceInfo = null; 
+		//try {
+		//	serviceInfo = cupsJobOptions;//.getPpdRec().getPpdServiceInfo();
+		//}catch (Exception e){
+		//	System.err.println(e.toString());
+		//}
 		//if (serviceInfo == null){
 		//	return;
 		//}

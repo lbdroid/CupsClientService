@@ -1,5 +1,6 @@
 package ml.rabidbeaver.printservice;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -10,7 +11,9 @@ import android.content.res.Configuration;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
@@ -56,22 +59,15 @@ public class ServicePrintJobActivity extends Activity {
 			cupsJobOptions = CupsPrintService.jobOptions;
 		}
 		else {
-			List<JobOptions> jobOptions = CupsPrintService.capabilities.get(nickname);
-			if (jobOptions != null){
-				if (!(config.getPassword().equals(""))){
-					//TODO ?? auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
-				}
-				//cupsJobOptions = new ArrayList<JobOptions>();
-				//cupsJobOptions.setPpdRec(jobOptions.getPpdRec().deepCloneUILists());
-				cupsJobOptions = jobOptions;
-				CupsPrintService.jobId = jobInfo.getId();
-				CupsPrintService.jobOptions = cupsJobOptions;
+			List<JobOptions> jobOptions = new ArrayList<JobOptions>();//config.getPrinterAttributes();//CupsPrintService.capabilities.get(nickname);
+			if (!(config.getPassword().equals(""))){
+				//TODO ?? auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
 			}
-			else {
-				Util.showToast(this, "Unable to create advanced options");
-				finish();
-				return;
-			}
+			//cupsJobOptions = new ArrayList<JobOptions>();
+			//cupsJobOptions.setPpdRec(jobOptions.getPpdRec().deepCloneUILists());
+			cupsJobOptions = jobOptions;
+			CupsPrintService.jobId = jobInfo.getId();
+			CupsPrintService.jobOptions = cupsJobOptions;
 		}
         setStdOpts();
 
@@ -80,21 +76,15 @@ public class ServicePrintJobActivity extends Activity {
             public void onClick(View v) {
             	oKButton.setFocusableInTouchMode(true);
             	oKButton.requestFocus();
+            	//TODO: here we read the settings and apply them to the job configuration
             	//if (!layout.update())
                 //	return;
-                // TODO String stdAttrs = cupsJobOptions.getCupsStdString();
+                // String stdAttrs = cupsJobOptions.getCupsStdString();
         		setCupsString(null);//stdAttrs);
             }
         });
-        /*moreButton = getButton("More...");
-		moreButton.setEnabled(true);
-        moreButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	doGroup();
-            }
-        });*/
+
 		buttonRow = new TableRow(this);
-		//buttonRow.addView(moreButton);
 		buttonRow.addView(oKButton);
         setControls();
 	}
@@ -160,14 +150,17 @@ public class ServicePrintJobActivity extends Activity {
 	}
 
 	private void setControls(){
-		/* TODO layout = (CupsTableLayout) findViewById(R.id.advancedSettingsLayout);
-		layout.setShowName(false);
-		layout.reset();
-		for (PpdSectionList group: cupsJobOptions.getPpdRec().getStdList()){
-			layout.addSection(group);
-		}
+		TableLayout layout = (TableLayout) findViewById(R.id.advancedSettingsLayout);
+		
+		//TODO: add all the options to the layout here!!!
+		
+		//layout.setShowName(false);
+		//layout.reset();
+		//for (PpdSectionList group: cupsJobOptions.getPpdRec().getStdList()){
+		//	layout.addSection(group);
+		//}
 		layout.addView(buttonRow,new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-		*/
+		
 		uiSet = true;
 	}
 	

@@ -28,14 +28,14 @@ import android.widget.Toast;
 
 public class CupsPrintService extends PrintService implements PrintTaskListener{
 	
-	static ConcurrentHashMap<String, List<JobOptions>> capabilities;
+	//static ConcurrentHashMap<String, List<JobOptions>> capabilities;
 	static PrintJobId jobId;
 	static List<JobOptions> jobOptions;
 	
 	@Override
 	public void onCreate(){
 		super.onCreate();
-		capabilities = new ConcurrentHashMap<String, List<JobOptions>>();
+		//capabilities = new ConcurrentHashMap<String, List<JobOptions>>();
 	}
 	
 	@Override
