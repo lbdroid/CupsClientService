@@ -105,6 +105,8 @@ public class CupsClient {
     	m.setString(0, printJob.getJobName());
 
     	int num_options = 0;
+    	//TODO: this ByReference[] won't work, need to switch to a PointerByReference.
+    	// OR instantiate and initialize the array based on printJob.getAttributes().size().
     	cups_option_s.ByReference[] options = new cups_option_s.ByReference[1];
     	options[0] = new cups_option_s.ByReference();
     	//cups_option_s options;
