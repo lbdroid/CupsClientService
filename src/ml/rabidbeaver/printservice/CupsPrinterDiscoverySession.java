@@ -46,13 +46,9 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		ArrayList<PrinterId>printerIds = new ArrayList<PrinterId>();
 		for (PrinterInfo printerInfo : this.getPrinters()){
 			PrinterDiscoveryInfo info = printerMap.get(printerInfo.getName());
-			if (info == null){
-				//CupsPrintService.capabilities.remove(printerInfo.getName());
-				printerIds.add(printerInfo.getId());
-			}
+			if (info == null) printerIds.add(printerInfo.getId());
 		}
 		this.removePrinters(printerIds);
-	
 	 }
 
 	@Override
@@ -63,11 +59,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 	@Override
 	public void onStartPrinterStateTracking(PrinterId printerId) {
 		String nickName = printerId.getLocalId();
-		//List<JobOptions> savedJobOptions = CupsPrintService.capabilities.get(nickName);
-		//if (savedJobOptions == null){
-		//	savedJobOptions = new ArrayList<JobOptions>();
-		//	CupsPrintService.capabilities.put(nickName, savedJobOptions);
-		//}
+
 		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = dbconf.getPrinter(nickName);
 		dbconf.close();
@@ -86,18 +78,15 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 
 
 	@Override
-	public void onStopPrinterStateTracking(PrinterId arg0) {
-	}
+	public void onStopPrinterStateTracking(PrinterId arg0) {}
 
 	@Override
-	public void onValidatePrinters(List<PrinterId> arg0) {
-	}
+	public void onValidatePrinters(List<PrinterId> arg0) {}
 
 	@Override
 	public void onPrinterAdded(final PrinterDiscoveryInfo info) {
 		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
 		Runnable runnable = new Runnable(){
-
 			@Override
 			public void run() {
 				onPrinterAddedMainThread(info);
@@ -106,22 +95,19 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		handler.post(runnable);
 	}
 	
-	
 	public void onPrinterAddedMainThread(PrinterDiscoveryInfo info){
 		List<PrinterInfo> printers = new ArrayList<PrinterInfo>();
 		PrinterInfo printerInfo = createPrinterInfo(info);
 		if (printerInfo != null){
 			printers.add(printerInfo);
-			this.addPrinters(printers);;
+			this.addPrinters(printers);
 		}
-		
 	}
 
 	@Override
 	public void onPrinterRemoved(final PrinterDiscoveryInfo info) {
 		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
 		Runnable runnable = new Runnable(){
-
 			@Override
 			public void run() {
 				onPrinterRemovedMainThread(info);
@@ -136,8 +122,6 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		PrinterId id = printService.generatePrinterId(info.getNickname());
 		ids.add(id);
 		this.removePrinters(ids);
-		//CupsPrintService.capabilities.remove(id.getLocalId());
-	
 	}
 	
 	private PrinterInfo createPrinterInfo(PrinterDiscoveryInfo info){
@@ -150,128 +134,43 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 			return null;
 		}
 	}
-
 	
-	/*@Override
-	public void onGetServiceOptionsTaskDone(List<JobOptions> cupsJobOptions, PrintQueueConfig config, Exception exception) {
-		if (cupsJobOptions == null) return;
-		final String nicknameId = config.getNickname();
-		if (exception != null){
-			CupsPrintService.capabilities.remove(nicknameId);
-			//Toast.makeText(this.printService, exception.toString(), Toast.LENGTH_LONG).show();
-			return;
-		}
-		CupsPpdRec ppdRec = cupsJobOptions.getPpdRec();
-		//cupsPpd.setServiceResolution(config.getResolution());
-		if (ppdRec.getIsUpdated()){
-			CupsPrintService.capabilities.put(nicknameId, cupsJobOptions);
-		}
-		else{
-			cupsJobOptions = CupsPrintService.capabilities.get(nicknameId);
-			if (cupsJobOptions != null){
-				cupsJobOptions.setServiceResolution(config.getResolution());
-			}
-		}
-		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
-		Runnable runnable = new Runnable(){
-
-			@Override
-			public void run() {
-				setPrinterCapabilities(nicknameId);
-			}
-		};
-		handler.post(runnable);
-
-	
-	}*/
-	
-	// * TODO
+	/* TODO
+	 *   In this function, we actually TELL Android print frameworks what our printer is capable of.
+	 *   I.e., define its specifications.
+	 *   
+	 *   We need to read the PrintQueueConfig and take applicable printer attributes and translate them
+	 *   into a PrinterCapabilitiesInfo, and assign that to the printer.
+	 */
 	private void setPrinterCapabilities(String nickname){
-		
-		//List<JobOptions> cupsJobOptions = CupsPrintService.capabilities.get(nickname);
-		//if (cupsJobOptions == null){
-		//	return;
-		//}
-
-		//List<JobOptions> serviceInfo = null; 
-		//try {
-		//	serviceInfo = cupsJobOptions;//.getPpdRec().getPpdServiceInfo();
-		//}catch (Exception e){
-		//	System.err.println(e.toString());
-		//}
-		//if (serviceInfo == null){
-		//	return;
-		//}
 		
 		PrinterId id = printService.generatePrinterId(nickname);
 		PrinterInfo.Builder infoBuilder = new PrinterInfo.Builder(id, nickname, PrinterInfo.STATUS_IDLE);
 		PrinterCapabilitiesInfo.Builder capBuilder = new PrinterCapabilitiesInfo.Builder(id);
 		
-		/* TODO Map<String, PpdServiceInfo.Dimension> mediaSizes = serviceInfo.getPaperDimensions();
-		String defaultVal = serviceInfo.getDefaultPaperDimension();
-		for (Map.Entry<String, PpdServiceInfo.Dimension> entry : mediaSizes.entrySet()) {
-			Dimension dim = entry.getValue();
-			String key = entry.getKey();
-			boolean isDefault;
-			if (key.equals(defaultVal)){
-				isDefault = true;
-			}
-			else {
-				isDefault = false;
-			}
-			
-			capBuilder.addMediaSize(
-					new PrintAttributes.MediaSize(entry.getKey(), dim.getText(),
-								  dim.getWidth(), dim.getHeight()) , isDefault);
-		}*/
-		
+		/* TODO
+		 *   Load dimensions as following:
+		 */
 		capBuilder.addMediaSize(new PrintAttributes.MediaSize("ISO_A4", "ISO_A4", 210, 297), true);
 		//capBuilder.addMediaSize(MediaSize.ISO_A4, true);
-		//String defaultVal;
+		//  NOTE: second parameter flags the mediasize as "default".
+
 		//PrintAttributes.MediaSize builtIn = PrintAttributes.MediaSize.ISO_A4;
 		//PrintAttributes.MediaSize custom = new PrintAttributes.MediaSize("Letter", "Letter", 612, 792);
 		//String s = builtIn.getLabel(CupsPrintApp.getContext().getPackageManager());
 		
-		/* TODO Map<String, PpdServiceInfo.Dimension> resolutions = serviceInfo.getResolutions();
-		boolean ppdDefault = cupsJobOptions.getServiceResolution().equals("");
-
-		defaultVal = serviceInfo.getDefaultResolution();
-		for (Map.Entry<String, PpdServiceInfo.Dimension> entry : resolutions.entrySet()) {
-			Dimension dim = entry.getValue();
-			String key = entry.getKey();
-			boolean isDefault;
-			if (ppdDefault && key.equals(defaultVal)){
-				isDefault = true;
-			}
-			else {
-				isDefault = false;
-			}
-			capBuilder.addResolution(
-					new PrintAttributes.Resolution(
-							entry.getKey(), dim.getText(), dim.getWidth(), dim.getHeight()),
-					isDefault);
-			
-		}
-		if (!ppdDefault) {
-			String res = cupsJobOptions.getServiceResolution();
-			String[] dpis = res.split("x");
-			int x = 360; int y = 360;
-			try {
-				x = Integer.parseInt(dpis[0]);
-				y = Integer.parseInt(dpis[1]);
-			}catch (Exception e){}
-			capBuilder.addResolution(new PrintAttributes.Resolution("App default", "App default", x, y), true);	
-		}*/
-		
+		/* TODO
+		 *   Add printer resolutions as follows:
+		 */
 		capBuilder.addResolution(new PrintAttributes.Resolution("4x4", "5x5", 300, 300), true);
 		capBuilder.addResolution(new PrintAttributes.Resolution("6x4", "6x5", 600, 600), false);
 		capBuilder.addResolution(new PrintAttributes.Resolution("7x4", "7x5", 1200, 1200), false);
-		/*
-		 * 
-		 */
 
-		capBuilder.setColorModes(PrintAttributes.COLOR_MODE_COLOR + PrintAttributes.COLOR_MODE_MONOCHROME, 
-				PrintAttributes.COLOR_MODE_COLOR);
+		/* TODO
+		 *   Set color mode as per printer capabilities, probably should default to monochrome.
+		 */
+		capBuilder.setColorModes(PrintAttributes.COLOR_MODE_COLOR + PrintAttributes.COLOR_MODE_MONOCHROME, PrintAttributes.COLOR_MODE_COLOR);
+		
 		capBuilder.setMinMargins(PrintAttributes.Margins.NO_MARGINS);
 		PrinterCapabilitiesInfo caps = null;
 		PrinterInfo printInfo = null;
@@ -293,7 +192,5 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 			Toast.makeText(this.printService, e.toString(), Toast.LENGTH_LONG).show();
 			System.err.println(e.toString());
 		}
-		
-	} // * /
-	
+	}
 }

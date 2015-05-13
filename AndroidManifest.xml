@@ -49,9 +49,10 @@
             android:label="@string/title_activity_mime_types" >
         </activity>
         <activity
-            android:name="ml.rabidbeaver.printservice.ServicePrintJobActivity"
+            android:name="ml.rabidbeaver.printservice.AdvancedOptionsActivity"
             android:excludeFromRecents="true"
             android:exported="true"
+            android:permission="android.permission.START_PRINT_SERVICE_CONFIG_ACTIVITY"
             android:label="@string/title_activity_advanced_settings"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|screenSize"

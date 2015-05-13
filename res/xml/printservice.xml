@@ -5,5 +5,5 @@
     android:vendor="rabidbeaver"
     android:addPrintersActivity="ml.rabidbeaver.cupsprint.PrinterAddEditActivity"
     android:settingsActivity="ml.rabidbeaver.cupsprint.PrinterMainActivity"
-    android:advancedPrintOptionsActivity="ml.rabidbeaver.printservice.ServicePrintJobActivity" 
+    android:advancedPrintOptionsActivity="ml.rabidbeaver.printservice.AdvancedOptionsActivity" 
 />
