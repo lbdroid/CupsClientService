@@ -15,7 +15,7 @@ public class MimeTypesActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_mime_types);
+		setContentView(R.layout.mime_types_activity);
 		Intent intent = getIntent();
 		String sPrinter = intent.getStringExtra("printer");
 		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());

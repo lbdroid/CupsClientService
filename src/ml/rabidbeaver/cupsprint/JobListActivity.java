@@ -35,7 +35,7 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_job_list);
+		setContentView(R.layout.job_list_activity);
 		Intent intent = getIntent();
 		String nickname = intent.getStringExtra("printer");
 		if (nickname == null){

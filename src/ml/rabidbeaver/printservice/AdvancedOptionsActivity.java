@@ -22,7 +22,7 @@ public class AdvancedOptionsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_advanced_settings);
+		setContentView(R.layout.advanced_options_activity);
 		Intent intent = getIntent();
 
 		final PrintJobInfo jobInfo = (PrintJobInfo) intent.getParcelableExtra("android.intent.extra.print.PRINT_JOB_INFO");

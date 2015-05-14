@@ -22,7 +22,7 @@ public class PrinterMainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_printer_main);
+		setContentView(R.layout.printer_main_activity);
 		printersListView=(ListView) findViewById(R.id.printersListView);
 		printersListView.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View view,

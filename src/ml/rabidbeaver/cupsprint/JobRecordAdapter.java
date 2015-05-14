@@ -46,7 +46,7 @@ public class JobRecordAdapter extends BaseAdapter{
             
             //TODO: activity_job_list_row is far too short to be touch clickable.
             //  make it taller.
-            convertView = inflater.inflate(R.layout.activity_job_list_row, null);
+            convertView = inflater.inflate(R.layout.job_list_row, null);
         }
         try {
         	TextView id = (TextView) convertView.findViewById(R.id.jobJobId);
