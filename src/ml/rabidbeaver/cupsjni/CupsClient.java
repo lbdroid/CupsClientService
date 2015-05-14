@@ -4,8 +4,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
@@ -112,7 +110,6 @@ public class CupsClient {
     	for (int i=0; i<attrs.size(); i++){
     		JobOptions j = attrs.get(i);
     		try {
-    			Log.d("CUPSCLIENT-PRINT",j.name+": "+j.value);
     			num_options = cups.cupsAddOption(j.name, j.value, num_options, options);
     		} catch (Exception e){ e.printStackTrace(); }
     	}
