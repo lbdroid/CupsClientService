@@ -115,30 +115,6 @@
         <TextView
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-        	android:text="@string/orientation" />
-
-    	<Spinner
-        	android:id="@+id/editOrientation"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
-    
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="@string/justprint" />
-
-    	<CheckBox
-        	android:id="@+id/editNoOptions"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
-    
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
         	android:text="@string/isdefault" />
 
     	<CheckBox
@@ -146,21 +122,14 @@
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"/>
     </TableRow>
-    
     <TableRow>
-    	<TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editResolution"
-        	android:text="@string/resolution" />
-
-    	<Spinner
-        	android:id="@+id/editResolution"
-        	android:maxLines="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+    	<View
+            android:layout_width="1dp"
+            android:layout_height="25dp" />
     </TableRow>
-
     <TableRow>
         <View
             android:layout_width="1dp"
@@ -171,7 +140,7 @@
         	android:layout_height="wrap_content"
         	android:text="@string/test" />
     </TableRow>
-        <TableRow>
+    <TableRow>
         <View
             android:layout_width="1dp"
             android:layout_height="1dp" />

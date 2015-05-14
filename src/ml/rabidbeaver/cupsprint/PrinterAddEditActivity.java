@@ -172,7 +172,6 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		 		 
 		 		printerOptions = conf.printerAttributes; 
 
-				
 				findViewById(R.id.editSave).setEnabled(true);
 		     }
 		}
