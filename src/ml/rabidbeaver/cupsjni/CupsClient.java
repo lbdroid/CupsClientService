@@ -143,32 +143,6 @@ public class CupsClient {
     	return print(getPrinter(queue, false), printJob);
     }
     
-    public String getOption(cups_dest_s printer, String option){
-    	Pointer p = cups.cupsGetOption("device-uri",printer.num_options, printer.options);
-    	if (p==null) return null;
-    	else return p.getString(0);
-    }
-    
-    public String[] getAttribute(cups_dest_s printer, String attribute){
-    	String[] retval = null;
-    	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
-    	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "/printers/"+printer.name.getString(0));
-    	PointerByReference response = cups.cupsDoRequest(serv_conn_p, request, "/");
-
-    	PointerByReference attr;
-    	PointerByReference lang = null;
-    	for (attr = cups.ippFirstAttribute(response); attr != null; attr = cups.ippNextAttribute(response)){
-    		if (cups.ippGetName(attr) != null){
-    			String[] cstring = new String[cups.ippGetCount(attr)];
-    			for (int i=0; i<cups.ippGetCount(attr); i++)
-    				cstring[i] = (cups.ippGetString(attr, i, lang)==null)?null:cups.ippGetString(attr, i, lang).getString(0);
-    			if (cups.ippGetName(attr).getString(0).equals(attribute)) retval = cstring;
-    		}
-    	}
-    	
-    	return retval;
-    }
-    
     public List<JobOptions> getPrinterOptions(cups_dest_s printer){
     	List<JobOptions> printerOptions = new ArrayList<JobOptions>();
     	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
