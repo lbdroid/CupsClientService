@@ -26,9 +26,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String create = "CREATE TABLE printers (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 				+ "name VARCHAR, host VARCHAR, protocol VARCHAR, port INTEGER, queue VARCHAR, "
-				+ "username VARCHAR, password VARCHAR, orientation VARCHAR, fittopage INTEGER, "
-				+ "nooptions INTEGER, extensions VARCHAR, resolution VARCHAR, "
-				+ "def INTEGER DEFAULT 0);";
+				+ "username VARCHAR, password VARCHAR, def INTEGER DEFAULT 0);";
 		db.execSQL(create);
 		create = "CREATE TABLE printer_opts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 				+ "printername VARCHAR, option VARCHAR, value VARCHAR);";
@@ -37,10 +35,14 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (newVersion == 2){
+		if (newVersion >= 2){
 			String create = "CREATE TABLE printer_opts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 					+ "printername VARCHAR, option VARCHAR, value VARCHAR);";
 			db.execSQL(create);
+		}
+		if (newVersion == 3){
+			String alter = "ALTER TABLE printers DROP COLUMN fittopage, nooptions, extensions, orientation, resolution";
+			db.execSQL(alter);
 		}
 	}
 	
@@ -89,11 +91,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		values.put("queue", config.queue);
 		values.put("username", config.userName);
 		values.put("password", encrypt(config.password));
-		values.put("orientation", config.orientation);
-		values.put("fittopage", config.imageFitToPage);
-		values.put("nooptions", config.noOptions);
-		values.put("extensions", config.extensions);
-		values.put("resolution", config.resolution);
+		values.put("def", config.isDefault);
 		
 		if (printerExists(oldPrinter))
 			db.update("printers", values, "name = ?", new String[]{oldPrinter});
@@ -136,8 +134,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 	public PrintQueueConfig getPrinter(String name){
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query("printers", new String[]{"host","protocol","port","queue",
-				"username","password","orientation","fittopage","nooptions","extensions",
-				"resolution","def"}, "name = ?", new String[]{name}, null, null, null);
+				"username","password","def"}, "name = ?", new String[]{name}, null, null, null);
 		
 		if (cursor == null || cursor.getCount() < 1) return null;
 		
@@ -149,12 +146,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		PrintQueueConfig pqc = new PrintQueueConfig(name, protocol, host, port, queue);
 		pqc.userName = cursor.getString(4);
 		pqc.password = decrypt(cursor.getString(5));
-		pqc.orientation = cursor.getString(6);
-		pqc.imageFitToPage = cursor.getInt(7)!=0;
-		pqc.noOptions = cursor.getInt(8)!=0;
-		pqc.extensions = cursor.getString(9);
-		pqc.resolution = cursor.getString(10);
-		pqc.isDefault = cursor.getInt(11)!=0;
+		pqc.isDefault = cursor.getInt(6)!=0;
 		
 		pqc.printerAttributes = new ArrayList<JobOptions>();
 		cursor = db.query("printer_opts", new String[]{"option","value"}, "printername = ?", new String[]{name}, null, null, null);

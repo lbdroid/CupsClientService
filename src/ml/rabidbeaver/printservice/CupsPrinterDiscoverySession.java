@@ -5,11 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprint.CupsPrintApp;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.discovery.PrinterDiscoveryInfo;
 import ml.rabidbeaver.discovery.PrinterDiscoveryListener;
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.print.PrintAttributes;
 import android.print.PrinterCapabilitiesInfo;
@@ -27,8 +29,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 	}
 	
 	@Override
-	public void onDestroy(){
-	}
+	public void onDestroy(){}
 	
 	@Override
 	public void onStartPrinterDiscovery(List<PrinterId> arg0) {
@@ -63,17 +64,8 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
 		PrintQueueConfig config = dbconf.getPrinter(nickName);
 		dbconf.close();
-		if (config != null){
-			if (!(config.getPassword().equals(""))){
-				//TODO auth = new AuthInfo(CupsPrintApp.getContext(), config.getUserName(), config.getPassword());
-			}
-			/* TODO READ options from server HERE:
-			GetServicePpdTask task = new GetServicePpdTask(config, md5);
-			task.setPpdTaskListener(this);
-			task.get(true, Thread.NORM_PRIORITY);*/
-			setPrinterCapabilities(nickName);
-		}
-	
+		if (config != null)
+			setPrinterCapabilities(nickName, config);
 	}
 
 
@@ -114,7 +106,6 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 			}
 		};
 		handler.post(runnable);
-	
 	}
 	
 	private void onPrinterRemovedMainThread(PrinterDiscoveryInfo info){
@@ -135,43 +126,77 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		}
 	}
 	
-	/* TODO
-	 *   In this function, we actually TELL Android print frameworks what our printer is capable of.
-	 *   I.e., define its specifications.
-	 *   
-	 *   We need to read the PrintQueueConfig and take applicable printer attributes and translate them
-	 *   into a PrinterCapabilitiesInfo, and assign that to the printer.
-	 */
-	private void setPrinterCapabilities(String nickname){
+	@SuppressLint("DefaultLocale")
+	private void setPrinterCapabilities(String nickname, PrintQueueConfig config){
 		
 		PrinterId id = printService.generatePrinterId(nickname);
 		PrinterInfo.Builder infoBuilder = new PrinterInfo.Builder(id, nickname, PrinterInfo.STATUS_IDLE);
 		PrinterCapabilitiesInfo.Builder capBuilder = new PrinterCapabilitiesInfo.Builder(id);
 		
-		/* TODO
-		 *   Load dimensions as following:
-		 */
-		capBuilder.addMediaSize(new PrintAttributes.MediaSize("ISO_A4", "ISO_A4", 210, 297), true);
-		//capBuilder.addMediaSize(MediaSize.ISO_A4, true);
-		//  NOTE: second parameter flags the mediasize as "default".
-
-		//PrintAttributes.MediaSize builtIn = PrintAttributes.MediaSize.ISO_A4;
-		//PrintAttributes.MediaSize custom = new PrintAttributes.MediaSize("Letter", "Letter", 612, 792);
-		//String s = builtIn.getLabel(CupsPrintApp.getContext().getPackageManager());
+		List<JobOptions> attributes = config.getPrinterAttributes();
 		
-		/* TODO
-		 *   Add printer resolutions as follows:
-		 */
-		capBuilder.addResolution(new PrintAttributes.Resolution("4x4", "5x5", 300, 300), true);
-		capBuilder.addResolution(new PrintAttributes.Resolution("6x4", "6x5", 600, 600), false);
-		capBuilder.addResolution(new PrintAttributes.Resolution("7x4", "7x5", 1200, 1200), false);
-
-		/* TODO
-		 *   Set color mode as per printer capabilities, probably should default to monochrome.
-		 */
-		capBuilder.setColorModes(PrintAttributes.COLOR_MODE_COLOR + PrintAttributes.COLOR_MODE_MONOCHROME, PrintAttributes.COLOR_MODE_COLOR);
+		String def_media = "na_letter_8.5x11in";
+		for (int i=0; i<attributes.size(); i++)
+			if (attributes.get(i).name.equals("media-default")) def_media = attributes.get(i).value;
 		
-		capBuilder.setMinMargins(PrintAttributes.Margins.NO_MARGINS);
+		for (int i=0; i<attributes.size(); i++)
+			if (attributes.get(i).name.equals("media-supported")){
+				String newmedia = attributes.get(i).value;
+				String[] parts = newmedia.split("_");
+				String medianame = (parts[0]+" "+parts[1]).toUpperCase();
+				boolean inches = parts[2].contains("in");
+				parts[2] = parts[2].replace("in", "").replace("mm", "");
+				String[] dimens = parts[2].split("x");
+				int w, h;
+				w = (int) (Float.parseFloat(dimens[0]) * 1000);
+				h = (int) (Float.parseFloat(dimens[1]) * 1000);
+				if (!inches){
+					w *= 0.0393701;
+					h *= 0.0393701;
+				}
+				capBuilder.addMediaSize(new PrintAttributes.MediaSize(attributes.get(i).value, medianame, w, h), attributes.get(i).value.equals(def_media));
+			}
+		
+		String def_res = "600x600";
+		for (int i=0; i<attributes.size(); i++)
+			if (attributes.get(i).name.equals("printer-resolution-default")) def_res = attributes.get(i).value;
+		
+		for (int i=0; i<attributes.size(); i++)
+			if (attributes.get(i).name.equals("printer-resolution-supported")){
+				String[] res = attributes.get(i).value.split("x");
+				int x = Integer.parseInt(res[0]);
+				int y = Integer.parseInt(res[1]);
+				capBuilder.addResolution(new PrintAttributes.Resolution(attributes.get(i).value, res[0]+" DPI", x, y), attributes.get(i).value.equals(def_res));
+			}
+
+		int def_color = PrintAttributes.COLOR_MODE_MONOCHROME;
+		for (int i=0; i<attributes.size(); i++)
+			if (attributes.get(i).name.equals("print-color-mode-default"))
+				def_color = attributes.get(i).value.equals("color")?PrintAttributes.COLOR_MODE_COLOR:PrintAttributes.COLOR_MODE_MONOCHROME;
+
+		int colormode = def_color;
+		for (int i=0; i<attributes.size(); i++)
+			if (attributes.get(i).name.equals("print-color-mode-supported")){
+				if (attributes.get(i).value.equals("color")) colormode |= PrintAttributes.COLOR_MODE_COLOR;
+				if (attributes.get(i).value.equals("monochrome")) colormode |= PrintAttributes.COLOR_MODE_MONOCHROME;
+			}
+		capBuilder.setColorModes(colormode, def_color);
+		
+/*		int leftMils=0, topMils=0, rightMils=0, bottomMils=0;
+		for (int i=0; i<attributes.size(); i++){
+			if (attributes.get(i).name.equals("media-bottom-margin-supported"))
+				bottomMils = (int) (Float.parseFloat(attributes.get(i).value));
+			if (attributes.get(i).name.equals("media-left-margin-supported"))
+				leftMils = (int) (Float.parseFloat(attributes.get(i).value));
+			if (attributes.get(i).name.equals("media-right-margin-supported"))
+				rightMils = (int) (Float.parseFloat(attributes.get(i).value));
+			if (attributes.get(i).name.equals("media-top-margin-supported"))
+				topMils = (int) (Float.parseFloat(attributes.get(i).value));
+		}
+		PrintAttributes.Margins margins = new PrintAttributes.Margins(leftMils, topMils, rightMils, bottomMils);
+		capBuilder.setMinMargins(margins);*/
+		capBuilder.setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0));
+		
 		PrinterCapabilitiesInfo caps = null;
 		PrinterInfo printInfo = null;
 		try {
@@ -184,6 +209,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
  			System.err.println(e.toString());
 			return;
 		}
+
 		List<PrinterInfo> infos = new ArrayList<PrinterInfo>();
 		infos.add(printInfo);
 		try {

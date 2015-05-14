@@ -4,6 +4,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
@@ -105,21 +107,19 @@ public class CupsClient {
     	m.setString(0, printJob.getJobName());
 
     	int num_options = 0;
-    	//TODO: this ByReference[] won't work, need to switch to a PointerByReference.
-    	// OR instantiate and initialize the array based on printJob.getAttributes().size().
-    	cups_option_s.ByReference[] options = new cups_option_s.ByReference[1];
-    	options[0] = new cups_option_s.ByReference();
-    	//cups_option_s options;
+    	PointerByReference options = new PointerByReference();
     	List<JobOptions> attrs = printJob.getAttributes();
     	for (int i=0; i<attrs.size(); i++){
     		JobOptions j = attrs.get(i);
     		try {
+    			Log.d("CUPSCLIENT-PRINT",j.name+": "+j.value);
     			num_options = cups.cupsAddOption(j.name, j.value, num_options, options);
     		} catch (Exception e){ e.printStackTrace(); }
     	}
     	
-    	cups_option_s opts = options[0];
-    	
+    	cups_option_s opts = new cups_option_s(options.getValue());
+    	opts.read();
+
     	int job_id = cups.cupsCreateJob(serv_conn_p, printer.name, m, num_options, opts);
     	if (job_id == 0) return 0;
 
@@ -159,6 +159,20 @@ public class CupsClient {
 
     			for (int i=0; i<cups.ippGetCount(attr); i++){
     				switch (type){
+    				case ipp_tag_e.IPP_TAG_TEXT:
+    				case ipp_tag_e.IPP_TAG_NAME:
+    				case ipp_tag_e.IPP_TAG_KEYWORD:
+    				case ipp_tag_e.IPP_TAG_URI:
+    				case ipp_tag_e.IPP_TAG_CHARSET:
+    				case ipp_tag_e.IPP_TAG_LANGUAGE:
+    				case ipp_tag_e.IPP_TAG_MIMETYPE:
+    					cstring[i] = cups.ippGetString(attr, i, lang).getString(0);
+    					break;
+    				case ipp_tag_e.IPP_TAG_RANGE:
+    					IntByReference upper = new IntByReference();
+    					int lower = cups.ippGetRange(attr, i, upper);
+    					cstring[i] = Integer.toString(lower)+"-"+Integer.toString(upper.getValue());
+    					break;
     				case ipp_tag_e.IPP_TAG_INTEGER:
     				case ipp_tag_e.IPP_TAG_ENUM:
     					cstring[i] = Integer.toString(cups.ippGetInteger(attr, i));
@@ -175,21 +189,6 @@ public class CupsClient {
     					IntByReference units = new IntByReference();
     					int hres = cups.ippGetResolution(attr, i, vres, units);
     					cstring[i] = Integer.toString(hres)+"x"+Integer.toString(vres.getValue());
-    					break;
-    				case ipp_tag_e.IPP_TAG_RANGE:
-    					IntByReference upper = new IntByReference();
-    					int lower = cups.ippGetRange(attr, i, upper);
-    					cstring[i] = Integer.toString(lower)+"-"+Integer.toString(upper.getValue());
-    					break;
-
-    				case ipp_tag_e.IPP_TAG_TEXT:
-    				case ipp_tag_e.IPP_TAG_NAME:
-    				case ipp_tag_e.IPP_TAG_KEYWORD:
-    				case ipp_tag_e.IPP_TAG_URI:
-    				case ipp_tag_e.IPP_TAG_CHARSET:
-    				case ipp_tag_e.IPP_TAG_LANGUAGE:
-    				case ipp_tag_e.IPP_TAG_MIMETYPE:
-    					cstring[i] = cups.ippGetString(attr, i, lang).getString(0);
     					break;
 
     				default:

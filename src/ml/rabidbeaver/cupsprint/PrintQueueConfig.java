@@ -13,12 +13,7 @@ public class PrintQueueConfig {
 	public String queue;
 	String userName;
 	String password;
-	String orientation;
-	boolean imageFitToPage;
-	boolean noOptions;
 	boolean isDefault;
-	String extensions;
-	String resolution;
 	List<JobOptions> printerAttributes;
 	
 	
@@ -53,11 +48,7 @@ public class PrintQueueConfig {
 	public String getPassword(){
 		return password;
 	}
-	
-	public String getResolution(){
-		return resolution;
-	}
-	
+		
 	public List<JobOptions> getPrinterAttributes(){
 		return printerAttributes;
 	}

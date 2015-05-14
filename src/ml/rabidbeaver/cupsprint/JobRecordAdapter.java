@@ -3,6 +3,7 @@ package ml.rabidbeaver.cupsprint;
 import ml.rabidbeaver.cupsprintservice.R;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_jstate_e;
 import ml.rabidbeaver.jna.cups_job_s;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class JobRecordAdapter extends BaseAdapter{
 		return records[position].id;
 	}
 
+	@SuppressLint("InflateParams")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {

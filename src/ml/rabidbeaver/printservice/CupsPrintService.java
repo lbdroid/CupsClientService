@@ -21,7 +21,6 @@ import android.printservice.PrintDocument;
 import android.printservice.PrintJob;
 import android.printservice.PrintService;
 import android.printservice.PrinterDiscoverySession;
-import android.util.Log;
 import android.widget.Toast;
 
 public class CupsPrintService extends PrintService implements PrintTaskListener{
@@ -34,6 +33,8 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 	@Override
 	protected void onPrintJobQueued(PrintJob job) {
 		PrintJobInfo jobInfo = job.getInfo();
+		
+		boolean advancedresolution = false;
 		
 	    String nickname = jobInfo.getPrinterId().getLocalId();
 	    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
@@ -50,9 +51,8 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 		for (int i=0; i< printerAttributes.size(); i++){
 			JobOptions opt = printerAttributes.get(i);
 			if (opt.name.equals("job-settable-attributes-supported") && job.hasAdvancedOption(opt.value)){
+				if (opt.value.equals("printer-resolution")) advancedresolution = true;
 				cupsAttributes.add(new JobOptions(opt.value,job.getAdvancedStringOption(opt.value)));
-				
-				Log.d("JOB-ATTRIBUTE",opt.value+":"+job.getAdvancedStringOption(opt.value));
 			}
 		}
 		
@@ -89,12 +89,13 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 		else cupsAttributes.add(new JobOptions("orientation-requested","4"));
 
 		// TODO: figure out the correct format for resolution
-		cupsAttributes.add(new JobOptions("printer-resolution",attributes.getResolution().getHorizontalDpi()+"x"+attributes.getResolution().getVerticalDpi()));
+		if (!advancedresolution) cupsAttributes.add(new JobOptions("printer-resolution",attributes.getResolution().getHorizontalDpi()+"x"+attributes.getResolution().getVerticalDpi()));
 		cupsAttributes.add(new JobOptions("print-color-mode",attributes.getColorMode()==PrintAttributes.COLOR_MODE_COLOR?"color":"monochrome"));
 
 		PrintDocument document = job.getDocument();
 		FileInputStream file = new ParcelFileDescriptor.AutoCloseInputStream(document.getData());
 		String fileName = document.getInfo().getName();
+		cupsAttributes.add(new JobOptions("job-name",fileName));
 	    CupsPrintJob cupsPrintJob = new CupsPrintJob(file, fileName);
     	cupsPrintJob.setAttributes(cupsAttributes);
 
@@ -105,6 +106,7 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 	    PrintTask printTask = new PrintTask(cupsClient, config.queue);
 		printTask.setJob(cupsPrintJob);
 		printTask.setServicePrintJob(job);
+
 		printTask.setListener(this);
 		job.start();
 		printTask.execute();

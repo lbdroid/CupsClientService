@@ -6499,10 +6499,8 @@ public interface MlRabidbeaverJnaLibrary extends Library {
 	/**
 	 * Original signature : <code>int cupsAddOption(const char*, const char*, int, cups_option_t**)</code><br>
 	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:134</i><br>
-	 * @deprecated use the safer methods {@link #cupsAddOption(java.lang.String, java.lang.String, int, ml.rabidbeaver.jna.cups_option_s.ByReference[])} and {@link #cupsAddOption(com.sun.jna.Pointer, com.sun.jna.Pointer, int, ml.rabidbeaver.jna.cups_option_s.ByReference[])} instead
 	 */
-	@Deprecated 
-	int cupsAddOption(Pointer name, Pointer value, int num_options, PointerByReference options);
+	int cupsAddOption(String name, String value, int num_options, PointerByReference options);
 	/**
 	 * Original signature : <code>int cupsAddOption(const char*, const char*, int, cups_option_t**)</code><br>
 	 * <i>native declaration : /home/adam/git/CupsClientService/jni/cups-2.0.2/cups/cups.h:134</i>
