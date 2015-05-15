@@ -3,7 +3,7 @@
 <print-service
 	xmlns:android="http://schemas.android.com/apk/res/android"
     android:vendor="rabidbeaver"
-    android:addPrintersActivity="ml.rabidbeaver.cupsprint.PrinterAddEditActivity"
+    android:addPrintersActivity="ml.rabidbeaver.cupsprint.PrinterAddActivity"
     android:settingsActivity="ml.rabidbeaver.cupsprint.PrinterMainActivity"
     android:advancedPrintOptionsActivity="ml.rabidbeaver.printservice.AdvancedOptionsActivity" 
 />

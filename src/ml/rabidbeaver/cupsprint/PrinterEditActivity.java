@@ -3,8 +3,6 @@ package ml.rabidbeaver.cupsprint;
 import java.util.ArrayList;
 import java.util.List;
 
-import ml.rabidbeaver.detect.HostScanTask;
-import ml.rabidbeaver.detect.MdnsScanTask;
 import ml.rabidbeaver.detect.PrinterRec;
 import ml.rabidbeaver.detect.PrinterResult;
 import ml.rabidbeaver.detect.PrinterUpdater;
@@ -31,7 +29,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class PrinterAddEditActivity extends AppCompatActivity implements PrinterUpdater, GetPrinterListener{
+public class PrinterEditActivity extends AppCompatActivity implements PrinterUpdater, GetPrinterListener{
 
 	Spinner  protocol;
 	EditText nickname;
@@ -127,7 +125,7 @@ public class PrinterAddEditActivity extends AppCompatActivity implements Printer
 			    conf.isDefault = isDefault.isChecked();
 			    conf.printerAttributes = printerOptions;
 			    if ((conf.protocol.equals("http")) && (!(conf.password.equals("")))){
-			        AlertDialog.Builder builder = new AlertDialog.Builder(PrinterAddEditActivity.this);
+			        AlertDialog.Builder builder = new AlertDialog.Builder(PrinterEditActivity.this);
 			        builder.setTitle("Warning: Using password with http protocol")
 			        	.setMessage("This will result in both your username and password being sent over the network as plain text. "
 			        		+ "Using the https protocol is reccomended for authentication.")
@@ -155,8 +153,6 @@ public class PrinterAddEditActivity extends AppCompatActivity implements Printer
 		});
 
 		if (!oldPrinter.contentEquals("")){
-			this.setTitle(R.string.title_activity_printer_edit);
-
 		    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
 		    PrintQueueConfig conf = dbconf.getPrinter(oldPrinter);
 			dbconf.close();
@@ -190,25 +186,12 @@ public class PrinterAddEditActivity extends AppCompatActivity implements Printer
 	  
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.printer_add_edit_menu, menu);
 		return true;
 	}
 
 	@Override
 	  public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-	    	case R.id.scanhost:
-	    	    String user = userName.getText().toString();
-	    	    if (user.equals("")){
-	    	    	user = "anonymous";
-	    	    }
-	    	    String passwd = password.getText().toString();
-	    		new HostScanTask(this, this, user, passwd).execute();
-	    		break;
-	    	case R.id.scanmdns:
-	    		new MdnsScanTask(this, this).execute();
-	    		break;
 	    	case android.R.id.home:
 	            finish();
 	    }

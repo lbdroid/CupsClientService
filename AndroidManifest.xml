@@ -37,7 +37,14 @@
             android:label="@string/title_activity_printer_list" >
         </activity>
         <activity
-            android:name="ml.rabidbeaver.cupsprint.PrinterAddEditActivity"
+            android:name="ml.rabidbeaver.cupsprint.PrinterEditActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true"
+            android:label="@string/title_activity_printer_edit"
+            android:windowSoftInputMode="stateHidden" >
+        </activity>
+        <activity
+            android:name="ml.rabidbeaver.cupsprint.PrinterAddActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:label="@string/title_activity_printer_add"

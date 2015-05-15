@@ -92,7 +92,7 @@ public class PrinterMainActivity extends AppCompatActivity {
 	private void doOperation(final String nickname, final int op){
 		
 		if (op == 0){
-			Intent intent = new Intent(this, PrinterAddEditActivity.class);
+			Intent intent = new Intent(this, PrinterEditActivity.class);
 			intent.putExtra("printer", nickname);
 			startActivity(intent);
 		}
@@ -135,7 +135,7 @@ public class PrinterMainActivity extends AppCompatActivity {
 	}
 	
 	public void addPrinter(){
-		Intent intent = new Intent(this, PrinterAddEditActivity.class);
+		Intent intent = new Intent(this, PrinterEditActivity.class);
 		intent.putExtra("printer", "");
 		startActivity(intent);
 	}
