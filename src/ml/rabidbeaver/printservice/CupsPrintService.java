@@ -21,6 +21,7 @@ import android.printservice.PrintDocument;
 import android.printservice.PrintJob;
 import android.printservice.PrintService;
 import android.printservice.PrinterDiscoverySession;
+import android.util.Log;
 import android.widget.Toast;
 
 public class CupsPrintService extends PrintService implements PrintTaskListener{
@@ -121,22 +122,23 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 		Exception exception = task.getException();
 		PrintJob servicePrintJob = task.getServicePrintJob();
 		String jobname = servicePrintJob.getDocument().getInfo().getName();
-		String errmsg = "CupsPrint " + jobname + ": Apparently, this is an error message.";
+		String msg = "CupsPrint " + jobname + ": ";
 		
 		if (exception != null){
-			Toast.makeText(this, errmsg + exception.toString(), Toast.LENGTH_LONG).show();
+			Log.e("ONPRINTTASKDONE", msg + exception.getMessage());
+			Toast.makeText(this, msg + "FAILED WITH EXCEPTION!!!", Toast.LENGTH_LONG).show();
 			servicePrintJob.cancel();
 			return;
 		}
 		
 		int result = task.getResult();
 		if (result == 0){
-			Toast.makeText(this, errmsg + "Print job returned 0", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, msg + "Error unable to create print job.", Toast.LENGTH_LONG).show();
 			servicePrintJob.cancel();
 	    	return;
 	    }
 		
-		Toast.makeText(this, errmsg, Toast.LENGTH_LONG).show();
+		Toast.makeText(this, msg+"Success", Toast.LENGTH_LONG).show();
 		servicePrintJob.complete();
 	}
 }
