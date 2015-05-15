@@ -165,7 +165,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		}
 		try {
 			Cipher cipher = Cipher.getInstance("AES");
-	        cipher.init(Cipher.ENCRYPT_MODE, CupsPrintApp.getSecretKey());
+	        cipher.init(Cipher.ENCRYPT_MODE, CupsPrintFramework.getSecretKey());
 	        byte[] encryptedBytes = cipher.doFinal(data.getBytes());
 	        return new String(Base64.encode(encryptedBytes, Base64.DEFAULT));
 		}catch (Exception e){
@@ -181,7 +181,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		}
 		try {
 			Cipher cipher = Cipher.getInstance("AES");
-	        cipher.init(Cipher.DECRYPT_MODE, CupsPrintApp.getSecretKey());
+	        cipher.init(Cipher.DECRYPT_MODE, CupsPrintFramework.getSecretKey());
 	        byte[] decryptedBytes = cipher.doFinal(Base64.decode(data, Base64.DEFAULT));
 	        return new String(decryptedBytes);
 		}catch (Exception e){

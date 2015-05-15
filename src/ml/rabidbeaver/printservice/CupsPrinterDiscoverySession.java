@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import ml.rabidbeaver.cupsjni.JobOptions;
-import ml.rabidbeaver.cupsprint.CupsPrintApp;
+import ml.rabidbeaver.cupsprint.CupsPrintFramework;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.discovery.PrinterDiscoveryInfo;
@@ -18,6 +18,7 @@ import android.print.PrinterCapabilitiesInfo;
 import android.print.PrinterId;
 import android.print.PrinterInfo;
 import android.printservice.PrinterDiscoverySession;
+import android.util.Log;
 import android.widget.Toast;
 
 public class CupsPrinterDiscoverySession extends PrinterDiscoverySession implements PrinterDiscoveryListener {
@@ -25,15 +26,19 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 	private CupsPrintService printService;
 	
 	public CupsPrinterDiscoverySession(CupsPrintService printService){
+		Log.d("CUPSPRINTERDISCOVERYSESSION","init()");
 		this.printService = printService;
 	}
 	
 	@Override
-	public void onDestroy(){}
+	public void onDestroy(){
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onDestroy()");
+	}
 	
 	@Override
 	public void onStartPrinterDiscovery(List<PrinterId> arg0) {
-		Map<String, PrinterDiscoveryInfo> printerMap = CupsPrintApp.getPrinterDiscovery().addDiscoveryListener(this);
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onStartPrinterDiscovery()");
+		Map<String, PrinterDiscoveryInfo> printerMap = CupsPrintFramework.getPrinterDiscovery().addDiscoveryListener(this);
 		Iterator<String> it = printerMap.keySet().iterator();
 		List<PrinterInfo> printers = new ArrayList<PrinterInfo>();
 		while (it.hasNext()){
@@ -49,73 +54,73 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 			PrinterDiscoveryInfo info = printerMap.get(printerInfo.getName());
 			if (info == null) printerIds.add(printerInfo.getId());
 		}
-		this.removePrinters(printerIds);
+		removePrinters(printerIds);
 	 }
 
 	@Override
 	public void onStopPrinterDiscovery() {
-		CupsPrintApp.getPrinterDiscovery().removeDiscoveryListener(this);
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onStopPrinterDiscovery()");
+		CupsPrintFramework.getPrinterDiscovery().removeDiscoveryListener(this);
 	}
 	
 	@Override
 	public void onStartPrinterStateTracking(PrinterId printerId) {
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onStartPrinterStateTracking()");
 		String nickName = printerId.getLocalId();
 
-		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
+		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintFramework.getContext());
 		PrintQueueConfig config = dbconf.getPrinter(nickName);
 		dbconf.close();
 		if (config != null)
 			setPrinterCapabilities(nickName, config);
 	}
 
+	@Override
+	public void onStopPrinterStateTracking(PrinterId arg0) {
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onStopPrinterStateTracking()");
+	}
 
 	@Override
-	public void onStopPrinterStateTracking(PrinterId arg0) {}
-
-	@Override
-	public void onValidatePrinters(List<PrinterId> arg0) {}
+	public void onValidatePrinters(List<PrinterId> arg0) {
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onValidatePrinters()");
+	}
 
 	@Override
 	public void onPrinterAdded(final PrinterDiscoveryInfo info) {
-		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onPrinterAdded()");
+		Handler handler = new Handler(CupsPrintFramework.getContext().getMainLooper());
 		Runnable runnable = new Runnable(){
 			@Override
 			public void run() {
-				onPrinterAddedMainThread(info);
+				List<PrinterInfo> printers = new ArrayList<PrinterInfo>();
+				PrinterInfo printerInfo = createPrinterInfo(info);
+				if (printerInfo != null){
+					printers.add(printerInfo);
+					CupsPrinterDiscoverySession.this.addPrinters(printers);
+				}
 			}
 		};
 		handler.post(runnable);
-	}
-	
-	public void onPrinterAddedMainThread(PrinterDiscoveryInfo info){
-		List<PrinterInfo> printers = new ArrayList<PrinterInfo>();
-		PrinterInfo printerInfo = createPrinterInfo(info);
-		if (printerInfo != null){
-			printers.add(printerInfo);
-			this.addPrinters(printers);
-		}
 	}
 
 	@Override
 	public void onPrinterRemoved(final PrinterDiscoveryInfo info) {
-		Handler handler = new Handler(CupsPrintApp.getContext().getMainLooper());
+		Log.d("CUPSPRINTERDISCOVERYSESSION","onPrinterRemoved()");
+		Handler handler = new Handler(CupsPrintFramework.getContext().getMainLooper());
 		Runnable runnable = new Runnable(){
 			@Override
 			public void run() {
-				onPrinterRemovedMainThread(info);
+				List<PrinterId> ids = new ArrayList<PrinterId>();
+				PrinterId id = printService.generatePrinterId(info.getNickname());
+				ids.add(id);
+				CupsPrinterDiscoverySession.this.removePrinters(ids);
 			}
 		};
 		handler.post(runnable);
 	}
 	
-	private void onPrinterRemovedMainThread(PrinterDiscoveryInfo info){
-		List<PrinterId> ids = new ArrayList<PrinterId>();
-		PrinterId id = printService.generatePrinterId(info.getNickname());
-		ids.add(id);
-		this.removePrinters(ids);
-	}
-	
 	private PrinterInfo createPrinterInfo(PrinterDiscoveryInfo info){
+		Log.d("CUPSPRINTERDISCOVERYSESSION","createPrinterInfo()");
 		PrinterId id = printService.generatePrinterId(info.getNickname());
 		PrinterInfo.Builder builder = new PrinterInfo.Builder(id, info.getNickname(), PrinterInfo.STATUS_IDLE);
 		try{
@@ -128,7 +133,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 	
 	@SuppressLint("DefaultLocale")
 	private void setPrinterCapabilities(String nickname, PrintQueueConfig config){
-		
+		Log.d("CUPSPRINTERDISCOVERYSESSION","setPrinterCapabilities()");
 		PrinterId id = printService.generatePrinterId(nickname);
 		PrinterInfo.Builder infoBuilder = new PrinterInfo.Builder(id, nickname, PrinterInfo.STATUS_IDLE);
 		PrinterCapabilitiesInfo.Builder capBuilder = new PrinterCapabilitiesInfo.Builder(id);
@@ -206,7 +211,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 		}
 		catch (Exception e){
 			Toast.makeText(this.printService, e.toString(), Toast.LENGTH_LONG).show();
- 			System.err.println(e.toString());
+			Log.d("CUPSPRINTERDISCOVERYSESSION",e.toString());
 			return;
 		}
 
@@ -216,7 +221,7 @@ public class CupsPrinterDiscoverySession extends PrinterDiscoverySession impleme
 			this.addPrinters(infos);
 		} catch (Exception e){
 			Toast.makeText(this.printService, e.toString(), Toast.LENGTH_LONG).show();
-			System.err.println(e.toString());
+			Log.d("CUPSPRINTERDISCOVERYSESSION",e.toString());
 		}
 	}
 }

@@ -113,7 +113,7 @@ public class PrinterMainActivity extends Activity {
 		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, 
 				android.R.layout.simple_list_item_1, printersArray);
 		printersListView.setAdapter(aa);
-		CupsPrintApp.getPrinterDiscovery().updateStaticConfig();
+		CupsPrintFramework.getPrinterDiscovery().updateStaticConfig();
 	}
 	
 	public void addPrinter(){

@@ -11,16 +11,16 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Base64;
 
-public class CupsPrintApp extends Application{
+public class CupsPrintFramework extends Application{
     
-	private static CupsPrintApp instance;
+	private static CupsPrintFramework instance;
 	private static PrinterDiscovery printerDiscovery;
 	private static SecretKey secretKey;
 	private static final String PREF_FILE = "userData";
 	private static final String USER_KEY = "userKey";
 
 
-    public static CupsPrintApp getInstance() {
+    public static CupsPrintFramework getInstance() {
         return instance;
     }
 

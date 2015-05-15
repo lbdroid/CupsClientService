@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import ml.rabidbeaver.cupsprint.CupsPrintApp;
+import ml.rabidbeaver.cupsprint.CupsPrintFramework;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 
@@ -42,7 +42,7 @@ public class PrinterDiscovery{
 	
 	private void readStaticConfig(){
 		
-		PrintQueueConfHandler confdb = new PrintQueueConfHandler(CupsPrintApp.getContext());
+		PrintQueueConfHandler confdb = new PrintQueueConfHandler(CupsPrintFramework.getContext());
 		ArrayList<String> iniPrintersArray = confdb.getPrintQueueConfigs();
 		
 		synchronized(printerInfos){

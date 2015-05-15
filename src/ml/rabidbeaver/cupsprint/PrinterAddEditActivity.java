@@ -296,7 +296,7 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	
 	public void doSave(PrintQueueConfHandler confdb, PrintQueueConfig conf){
 	     confdb.addOrUpdatePrinter(conf, oldPrinter);
-	     CupsPrintApp.getPrinterDiscovery().updateStaticConfig();
+	     CupsPrintFramework.getPrinterDiscovery().updateStaticConfig();
 		 Intent intent = new Intent(this, PrinterMainActivity.class);
 	     startActivity(intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 	}

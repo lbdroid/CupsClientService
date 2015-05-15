@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import ml.rabidbeaver.cupsprint.CupsPrintApp;
+import ml.rabidbeaver.cupsprint.CupsPrintFramework;
 import ml.rabidbeaver.cupsprint.PrintQueueConfig;
 import ml.rabidbeaver.cupsprint.PrintQueueConfHandler;
 import ml.rabidbeaver.tasks.PrintTask;
@@ -38,7 +38,7 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 		boolean advancedresolution = false;
 		
 	    String nickname = jobInfo.getPrinterId().getLocalId();
-	    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintApp.getContext());
+	    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(CupsPrintFramework.getContext());
 		PrintQueueConfig config = dbconf.getPrinter(nickname);
 		dbconf.close();
 		if (config == null){
