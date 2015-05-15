@@ -62,6 +62,7 @@ public class CupsClient {
 	
 
 	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){
+		if (serv_conn_p == null) return null;
 		PointerByReference p = new PointerByReference();
 		int num = cups.cupsGetJobs2(serv_conn_p, p, queue, myJobs?1:0, whichJobs);
 		if (num == 0) return null;
@@ -78,6 +79,7 @@ public class CupsClient {
     }
 
 	public cups_dest_s getPrinter(String queue, boolean extended){
+		if (serv_conn_p == null) return null;
 		PointerByReference p = new PointerByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, p);
 		Pointer ptr = p.getValue();
@@ -90,6 +92,7 @@ public class CupsClient {
     }
 	
 	public cups_dest_s[] listPrinters(){
+		if (serv_conn_p == null) return null;
 		PointerByReference p = new PointerByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, p);
 		Pointer ptr = p.getValue();
@@ -101,6 +104,7 @@ public class CupsClient {
 	}
     
     public int print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
+    	if (serv_conn_p == null) return -1;
     	Pointer m = new Memory(printJob.getJobName().length() + 1);
     	m.setString(0, printJob.getJobName());
 
@@ -142,6 +146,7 @@ public class CupsClient {
     
     public List<JobOptions> getPrinterOptions(cups_dest_s printer){
     	List<JobOptions> printerOptions = new ArrayList<JobOptions>();
+    	if (serv_conn_p == null) return printerOptions;
     	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
     	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "/printers/"+printer.name.getString(0));
     	PointerByReference response = cups.cupsDoRequest(serv_conn_p, request, "/");

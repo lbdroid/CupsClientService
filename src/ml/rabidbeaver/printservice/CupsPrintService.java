@@ -125,7 +125,7 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 		String msg = "CupsPrint " + jobname + ": ";
 		
 		if (exception != null){
-			Log.e("ONPRINTTASKDONE", msg + exception.getMessage());
+			Log.d("ONPRINTTASKDONE", msg + exception);
 			Toast.makeText(this, msg + "FAILED WITH EXCEPTION!!!", Toast.LENGTH_LONG).show();
 			servicePrintJob.cancel();
 			return;
@@ -134,6 +134,11 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 		int result = task.getResult();
 		if (result == 0){
 			Toast.makeText(this, msg + "Error unable to create print job.", Toast.LENGTH_LONG).show();
+			servicePrintJob.cancel();
+	    	return;
+	    }
+		if (result == -1){
+			Toast.makeText(this, msg + "Network error.", Toast.LENGTH_LONG).show();
 			servicePrintJob.cancel();
 	    	return;
 	    }
