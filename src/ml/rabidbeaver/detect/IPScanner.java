@@ -47,11 +47,11 @@ public class IPScanner implements Runnable{
                     	cups_dest_s[] pList = cupsClient.listPrinters();
                     	for (cups_dest_s p: pList){
                     		PrinterRec rec = new PrinterRec(
-                    			p.name.toString(),
+                    			p.name.getString(0),
                                 "http",
                                 ip,
                                 port,
-                                p.name.toString()
+                                p.name.getString(0)
                                 );
                     		IPTester.httpResults.printerRecs.add(rec);
                     		//System.out.println(p.getName());
@@ -65,11 +65,11 @@ public class IPScanner implements Runnable{
                     	cups_dest_s[] pList = cupsClient.listPrinters();
                     	for (cups_dest_s p: pList){
                     		PrinterRec rec = new PrinterRec(
-                    			p.name.toString(),
+                    			p.name.getString(0),
                                 "https",
                                 ip,
                                 port,
-                                p.name.toString()
+                                p.name.getString(0)
                                 );
                     		IPTester.httpsResults.printerRecs.add(rec);
                         //System.out.println(p.getName());
