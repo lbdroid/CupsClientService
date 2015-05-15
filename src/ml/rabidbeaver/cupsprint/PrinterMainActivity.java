@@ -3,18 +3,20 @@ package ml.rabidbeaver.cupsprint;
 import java.util.ArrayList;
 
 import ml.rabidbeaver.cupsprintservice.R;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class PrinterMainActivity extends Activity {
+public class PrinterMainActivity extends AppCompatActivity {
 
 	ListView printersListView;
 	ArrayList<String> printersArray;
@@ -23,6 +25,13 @@ public class PrinterMainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.printer_main_activity);
+
+		Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+
 		printersListView=(ListView) findViewById(R.id.printersListView);
 		printersListView.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View view,
@@ -30,6 +39,15 @@ public class PrinterMainActivity extends Activity {
 	        	setOperation(position);
 	        	}
 			});
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+	    switch (menuItem.getItemId()) {
+	        case android.R.id.home:
+	            finish();
+	    }
+	    return (super.onOptionsItemSelected(menuItem));
 	}
 	
 	@Override

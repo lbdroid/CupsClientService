@@ -16,11 +16,12 @@ import ml.rabidbeaver.cupsjni.CupsClient;
 import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class PrinterAddEditActivity extends Activity implements PrinterUpdater, GetPrinterListener{
+public class PrinterAddEditActivity extends AppCompatActivity implements PrinterUpdater, GetPrinterListener{
 
 	Spinner  protocol;
 	EditText nickname;
@@ -48,6 +49,12 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.printer_add_edit_activity);
 		
+		Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		
 		Intent intent = getIntent();
 		
 		ArrayList<String> protocols = new ArrayList<String>();
@@ -58,7 +65,8 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 		if (oldPrinter == null) oldPrinter="";
 		nickname = (EditText) findViewById(R.id.editNickname);
 		protocol = (Spinner) findViewById(R.id.editProtocol);
-		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, protocols);
+		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, protocols);
+		aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		protocol.setAdapter(aa);
 		host = (EditText) findViewById(R.id.editHost);
 		port = (EditText) findViewById(R.id.editPort);
@@ -201,6 +209,8 @@ public class PrinterAddEditActivity extends Activity implements PrinterUpdater, 
 	    	case R.id.scanmdns:
 	    		new MdnsScanTask(this, this).execute();
 	    		break;
+	    	case android.R.id.home:
+	            finish();
 	    }
 	    return super.onContextItemSelected(item);
 	 }

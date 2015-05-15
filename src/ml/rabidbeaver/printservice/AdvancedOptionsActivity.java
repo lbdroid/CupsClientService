@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -84,6 +83,8 @@ public class AdvancedOptionsActivity extends Activity {
 			}
 		}
 
+		final float scale = getResources().getDisplayMetrics().density;
+		int pixels = (int) (20 * scale + 0.5f);
 		for (int i=0; i< jobOptions.size(); i++){
 			// TODO: if the number of supported options is a RANGE "#-#", create a number field with +/-
 			// else (this is a string...) create a spinner.
@@ -97,7 +98,8 @@ public class AdvancedOptionsActivity extends Activity {
 					if (((ArrayList<String>)supp_opt[i]).get(j).equals(def_opt[i])) defidx = j;
 				}
 
-				ArrayAdapter<JobOptions> ab = new ArrayAdapter<JobOptions>(this, android.R.layout.simple_spinner_item, spinlist);
+				ArrayAdapter<JobOptions> ab = new ArrayAdapter<JobOptions>(this, android.R.layout.simple_spinner_dropdown_item, spinlist);
+				ab.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				Spinner newspinner = new Spinner(this);
 				newspinner.setAdapter(ab);
 				if (defidx > -1) newspinner.setSelection(defidx);
@@ -115,7 +117,8 @@ public class AdvancedOptionsActivity extends Activity {
 					@Override
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
-			
+				
+				newspinner.setPadding(pixels, 0, 0, 0);
 				TableRow tr = new TableRow(this);
 				TextView label = new TextView(this);
 				label.setText(name_opt[i]);
@@ -126,8 +129,8 @@ public class AdvancedOptionsActivity extends Activity {
 			}
 		}
 
-        Button oKButton = new Button(this);
-        oKButton.setText("OK");
+        Button oKButton = (Button) findViewById(R.id.okbutton);//new Button(this);
+        
         oKButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -145,10 +148,5 @@ public class AdvancedOptionsActivity extends Activity {
         		finish();
             }
         });
-
-        TableRow buttonRow = new TableRow(this);
-		buttonRow.addView(oKButton);
-                
-        layout.addView(buttonRow,new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 	}
 }

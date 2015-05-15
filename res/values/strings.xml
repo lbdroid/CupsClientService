@@ -24,7 +24,7 @@
     <string name="isdefault">Default printer</string>
     <string name="importcert">Get Certificate</string>
     <string name="resolution">Resolution</string>
-    <string name="save">Save</string>
+    <string name="save">Save Printer</string>
     <string name="scanhost">Scan Hosts</string>
     <string name="scanmdns">Scan mDNS</string>
     <string name="showin">Show In</string>
@@ -37,5 +37,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_advanced_settings">Advanced Settings</string>
     <string name="title_activity_job_list">Jobs</string>
+    <string name="button_ok">OK</string>
 
 </resources>

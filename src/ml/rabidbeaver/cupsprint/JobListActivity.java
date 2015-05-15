@@ -17,13 +17,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class JobListActivity extends Activity implements GetPrinterListener{
+public class JobListActivity extends AppCompatActivity implements GetPrinterListener{
 	
 	private PrintQueueConfig config;
 	private Updater updater;
@@ -36,6 +39,13 @@ public class JobListActivity extends Activity implements GetPrinterListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.job_list_activity);
+		
+		Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		
 		Intent intent = getIntent();
 		String nickname = intent.getStringExtra("printer");
 		if (nickname == null){
@@ -90,6 +100,15 @@ public class JobListActivity extends Activity implements GetPrinterListener{
         	}
 		});
 
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+	    switch (menuItem.getItemId()) {
+	        case android.R.id.home:
+	            finish();
+	    }
+	    return (super.onOptionsItemSelected(menuItem));
 	}
 
 	@Override

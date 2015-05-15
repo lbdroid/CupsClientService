@@ -1,169 +1,175 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
-
-<TableLayout 
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:orientation="vertical"
+    android:background="@color/toolbarPrimary"
+    android:fitsSystemWindows="true" >
     
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editNickname"
-        	android:text="@string/nickname" />
-    	<EditText
-        	android:id="@+id/editNickname"
-        	android:inputType="text"
-			android:layout_weight="1"
-			android:layout_width="wrap_content"
-        	android:layout_height="wrap_content" />
-    </TableRow>
-    <TableRow>
-    	<TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="@string/protocol" />
+    <include layout="@layout/toolbar" />
 
-    	<Spinner
-        	android:id="@+id/editProtocol"
-        	android:inputType="text"
-        	android:maxLines="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
-    <TableRow>
-    	<TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editHost"
-        	android:text="@string/host" />
-
-    	<EditText
-        	android:id="@+id/editHost"
-        	android:inputType="text"
-			android:layout_weight="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
+	<ScrollView
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:background="#FFFFFFFF" >
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:orientation="vertical" >
+		<TableLayout 
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:layout_margin="10dp">
     
-    <TableRow>
-    	<TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editPort"
-        	android:text="@string/port" />
+    		<TableRow android:minHeight="48dp" >
+        		<TextView
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:labelFor="@+id/editNickname"
+        			android:layout_gravity="center_vertical"
+        			android:text="@string/nickname" />
+    			<EditText
+        			android:id="@+id/editNickname"
+        			android:inputType="text"
+					android:layout_weight="1"
+					android:layout_gravity="center_vertical"
+					android:layout_width="wrap_content"
+        			android:layout_height="wrap_content" />
+    		</TableRow>
+    		<TableRow android:minHeight="48dp" >
+	    		<TextView
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:text="@string/protocol" />
 
-    	<EditText
-        	android:id="@+id/editPort"
-        	android:inputType="number"
-        	android:maxLines="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
+    			<Spinner
+	        		android:id="@+id/editProtocol"
+        			android:inputType="text"
+        			android:maxLines="1"
+        			android:layout_gravity="center_vertical"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"/>
+    		</TableRow>
+    		<TableRow android:minHeight="48dp" >
+    			<TextView
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:labelFor="@+id/editHost"
+        			android:text="@string/host" />
+
+    			<EditText
+        			android:id="@+id/editHost"
+        			android:inputType="text"
+					android:layout_weight="1"
+					android:layout_gravity="center_vertical"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"/>
+    		</TableRow>
     
+    		<TableRow android:minHeight="48dp" >
+    			<TextView
+	        		android:layout_width="wrap_content"
+    	    		android:layout_height="wrap_content"
+    	    		android:layout_gravity="center_vertical"
+        			android:labelFor="@+id/editPort"
+        			android:text="@string/port" />
+
+	    		<EditText
+    	    		android:id="@+id/editPort"
+        			android:inputType="number"
+        			android:maxLines="1"
+        			android:layout_gravity="center_vertical"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"/>
+    		</TableRow>
     	
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editQueue"
-        	android:text="@string/queue" />
+	    	<TableRow android:minHeight="48dp" >
+    	    	<TextView
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:labelFor="@+id/editQueue"
+        			android:text="@string/queue" />
 
-    	<EditText
-        	android:id="@+id/editQueue"
-        	android:inputType="text"
-			android:layout_weight="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
+	    		<EditText
+    	    		android:id="@+id/editQueue"
+        			android:inputType="text"
+					android:layout_weight="1"
+        			android:layout_width="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:layout_height="wrap_content"/>
+    		</TableRow>
     
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editUserName"
-        	android:text="@string/username" />
+    		<TableRow android:minHeight="48dp" >
+        		<TextView
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:labelFor="@+id/editUserName"
+        			android:text="@string/username" />
 
-    	<EditText
-        	android:id="@+id/editUserName"
-        	android:inputType="text"
-			android:layout_weight="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
+    			<EditText
+        			android:id="@+id/editUserName"
+        			android:inputType="text"
+					android:layout_weight="1"
+					android:layout_gravity="center_vertical"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"/>
+    		</TableRow>
     
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:labelFor="@+id/editPassword"
-        	android:text="@string/password" />
+    		<TableRow android:minHeight="48dp" >
+        		<TextView
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:labelFor="@+id/editPassword"
+        			android:text="@string/password" />
 
-    	<EditText
-        	android:id="@+id/editPassword"
-        	android:inputType="textPassword"
-			android:layout_weight="1"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
+    			<EditText
+        			android:id="@+id/editPassword"
+        			android:inputType="textPassword"
+        			android:layout_gravity="center_vertical"
+					android:layout_weight="1"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"/>
+    		</TableRow>
     
-    <TableRow>
-        <TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="@string/isdefault" />
+    		<TableRow android:minHeight="48dp" >
+        		<TextView
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_vertical"
+        			android:text="@string/isdefault" />
 
-    	<CheckBox
-        	android:id="@+id/editIsDefault"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"/>
-    </TableRow>
-    <TableRow>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="1dp" />
-    	<View
-            android:layout_width="1dp"
-            android:layout_height="25dp" />
-    </TableRow>
-    <TableRow>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="1dp" />
-    	<Button
-        	android:id="@+id/editTest"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="@string/test" />
-    </TableRow>
-    <TableRow>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="1dp" />
-    	<View
-            android:layout_width="1dp"
-            android:layout_height="25dp" />
-    </TableRow>
-    <TableRow>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="1dp" />
-       	<Button
-        	android:id="@+id/editSave"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="@string/save"
-     		android:enabled="false" />
-    </TableRow>
-    <TableRow>
-    	<TextView
-        	android:layout_width="wrap_content"
-        	android:layout_height="20dp" />
-    </TableRow>
-    
-</TableLayout>
-</ScrollView>
+    			<CheckBox
+        			android:id="@+id/editIsDefault"
+        			android:layout_gravity="center_vertical"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"/>
+    		</TableRow>
+		</TableLayout>
+		
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal" >
+			<Button
+	        	android:id="@+id/editTest"
+    	    	android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		style="?android:attr/buttonBarButtonStyle"
+        		android:text="@string/test" />
+		    			
+		    <Button
+        		android:id="@+id/editSave"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="@string/save"
+        		style="?android:attr/buttonBarButtonStyle"
+     			android:enabled="false" />
+		</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

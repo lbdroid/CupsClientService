@@ -1,14 +1,17 @@
 package ml.rabidbeaver.cupsprint;
 
 import java.util.List;
+
 import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.content.Intent;
+import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MimeTypesActivity extends Activity {
+public class MimeTypesActivity extends AppCompatActivity {
 
 	PrintQueueConfig printConfig;
 	
@@ -16,6 +19,13 @@ public class MimeTypesActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mime_types_activity);
+		
+		Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		
 		Intent intent = getIntent();
 		String sPrinter = intent.getStringExtra("printer");
 		PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
@@ -37,5 +47,14 @@ public class MimeTypesActivity extends Activity {
 		TextView mimeList = (TextView) findViewById(R.id.mimeList);
 
 		mimeList.setText(mimetypes);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem menuItem) {
+	    switch (menuItem.getItemId()) {
+	        case android.R.id.home:
+	            finish();
+	    }
+	    return (super.onOptionsItemSelected(menuItem));
 	}
 }

@@ -85,7 +85,7 @@ public class JobRecordAdapter extends BaseAdapter{
         }catch (Exception e){
         	System.err.println(e.toString());
         }
-        
+        //convertView.setMinimumHeight(200);
         return convertView;
 	}
 
