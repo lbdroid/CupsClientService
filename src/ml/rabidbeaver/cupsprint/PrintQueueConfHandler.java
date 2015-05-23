@@ -26,7 +26,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String create = "CREATE TABLE printers (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 				+ "name VARCHAR, host VARCHAR, protocol VARCHAR, port INTEGER, queue VARCHAR, "
-				+ "username VARCHAR, password VARCHAR, tunneluuid VARCHAR, tunnelhost VARCHAR, "
+				+ "username VARCHAR, password VARCHAR, tunneluuid VARCHAR, tunnel VARCHAR, "
 				+ "tunnelport INTEGER, tunnelfallback INTEGER, def INTEGER DEFAULT 0);";
 		db.execSQL(create);
 		create = "CREATE TABLE printer_opts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
@@ -47,7 +47,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		case 3:
 			String alter = "ALTER TABLE printers ADD COLUMN tunneluuid VARCHAR;";
 			db.execSQL(alter);
-			alter = "ALTER TABLE printers ADD COLUMN tunnelhost VARCHAR;";
+			alter = "ALTER TABLE printers ADD COLUMN tunnel VARCHAR;";
 			db.execSQL(alter);
 			alter = "ALTER TABLE printers ADD COLUMN tunnelport INTEGER;";
 			db.execSQL(alter);
@@ -101,6 +101,10 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		values.put("queue", config.queue);
 		values.put("username", config.userName);
 		values.put("password", encrypt(config.password));
+		values.put("tunnel", config.tunnel);
+		values.put("tunneluuid", config.tunneluuid);
+		values.put("tunnelport", config.tunnelport);
+		values.put("tunnelfallback", config.tunnelfallback);
 		values.put("def", config.isDefault);
 		
 		if (printerExists(oldPrinter))
@@ -144,7 +148,8 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 	public PrintQueueConfig getPrinter(String name){
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query("printers", new String[]{"host","protocol","port","queue",
-				"username","password","def"}, "name = ?", new String[]{name}, null, null, null);
+				"username","password","def", "tunnel", "tunneluuid", "tunnelport", "tunnelfallback"},
+				"name = ?", new String[]{name}, null, null, null);
 		
 		if (cursor == null || cursor.getCount() < 1) return null;
 		
@@ -153,7 +158,11 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		String protocol = cursor.getString(1);
 		String port = Integer.toString(cursor.getInt(2));
 		String queue = cursor.getString(3);
-		PrintQueueConfig pqc = new PrintQueueConfig(name, protocol, host, port, queue);
+		String tunnel = cursor.getString(7);
+		String tunneluuid = cursor.getString(8);
+		String tunnelport = cursor.getString(9);
+		boolean tunnelfallback = cursor.getInt(10)>0;
+		PrintQueueConfig pqc = new PrintQueueConfig(name, protocol, host, port, queue, tunnel, tunneluuid, tunnelport, tunnelfallback);
 		pqc.userName = cursor.getString(4);
 		pqc.password = decrypt(cursor.getString(5));
 		pqc.isDefault = cursor.getInt(6)!=0;

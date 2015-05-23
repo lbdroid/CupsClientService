@@ -42,6 +42,12 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 	EditText password;
 	CheckBox isDefault;
 	String oldPrinter;
+	String tunnelName = "";
+	String tunnelUuid = "";
+	String tunnelPort = "";
+	//boolean tunnelFallback = true;
+	CheckBox fallback;
+	EditText tunnel;
 	List<JobOptions> printerOptions;
 
 	@Override
@@ -74,6 +80,9 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 		userName = (EditText) findViewById(R.id.editUserName);
 		password = (EditText) findViewById(R.id.editPassword);
 
+		fallback = (CheckBox) findViewById(R.id.tunnelFallback);
+		tunnel = (EditText) findViewById(R.id.sshTunnel);
+		
 		isDefault = (CheckBox) findViewById(R.id.editIsDefault);
 		
 		Button saveBtn = (Button) findViewById(R.id.editSave);
@@ -117,7 +126,7 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 			    String sProtocol = (String) protocol.getSelectedItem();
 			    String sPassword = password.getText().toString().trim();
 
-			    final PrintQueueConfig conf = new PrintQueueConfig(sNickname, sProtocol, sHost, sPort, sQueue);
+			    final PrintQueueConfig conf = new PrintQueueConfig(sNickname, sProtocol, sHost, sPort, sQueue, tunnelName, tunnelUuid, tunnelPort, fallback.isChecked());
 			    if (checkExists(conf.getPrintQueue(), confdb)){
 			    	host.requestFocus();
 			    	return;
@@ -183,6 +192,13 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 		    	userName.setText(conf.userName);
 		    	password.setText(conf.password);
 		 		isDefault.setChecked(conf.isDefault);
+		 		
+		 		tunnelUuid = conf.tunneluuid;
+		 		tunnelName = conf.tunnel;
+		 		tunnelPort = conf.tunnelport;
+		 		fallback.setChecked(conf.tunnelfallback);
+		 		fallback.setEnabled(tunnelUuid.length() > 1);
+		 		tunnel.setText(tunnelName);
 		 		 
 		 		printerOptions = conf.printerAttributes; 
 
@@ -216,10 +232,12 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK && data != null && data.hasExtra("name") && data.hasExtra("uuid") && data.hasExtra("port")) {
-			String tunnelName = data.getStringExtra("name");
-			String tunnelUuid = data.getStringExtra("uuid");
-			int tunnelPort = data.getIntExtra("port", -1);
-			Log.d("PRINTEREDIT","Name:"+tunnelName+", Uuid:"+tunnelUuid+", Port:"+Integer.toString(tunnelPort));
+			tunnelName = data.getStringExtra("name");
+			tunnelUuid = data.getStringExtra("uuid");
+			tunnelPort = Integer.toString(data.getIntExtra("port", -1));
+			fallback.setEnabled(true);
+			tunnel.setText(tunnelName);
+			Log.d("PRINTEREDIT","Name:"+tunnelName+", Uuid:"+tunnelUuid+", Port:"+tunnelPort);
 		}
     }
 	
@@ -259,7 +277,8 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 				(String)protocol.getSelectedItem(),
 					host.getText().toString(),
 					port.getText().toString(),
-					queue.getText().toString());
+					queue.getText().toString(),
+					tunnelName, tunnelUuid, tunnelPort, fallback.isChecked());
 		
 	    CupsClient client;
 	    try {

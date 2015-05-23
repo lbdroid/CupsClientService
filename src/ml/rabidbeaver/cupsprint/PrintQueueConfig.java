@@ -13,16 +13,23 @@ public class PrintQueueConfig {
 	public String queue;
 	String userName;
 	String password;
+	String tunnel;
+	String tunneluuid;
+	String tunnelport;
+	boolean tunnelfallback;
 	boolean isDefault;
 	List<JobOptions> printerAttributes;
 	
 	
-	public PrintQueueConfig(String nickname, String protocol, String host, String port, String queue){
+	public PrintQueueConfig(String nickname, String protocol, String host, String port, String queue, String tunnel, String tunneluuid, String tunnelport, boolean tunnelfallback){
 		this.nickname = nickname;
 		this.protocol = protocol;
 		this.host = host;
 		this.port = port;
 		this.queue = queue;
+		this.tunnel = tunnel;
+		this.tunneluuid = tunneluuid;
+		this.tunnelport = tunnelport;
 	}
 	
 	public String getNickname(){
