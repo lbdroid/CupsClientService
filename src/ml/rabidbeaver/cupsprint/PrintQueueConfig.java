@@ -30,6 +30,7 @@ public class PrintQueueConfig {
 		this.tunnel = tunnel;
 		this.tunneluuid = tunneluuid;
 		this.tunnelport = tunnelport;
+		this.tunnelfallback = tunnelfallback;
 	}
 	
 	public String getNickname(){

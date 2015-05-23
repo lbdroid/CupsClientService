@@ -126,7 +126,6 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 			    }
 			    String sProtocol = (String) protocol.getSelectedItem();
 			    String sPassword = password.getText().toString().trim();
-
 			    final PrintQueueConfig conf = new PrintQueueConfig(sNickname, sProtocol, sHost, sPort, sQueue, tunnelName, tunnelUuid, tunnelPort, fallback.isChecked());
 			    if (checkExists(conf.getPrintQueue(), confdb)){
 			    	host.requestFocus();

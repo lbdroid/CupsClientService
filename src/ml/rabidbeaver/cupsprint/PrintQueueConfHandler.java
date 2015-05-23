@@ -104,7 +104,7 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 		values.put("tunnel", config.tunnel);
 		values.put("tunneluuid", config.tunneluuid);
 		values.put("tunnelport", config.tunnelport);
-		values.put("tunnelfallback", config.tunnelfallback);
+		values.put("tunnelfallback", config.tunnelfallback?1:0);
 		values.put("def", config.isDefault);
 		
 		if (printerExists(oldPrinter))
