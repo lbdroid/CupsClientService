@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Base64;
 
 public class PrintQueueConfHandler extends SQLiteOpenHelper {
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 4;
 	private static final String DATABASE_NAME = "printers.db";
 
 	public PrintQueueConfHandler(Context context){
@@ -26,7 +26,8 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String create = "CREATE TABLE printers (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 				+ "name VARCHAR, host VARCHAR, protocol VARCHAR, port INTEGER, queue VARCHAR, "
-				+ "username VARCHAR, password VARCHAR, def INTEGER DEFAULT 0);";
+				+ "username VARCHAR, password VARCHAR, tunneluuid VARCHAR, tunnelhost VARCHAR, "
+				+ "tunnelport INTEGER, tunnelfallback INTEGER, def INTEGER DEFAULT 0);";
 		db.execSQL(create);
 		create = "CREATE TABLE printer_opts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 				+ "printername VARCHAR, option VARCHAR, value VARCHAR);";
@@ -35,13 +36,22 @@ public class PrintQueueConfHandler extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (newVersion >= 2){
+		switch(oldVersion){
+		case 1:
 			String create = "CREATE TABLE printer_opts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
 					+ "printername VARCHAR, option VARCHAR, value VARCHAR);";
 			db.execSQL(create);
-		}
-		if (newVersion == 3){
-			String alter = "ALTER TABLE printers DROP COLUMN fittopage, nooptions, extensions, orientation, resolution";
+		case 2:
+			//String alter = "ALTER TABLE printers DROP COLUMN fittopage, DROP COLUMN nooptions, DROP COLUMN extensions, DROP COLUMN orientation, DROP COLUMN resolution;";
+			//db.execSQL(alter);
+		case 3:
+			String alter = "ALTER TABLE printers ADD COLUMN tunneluuid VARCHAR;";
+			db.execSQL(alter);
+			alter = "ALTER TABLE printers ADD COLUMN tunnelhost VARCHAR;";
+			db.execSQL(alter);
+			alter = "ALTER TABLE printers ADD COLUMN tunnelport INTEGER;";
+			db.execSQL(alter);
+			alter = "ALTER TABLE printers ADD COLUMN tunnelfallback INTEGER;";
 			db.execSQL(alter);
 		}
 	}

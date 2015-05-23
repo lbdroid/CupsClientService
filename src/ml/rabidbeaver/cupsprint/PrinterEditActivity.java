@@ -15,11 +15,13 @@ import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -151,6 +153,14 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 				testPrinter(v);
 			}
 		});
+		
+		Button tunnelBtn = (Button) findViewById(R.id.getTunnels);
+		tunnelBtn.setOnClickListener(new Button.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				getTunnels(v);
+			}
+		});
 
 		if (!oldPrinter.contentEquals("")){
 		    PrintQueueConfHandler dbconf = new PrintQueueConfHandler(getBaseContext());
@@ -198,6 +208,20 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 	    return super.onContextItemSelected(item);
 	 }
 
+	private void getTunnels(View v){
+		Intent intent = new Intent();
+		intent.setComponent(new ComponentName("ml.rabidbeaver.ssh", "ml.rabidbeaver.ssh.TunnelChooser"));
+		startActivityForResult(intent,0);
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK && data != null && data.hasExtra("name") && data.hasExtra("uuid")) {
+			String tunnelName = data.getStringExtra("name");
+			String tunnelUuid = data.getStringExtra("uuid");
+			Log.d("PRINTEREDIT","Name:"+tunnelName+", Uuid:"+tunnelUuid);
+		}
+    }
+	
 	private void alert(String message){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(message)

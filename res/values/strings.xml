@@ -38,5 +38,9 @@
     <string name="title_activity_advanced_settings">Advanced Settings</string>
     <string name="title_activity_job_list">Jobs</string>
     <string name="button_ok">OK</string>
+    <string name="sshtunnel">SSH Tunnel</string>
+    <string name="sshport">SSH local port</string>
+    <string name="sshfallback">SSH fallback</string>
+    <string name="sshchoose">Choose Tunnel</string>
 
 </resources>
