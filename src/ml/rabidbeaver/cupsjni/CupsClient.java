@@ -1,6 +1,5 @@
 package ml.rabidbeaver.cupsjni;
 
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import com.sun.jna.ptr.PointerByReference;
 
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.cups_password_cb_t;
-import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_encryption_e;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.http_status_e;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_op_e;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary.ipp_tag_e;
@@ -24,7 +22,6 @@ public class CupsClient {
 	private String userName = "anonymous";
 	private String password;
 	private PointerByReference serv_conn_p;
-	private IntBuffer i_b = IntBuffer.allocate(1);
 	
 	public static final int USER_AllOWED = 0;
 	public static final int USER_DENIED = 1;
@@ -35,7 +32,6 @@ public class CupsClient {
 	public CupsClient(String host, int port, String tunnelUuid, int tunnelPort, boolean tunnelFallback){
 		serv_conn_p = cups.httpConnect(host, port);
 	}
-	public CupsClient(){}
 	
 	public void setUserPass(String user, String pass){
 		this.userName=user;
