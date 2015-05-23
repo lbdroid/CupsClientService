@@ -53,6 +53,7 @@ public class PrintTask extends AsyncTask<Void, Void, Void>{
 	protected Void doInBackground(Void... params) {
 		try {
 			result = client.print(queue, cupsPrintJob);
+			client.cleanup();
 		}catch (Exception e){
 			this.exception = e;
 		}

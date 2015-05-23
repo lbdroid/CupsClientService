@@ -100,7 +100,7 @@ public class CupsPrintService extends PrintService implements PrintTaskListener{
 	    CupsPrintJob cupsPrintJob = new CupsPrintJob(file, fileName);
     	cupsPrintJob.setAttributes(cupsAttributes);
 
-	    CupsClient cupsClient = new CupsClient(config.host,Integer.parseInt(config.port),config.getTunnelUuid(), config.getTunnelPort(), config.getTunnelFallback());
+	    CupsClient cupsClient = new CupsClient(config.host,Integer.parseInt(config.port),config.getTunnelUuid(), config.getTunnelPort(), config.getTunnelFallback(), this);
 	    if (!(config.getPassword().equals(""))){
 	    	cupsClient.setUserPass(config.getUserName(), config.getPassword());
 	    }

@@ -3,6 +3,17 @@ package ml.rabidbeaver.cupsjni;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.util.Log;
+
 import com.ochafik.lang.jnaerator.runtime.NativeSize;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
@@ -28,9 +39,62 @@ public class CupsClient {
 	public static final int USER_NOT_ALLOWED = 2;
 	private MlRabidbeaverJnaLibrary cups = MlRabidbeaverJnaLibrary.INSTANCE;
 	
+	private ServiceConnection mConnection = null;
+	private Messenger mService = null;
+    private String Uuid;
+    private int tunnelPort;
+    private Context ctx;
+	
 	// Constructors
-	public CupsClient(String host, int port, String tunnelUuid, int tunnelPort, boolean tunnelFallback){
-		serv_conn_p = cups.httpConnect(host, port);
+	public CupsClient(String host, int port, String tunnelUuid, int tunnelPort, boolean tunnelFallback, Context ctx){
+		this.ctx=ctx;
+		if (tunnelUuid != null && tunnelUuid.length() > 1){
+			if ((tunnelFallback && (serv_conn_p = cups.httpConnect(host, port)) == null) || !tunnelFallback){
+				// try the tunnel
+				this.Uuid=tunnelUuid;
+				this.tunnelPort=tunnelPort;
+				loadServiceConnection();
+				Intent intent = new Intent();
+				intent.setComponent(new ComponentName("ml.rabidbeaver.ssh", "ml.rabidbeaver.ssh.TunnelService"));
+				ctx.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+				//TODO: the tunnel isn't ready fast enough when this function returns. Need to figure out
+				// some way to give it a chance to set up.
+			}
+		} else serv_conn_p = cups.httpConnect(host, port);
+	}
+	
+	public void cleanup(){
+		if (mConnection != null){
+			Message msg = Message.obtain(null, 3 /*MSG_DROP_ALL_TUNNELS*/, android.os.Process.myPid(), 0);
+        	try {
+				mService.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			ctx.unbindService(mConnection);
+		}
+	}
+	
+	public void loadServiceConnection(){
+		mConnection = new ServiceConnection() {
+	        public void onServiceConnected(ComponentName className, IBinder service) {
+	        	Log.d("CUPSCLIENT","setting up service");
+	            mService = new Messenger(service);
+	            Bundle bundle = new Bundle();
+	            bundle.putString("uuid", Uuid);
+	            Message msg = Message.obtain(null, 1 /*MSG_HOLDOPEN_TUNNEL*/, android.os.Process.myPid(), 0, bundle);
+            	try {
+					mService.send(msg);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+            	serv_conn_p = cups.httpConnect("localhost", tunnelPort);
+	        }
+
+	        public void onServiceDisconnected(ComponentName className) {
+	            mService = null;
+	        }
+	    };
 	}
 	
 	public void setUserPass(String user, String pass){

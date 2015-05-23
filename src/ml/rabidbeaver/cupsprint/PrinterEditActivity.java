@@ -46,6 +46,7 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 	String tunnelUuid = "";
 	String tunnelPort = "";
 	//boolean tunnelFallback = true;
+	CupsClient client;
 	CheckBox fallback;
 	EditText tunnel;
 	List<JobOptions> printerOptions;
@@ -280,9 +281,8 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 					queue.getText().toString(),
 					tunnelName, tunnelUuid, tunnelPort, fallback.isChecked());
 		
-	    CupsClient client;
 	    try {
-	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort(), printConfig.getTunnelUuid(), printConfig.getTunnelPort(), printConfig.getTunnelFallback());
+	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort(), printConfig.getTunnelUuid(), printConfig.getTunnelPort(), printConfig.getTunnelFallback(), this);
 	    }
 	    catch (Exception e){
 	    	showResult("Failed", e.getMessage());
@@ -327,7 +327,7 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 	    for (int i=0; i<printer.num_options; i++){
 	    	result += "\n"+ optsarr[i].name.getString(0) + ": " + optsarr[i].value.getString(0);
 	    }
-			    
+	    client.cleanup();
 		showResult("Success", result);
 	}
 	
