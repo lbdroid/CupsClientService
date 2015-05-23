@@ -44,6 +44,7 @@ public class CupsClient {
     private String Uuid;
     private int tunnelPort;
     private Context ctx;
+    private boolean tunnelconnected = false;
 	
 	// Constructors
 	public CupsClient(String host, int port, String tunnelUuid, int tunnelPort, boolean tunnelFallback, Context ctx){
@@ -88,7 +89,13 @@ public class CupsClient {
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-            	serv_conn_p = cups.httpConnect("localhost", tunnelPort);
+            	int i=0;
+            	while (serv_conn_p == null){
+            		serv_conn_p = cups.httpConnect("localhost", tunnelPort);
+            		try { Thread.sleep(1000); } catch (InterruptedException e) {}
+            		i++;
+            		if (i>20) break;
+            	}
 	        }
 
 	        public void onServiceDisconnected(ComponentName className) {
@@ -118,6 +125,7 @@ public class CupsClient {
 	
 
 	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){
+		Log.d("CUPSCLIENT-getjobs",serv_conn_p==null?"NULL":"notnull");
 		if (serv_conn_p == null) return null;
 		PointerByReference p = new PointerByReference();
 		int num = cups.cupsGetJobs2(serv_conn_p, p, queue, myJobs?1:0, whichJobs);
@@ -126,7 +134,7 @@ public class CupsClient {
 		cups_job_s cjob = new cups_job_s(ptr);
 		cjob.read();
 		cups_job_s[] jobarr = (cups_job_s[]) cjob.toArray(num);
-		
+		Log.d("CUPSCLIENT-donegetjobs",serv_conn_p==null?"NULL":"notnull");
 		return jobarr;
     }
 	
