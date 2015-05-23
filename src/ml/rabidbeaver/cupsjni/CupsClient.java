@@ -92,9 +92,9 @@ public class CupsClient {
             	int i=0;
             	while (serv_conn_p == null){
             		serv_conn_p = cups.httpConnect("localhost", tunnelPort);
-            		try { Thread.sleep(1000); } catch (InterruptedException e) {}
             		i++;
-            		if (i>20) break;
+            		if (serv_conn_p != null || i>20) break;
+            		try { Thread.sleep(1000); } catch (InterruptedException e) {}
             	}
 	        }
 
