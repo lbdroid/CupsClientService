@@ -32,7 +32,7 @@ import ml.rabidbeaver.jna.cups_option_s;
 public class CupsClient {
 	private String userName = "anonymous";
 	private String password;
-	private PointerByReference serv_conn_p;
+	private PointerByReference serv_conn_p = null;
 	
 	public static final int USER_AllOWED = 0;
 	public static final int USER_DENIED = 1;
@@ -44,7 +44,8 @@ public class CupsClient {
     private String Uuid;
     private int tunnelPort;
     private Context ctx;
-    private boolean tunnelconnected = false;
+    private boolean cupsready = false;
+    private boolean tunnelconn = false;
 	
 	// Constructors
 	public CupsClient(String host, int port, String tunnelUuid, int tunnelPort, boolean tunnelFallback, Context ctx){
@@ -52,16 +53,16 @@ public class CupsClient {
 		if (tunnelUuid != null && tunnelUuid.length() > 1){
 			if ((tunnelFallback && (serv_conn_p = cups.httpConnect(host, port)) == null) || !tunnelFallback){
 				// try the tunnel
+				tunnelconn = true;
 				this.Uuid=tunnelUuid;
 				this.tunnelPort=tunnelPort;
 				loadServiceConnection();
 				Intent intent = new Intent();
 				intent.setComponent(new ComponentName("ml.rabidbeaver.ssh", "ml.rabidbeaver.ssh.TunnelService"));
 				ctx.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-				//TODO: the tunnel isn't ready fast enough when this function returns. Need to figure out
-				// some way to give it a chance to set up.
 			}
 		} else serv_conn_p = cups.httpConnect(host, port);
+		if (serv_conn_p != null) cupsready = true;
 	}
 	
 	public void cleanup(){
@@ -96,6 +97,8 @@ public class CupsClient {
             		if (serv_conn_p != null || i>20) break;
             		try { Thread.sleep(1000); } catch (InterruptedException e) {}
             	}
+            	if (serv_conn_p != null) cupsready = true;
+            	else tunnelconn = false; // don't wait on connection that will never happen
 	        }
 
 	        public void onServiceDisconnected(ComponentName className) {
@@ -123,9 +126,17 @@ public class CupsClient {
 		return true;
 	}
 	
+	private void waitForTunnel(){
+		int counter = 0;
+		while (tunnelconn && !cupsready){
+			try { Thread.sleep(500); } catch (InterruptedException e) {}
+			counter++;
+			if (counter > 40) break;
+		}
+	}
 
 	public cups_job_s[] getJobs(String queue, int whichJobs, boolean myJobs){
-		Log.d("CUPSCLIENT-getjobs",serv_conn_p==null?"NULL":"notnull");
+		waitForTunnel();
 		if (serv_conn_p == null) return null;
 		PointerByReference p = new PointerByReference();
 		int num = cups.cupsGetJobs2(serv_conn_p, p, queue, myJobs?1:0, whichJobs);
@@ -134,7 +145,6 @@ public class CupsClient {
 		cups_job_s cjob = new cups_job_s(ptr);
 		cjob.read();
 		cups_job_s[] jobarr = (cups_job_s[]) cjob.toArray(num);
-		Log.d("CUPSCLIENT-donegetjobs",serv_conn_p==null?"NULL":"notnull");
 		return jobarr;
     }
 	
@@ -143,6 +153,7 @@ public class CupsClient {
     }
 
 	public cups_dest_s getPrinter(String queue, boolean extended){
+		waitForTunnel();
 		if (serv_conn_p == null) return null;
 		PointerByReference p = new PointerByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, p);
@@ -156,6 +167,7 @@ public class CupsClient {
     }
 	
 	public cups_dest_s[] listPrinters(){
+		waitForTunnel();
 		if (serv_conn_p == null) return null;
 		PointerByReference p = new PointerByReference();
     	int s = cups.cupsGetDests2(serv_conn_p, p);
@@ -168,6 +180,7 @@ public class CupsClient {
 	}
     
     public int print(cups_dest_s printer, CupsPrintJob printJob) throws Exception{
+    	waitForTunnel();
     	if (serv_conn_p == null) return -1;
     	Pointer m = new Memory(printJob.getJobName().length() + 1);
     	m.setString(0, printJob.getJobName());
@@ -210,6 +223,7 @@ public class CupsClient {
     
     public List<JobOptions> getPrinterOptions(cups_dest_s printer){
     	List<JobOptions> printerOptions = new ArrayList<JobOptions>();
+    	waitForTunnel();
     	if (serv_conn_p == null) return printerOptions;
     	PointerByReference request = cups.ippNewRequest(ipp_op_e.IPP_OP_GET_PRINTER_ATTRIBUTES);
     	cups.ippAddString(request, ipp_tag_e.IPP_TAG_OPERATION, ipp_tag_e.IPP_TAG_URI, "printer-uri", null, "/printers/"+printer.name.getString(0));

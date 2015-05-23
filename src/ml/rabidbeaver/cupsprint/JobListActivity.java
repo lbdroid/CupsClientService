@@ -1,16 +1,9 @@
 package ml.rabidbeaver.cupsprint;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import ml.rabidbeaver.tasks.CancelJobTask;
-import ml.rabidbeaver.tasks.GetPrinterListener;
-import ml.rabidbeaver.tasks.GetPrinterTask;
 import ml.rabidbeaver.cupsjni.CupsClient;
-import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import ml.rabidbeaver.jna.MlRabidbeaverJnaLibrary;
-import ml.rabidbeaver.jna.cups_dest_s;
 import ml.rabidbeaver.jna.cups_job_s;
 import android.os.Bundle;
 import android.app.Activity;
@@ -26,7 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class JobListActivity extends AppCompatActivity implements GetPrinterListener{
+public class JobListActivity extends AppCompatActivity {
 	
 	private PrintQueueConfig config;
 	private Updater updater;
@@ -74,23 +67,6 @@ public class JobListActivity extends AppCompatActivity implements GetPrinterList
 		}
 		if (!(config.password.equals(""))){
 			client.setUserPass(config.userName, config.password);
-		}
-		GetPrinterTask task = new GetPrinterTask(client, config.getPrintQueue(), false);
-		task = new GetPrinterTask(client, Util.getQueue(config),true);
-		task.setListener(this);
-		try {
-			task.execute().get(5000, TimeUnit.MILLISECONDS);
-		}
-		catch (Exception e){
-			Util.showToast(this, e.toString());
-			finish();
-			return;
-		}
-		Exception ex = task.getException();
-		if (ex != null){
-			Util.showToast(this, ex.toString());
-			finish();
-			return;
 		}
 		jobsListView.setOnItemClickListener(new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view,
@@ -222,10 +198,4 @@ public class JobListActivity extends AppCompatActivity implements GetPrinterList
 			}
 		}
 	}
-
-	@Override
-	public void onGetPrinterTaskDone(cups_dest_s printer, List<JobOptions> jobOptions, Exception exception) {
-		// do nothing
-	}
-
 }
