@@ -215,10 +215,11 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == RESULT_OK && data != null && data.hasExtra("name") && data.hasExtra("uuid")) {
+		if (resultCode == RESULT_OK && data != null && data.hasExtra("name") && data.hasExtra("uuid") && data.hasExtra("port")) {
 			String tunnelName = data.getStringExtra("name");
 			String tunnelUuid = data.getStringExtra("uuid");
-			Log.d("PRINTEREDIT","Name:"+tunnelName+", Uuid:"+tunnelUuid);
+			int tunnelPort = data.getIntExtra("port", -1);
+			Log.d("PRINTEREDIT","Name:"+tunnelName+", Uuid:"+tunnelUuid+", Port:"+Integer.toString(tunnelPort));
 		}
     }
 	
