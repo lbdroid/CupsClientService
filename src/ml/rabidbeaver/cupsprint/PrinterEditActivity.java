@@ -282,7 +282,7 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 		
 	    CupsClient client;
 	    try {
-	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort());
+	    	client = new CupsClient(Util.getClientURL(printConfig).getHost(), Util.getClientURL(printConfig).getPort(), printConfig.getTunnelUuid(), printConfig.getTunnelPort(), printConfig.getTunnelFallback());
 	    }
 	    catch (Exception e){
 	    	showResult("Failed", e.getMessage());

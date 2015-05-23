@@ -55,6 +55,18 @@ public class PrintQueueConfig {
 	public String getPassword(){
 		return password;
 	}
+	
+	public String getTunnelUuid(){
+		return tunneluuid;
+	}
+	
+	public int getTunnelPort(){
+		return Integer.parseInt(tunnelport);
+	}
+	
+	public boolean getTunnelFallback(){
+		return tunnelfallback;
+	}
 		
 	public List<JobOptions> getPrinterAttributes(){
 		return printerAttributes;

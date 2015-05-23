@@ -32,11 +32,7 @@ public class CupsClient {
 	private MlRabidbeaverJnaLibrary cups = MlRabidbeaverJnaLibrary.INSTANCE;
 	
 	// Constructors
-	public CupsClient(String host, int port, String userName){
-		this.userName=userName;
-		serv_conn_p = cups.httpConnect2(host, port, null, 0, http_encryption_e.HTTP_ENCRYPTION_IF_REQUESTED, 0, 2500, i_b);
-	}
-	public CupsClient(String host, int port){
+	public CupsClient(String host, int port, String tunnelUuid, int tunnelPort, boolean tunnelFallback){
 		serv_conn_p = cups.httpConnect(host, port);
 	}
 	public CupsClient(){}

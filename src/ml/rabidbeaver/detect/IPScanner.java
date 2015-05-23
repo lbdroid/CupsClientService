@@ -40,7 +40,7 @@ public class IPScanner implements Runnable{
                     s.close();
                     //System.out.println(ip + " open");
                     try {
-                    	CupsClient cupsClient = new CupsClient(ip, port, "");
+                    	CupsClient cupsClient = new CupsClient(ip, port, null, 0, true);
                     	if (!(password.equals(""))){
                     		cupsClient.setUserPass(username, password);
                     	}
@@ -58,7 +58,7 @@ public class IPScanner implements Runnable{
                     	}
                     }catch (Exception e){}
                     try {
-                    	CupsClient cupsClient = new CupsClient(ip, port, "");
+                    	CupsClient cupsClient = new CupsClient(ip, port, null, 0, true);
                     	if (!(password.equals(""))){
                     		cupsClient.setUserPass(username, password);
                     	}

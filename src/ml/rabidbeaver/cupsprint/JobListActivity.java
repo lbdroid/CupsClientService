@@ -66,7 +66,7 @@ public class JobListActivity extends AppCompatActivity implements GetPrinterList
 		recordAdapter = new JobRecordAdapter(this);
 		jobsListView.setAdapter(recordAdapter);
 		try {
-			client = new CupsClient(Util.getClientURL(config).getHost(), Util.getClientURL(config).getPort());
+			client = new CupsClient(Util.getClientURL(config).getHost(), Util.getClientURL(config).getPort(), config.tunneluuid, config.getTunnelPort(), config.tunnelfallback);
 		} catch (Exception e){
 			Util.showToast(this, e.toString());
 			finish();
