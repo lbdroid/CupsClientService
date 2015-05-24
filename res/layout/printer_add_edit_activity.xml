@@ -30,7 +30,8 @@
         				android:text="@string/nickname" />
     				<EditText
 	        			android:id="@+id/editNickname"
-    	    			android:inputType="text"
+    	    			android:inputType="textNoSuggestions"
+   		        		android:privateImeOptions="nm"
 						android:layout_weight="1"
 						android:layout_gravity="center_vertical"
 						android:layout_width="wrap_content"
@@ -61,7 +62,8 @@
 
     				<EditText
         				android:id="@+id/editHost"
-	        			android:inputType="text"
+	        			android:inputType="textNoSuggestions"
+   		        		android:privateImeOptions="nm"
 						android:layout_weight="1"
 						android:layout_gravity="center_vertical"
         				android:layout_width="wrap_content"
@@ -79,6 +81,7 @@
 	    			<EditText
     	    			android:id="@+id/editPort"
         				android:inputType="number"
+        				android:privateImeOptions="nm"
         				android:maxLines="1"
 	        			android:layout_gravity="center_vertical"
     	    			android:layout_width="wrap_content"
@@ -95,7 +98,8 @@
 
 		    		<EditText
     		    		android:id="@+id/editQueue"
-        				android:inputType="text"
+        				android:inputType="textNoSuggestions"
+   		        		android:privateImeOptions="nm"
 						android:layout_weight="1"
         				android:layout_width="wrap_content"
 	        			android:layout_gravity="center_vertical"
@@ -112,7 +116,8 @@
 
     				<EditText
         				android:id="@+id/editUserName"
-	        			android:inputType="text"
+	        			android:inputType="textNoSuggestions"
+   		        		android:privateImeOptions="nm"
 						android:layout_weight="1"
 						android:layout_gravity="center_vertical"
         				android:layout_width="wrap_content"
@@ -130,6 +135,7 @@
     				<EditText
         				android:id="@+id/editPassword"
         				android:inputType="textPassword"
+        				android:privateImeOptions="nm"
         				android:layout_gravity="center_vertical"
 						android:layout_weight="1"
     	    			android:layout_width="wrap_content"
@@ -161,7 +167,8 @@
 
     				<EditText
         				android:id="@+id/sshTunnel"
-	        			android:inputType="text"
+	        			android:inputType="textNoSuggestions"
+   		        		android:privateImeOptions="nm"
 						android:layout_weight="1"
 						android:layout_gravity="center_vertical"
         				android:layout_width="wrap_content"
