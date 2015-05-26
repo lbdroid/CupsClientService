@@ -1277,7 +1277,7 @@ cupsdCheckGroup(
   */
 
   group = getgrnam(groupname);
-  endgrent();
+  //endgrent();
 
   if (group != NULL)
   {
@@ -2092,8 +2092,8 @@ static char *				/* O - Encrypted password */
 cups_crypt(const char *pw,		/* I - Password string */
            const char *salt)		/* I - Salt (key) string */
 {
-  if (!strncmp(salt, "$1$", 3))
-  {
+  //if (!strncmp(salt, "$1$", 3))
+  //{
    /*
     * Use MD5 passwords without the benefit of PAM; this is for
     * Slackware Linux, and the algorithm was taken from the
@@ -2192,15 +2192,15 @@ cups_crypt(const char *pw,		/* I - Password string */
     *ptr = '\0';
 
     return (result);
-  }
-  else
-  {
+ // }
+  //else
+  //{
    /*
     * Use the standard crypt() function...
     */
 
-    return (crypt(pw, salt));
-  }
+    //return (crypt(pw, salt));
+  //}
 }
 #endif /* !HAVE_LIBPAM */
 

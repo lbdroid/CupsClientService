@@ -31,6 +31,12 @@
 # define F_TLOCK 2	/* Test and lock a region for exclusive use.  */
 # define F_TEST  3	/* Test a region for other processes locks.  */
 
+// The lockf() function is not available on Android; we translate to flock().
+#define F_LOCK LOCK_EX
+#define F_ULOCK LOCK_UN
+inline int lockf(int fd, int cmd, off_t ignored_len) {
+    return flock(fd, cmd);
+}
 
 /*
  * Local functions...

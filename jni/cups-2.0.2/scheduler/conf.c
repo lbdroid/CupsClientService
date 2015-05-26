@@ -651,7 +651,7 @@ cupsdReadConfiguration(void)
   */
 
   group = getgrnam(CUPS_DEFAULT_GROUP);
-  endgrent();
+  //endgrent();
 
   if (group)
     Group = group->gr_gid;
@@ -662,7 +662,7 @@ cupsdReadConfiguration(void)
     */
 
     group = getgrnam("nobody");
-    endgrent();
+    //endgrent();
 
     if (group)
       Group = group->gr_gid;
@@ -925,7 +925,7 @@ cupsdReadConfiguration(void)
       */
 
       group = getgrgid(0);
-      endgrent();
+      //endgrent();
 
       if (group != NULL)
 	cupsdSetString(&SystemGroups[0], group->gr_name);
@@ -1001,7 +1001,7 @@ cupsdReadConfiguration(void)
       cupsdLogMessage(CUPSD_LOG_INFO, "Resetting Group to \"nobody\"...");
 
       group = getgrnam("nobody");
-      endgrent();
+      //endgrent();
 
       if (group != NULL)
 	Group = group->gr_gid;
@@ -2503,7 +2503,7 @@ parse_groups(const char *s)		/* I - Space-delimited groups */
     else
       status = 0;
 
-    endgrent();
+    //endgrent();
 
     valstart = valend;
 
@@ -3428,7 +3428,7 @@ read_cups_files_conf(cups_file_t *fp)	/* I - File to read from */
         Group = (gid_t)atoi(value);
       else
       {
-        endgrent();
+        //endgrent();
 	group = getgrnam(value);
 
 	if (group != NULL)
