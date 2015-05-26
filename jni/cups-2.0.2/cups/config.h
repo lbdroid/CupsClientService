@@ -107,8 +107,7 @@
  * Default WebInterface value...
  */
 
-#undef CUPS_DEFAULT_WEBIF
-
+#define CUPS_DEFAULT_WEBIF 1
 
 /*
  * Where are files stored?
@@ -255,7 +254,7 @@
  */
 
 #undef HAVE_SIGSET
-#undef HAVE_SIGACTION
+#define HAVE_SIGACTION 1
 
 
 /*

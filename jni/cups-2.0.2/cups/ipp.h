@@ -695,7 +695,7 @@ typedef int (*ipp_copycb_t)(void *context, ipp_t *dst, ipp_attribute_t *attr);
  * from being exposed.  This is useful when migrating existing code to the new
  * accessors.
  */
-
+#define _IPP_PRIVATE_STRUCTURES 1
 #  ifdef _IPP_PRIVATE_STRUCTURES
      /* Somebody has overridden the value */
 #  elif defined(_CUPS_SOURCE) || defined(_CUPS_IPP_PRIVATE_H_)
