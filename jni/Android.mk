@@ -101,3 +101,4 @@ CUPS_LIB_DIR       := cups-2.0.2/cups
 include $(CLEAR_VARS)
 include $(my_LOCAL_PATH)/$(CUPS_BASE_DIR)/Android.mk
 include $(my_LOCAL_PATH)/cups_shim/Android.mk
+include $(my_LOCAL_PATH)/libusb/android/jni/libusb.mk
