@@ -62,7 +62,13 @@ public class PrintQueueConfig {
 	}
 	
 	public int getTunnelPort(){
-		return Integer.parseInt(tunnelport);
+		int tunnelpt;
+		try {
+			tunnelpt = Integer.parseInt(tunnelport);
+		} catch (NumberFormatException e){
+			tunnelpt = -1;
+		}
+		return tunnelpt;
 	}
 	
 	public boolean getTunnelFallback(){
