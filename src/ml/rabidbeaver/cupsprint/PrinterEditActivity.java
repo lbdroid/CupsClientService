@@ -15,6 +15,7 @@ import ml.rabidbeaver.cupsjni.JobOptions;
 import ml.rabidbeaver.cupsprintservice.R;
 import android.os.Bundle;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -227,7 +228,9 @@ public class PrinterEditActivity extends AppCompatActivity implements PrinterUpd
 	private void getTunnels(View v){
 		Intent intent = new Intent();
 		intent.setComponent(new ComponentName("ml.rabidbeaver.ssh", "ml.rabidbeaver.ssh.TunnelChooser"));
-		startActivityForResult(intent,0);
+		try {
+			startActivityForResult(intent,0);
+		} catch (ActivityNotFoundException e){}
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
