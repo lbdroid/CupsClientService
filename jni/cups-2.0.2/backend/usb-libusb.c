@@ -26,7 +26,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-
 /*
  * WAIT_EOF_DELAY is number of seconds we'll wait for responses from
  * the printer after we've finished sending all the data

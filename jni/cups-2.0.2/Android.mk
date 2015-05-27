@@ -744,8 +744,8 @@ include $(BUILD_EXECUTABLE)
 # usb
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES:= backend/usb.c
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/cups
-LOCAL_SHARED_LIBRARIES += libcups
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/cups $(LOCAL_PATH)/../libusb
+LOCAL_SHARED_LIBRARIES += libcups libusb1.0
 LOCAL_STATIC_LIBRARIES += libbackend
 LOCAL_MODULE := usb
 LOCAL_MODULE_TAGS := optional

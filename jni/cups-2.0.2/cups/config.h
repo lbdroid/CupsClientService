@@ -647,7 +647,7 @@
  * Do we have libusb?
  */
 
-#undef HAVE_LIBUSB
+#define HAVE_LIBUSB 1
 
 
 /*
