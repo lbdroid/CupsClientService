@@ -1,0 +1,8 @@
+[submodule "jni/libusb"]
+    path = jni/libusb
+    url = https://github.com/libusb/libusb.git
+
+[submodule "jni/cups"]
+    path = jni/cups
+    url = https://github.com/cups/cups.git
+
