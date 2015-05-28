@@ -392,26 +392,6 @@ LOCAL_MODULE := cupsctl
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_EXECUTABLE)
 
-# admin cupstestdsc
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES:= \
-	systemv/cupstestdsc.c
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/cups
-LOCAL_SHARED_LIBRARIES += libcups
-LOCAL_MODULE := cupstestdsc
-LOCAL_MODULE_TAGS := optional
-include $(BUILD_EXECUTABLE)
-
-# admin cupstestppd
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES:= \
-	systemv/cupstestppd.c
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/cups
-LOCAL_SHARED_LIBRARIES += libcups libcupsimage
-LOCAL_MODULE := cupstestppd
-LOCAL_MODULE_TAGS := optional
-include $(BUILD_EXECUTABLE)
-
 # admin lp
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES:= \
