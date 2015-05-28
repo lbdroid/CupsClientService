@@ -116,18 +116,18 @@
  *       variables at run-time...
  */
 
-#define CUPS_BINDIR	"/usr/bin"
-#define CUPS_CACHEDIR	"/data/data/ml.rabidbeaver.cupsprintservice/files/cache"
-#define CUPS_DATADIR    "/usr/share/cups"
-#define CUPS_DOCROOT	"/usr/share/doc/cups"
-#define CUPS_FONTPATH	"/usr/share/cups/fonts"
-#define CUPS_LOCALEDIR	"/usr/share/locale"
-#define CUPS_LOGDIR	"/data/data/ml.rabidbeaver.cupsprintservice/files/logs"
-#define CUPS_REQUESTS	"/var/spool/cups"
-#define CUPS_SBINDIR	"/usr/sbin"
-#define CUPS_SERVERBIN	"/usr/lib/cups"
-#define CUPS_SERVERROOT	"/data/data/ml.rabidbeaver.cupsprintservice/files"
-#define CUPS_STATEDIR	"/var/run/cups"
+#define CUPS_BINDIR	"/data/data/ml.rabidbeaver.cupsprintservice/bin"
+#define CUPS_CACHEDIR	"/data/data/ml.rabidbeaver.cupsprintservice/cache"
+#define CUPS_DATADIR    "/data/data/ml.rabidbeaver.cupsprintservice/data"
+#define CUPS_DOCROOT	"/data/data/ml.rabidbeaver.cupsprintservice/doc"
+#define CUPS_FONTPATH	"/data/data/ml.rabidbeaver.cupsprintservice/fonts"
+#define CUPS_LOCALEDIR	"/data/data/ml.rabidbeaver.cupsprintservice/locale"
+#define CUPS_LOGDIR	"/data/data/ml.rabidbeaver.cupsprintservice/logs"
+#define CUPS_REQUESTS	"/data/data/ml.rabidbeaver.cupsprintservice/spool"
+#define CUPS_SBINDIR	"/data/data/ml.rabidbeaver.cupsprintservice/sbin"
+#define CUPS_SERVERBIN	"/data/data/ml.rabidbeaver.cupsprintservice/cupsd"
+#define CUPS_SERVERROOT	"/data/data/ml.rabidbeaver.cupsprintservice/root"
+#define CUPS_STATEDIR	"/data/data/ml.rabidbeaver.cupsprintservice/run"
 
 
 /*
