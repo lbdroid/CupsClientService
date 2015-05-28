@@ -67,6 +67,7 @@ LOCAL_SRC_FILES:= \
 	cups/string.c \
 	cups/tempfile.c \
 	cups/thread.c \
+	cups/tls.c \
 	cups/transcode.c \
 	cups/usersys.c \
 	cups/util.c \
@@ -702,14 +703,14 @@ include $(BUILD_STATIC_LIBRARY)
 #include $(BUILD_EXECUTABLE)
 
 # ipp (requires cups/tls.h)
-#include $(CLEAR_VARS)
-#LOCAL_SRC_FILES:= backend/ipp.c
-#LOCAL_C_INCLUDES := $(LOCAL_PATH)/cups
-#LOCAL_SHARED_LIBRARIES += libcups
-#LOCAL_STATIC_LIBRARIES += libbackend
-#LOCAL_MODULE := ipp
-#LOCAL_MODULE_TAGS := optional
-#include $(BUILD_EXECUTABLE)
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES:= backend/ipp.c
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/cups
+LOCAL_SHARED_LIBRARIES += libcups
+LOCAL_STATIC_LIBRARIES += libbackend
+LOCAL_MODULE := ipp
+LOCAL_MODULE_TAGS := optional
+include $(BUILD_EXECUTABLE)
 
 # lpd
 include $(CLEAR_VARS)
