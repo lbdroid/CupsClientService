@@ -22,8 +22,8 @@ my_LOCAL_PATH := $(call my-dir)
 #WPRINT_LIB_DIR     := wprint/lib
 #WPRINT_PLUGINS_DIR := wprint/plugins
 #IPP_HELPER_DIR     := wprint/ipphelper
-CUPS_BASE_DIR      := cups-2.0.2
-CUPS_LIB_DIR       := cups-2.0.2/cups
+CUPS_BASE_DIR      := cups
+CUPS_LIB_DIR       := cups/cups
 
 
 #include $(CLEAR_VARS)
