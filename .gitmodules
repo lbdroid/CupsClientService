@@ -1,8 +1,12 @@
 [submodule "jni/libusb"]
     path = jni/libusb
-    url = https://github.com/libusb/libusb.git
+    url = https://github.com/lbdroid/libusb.git
 
 [submodule "jni/cups"]
     path = jni/cups
-    url = https://github.com/cups/cups.git
+    url = https://github.com/lbdroid/cups.git
+
+[submodule "jni/openssl"]
+    path = jni/openssl
+    url = https://github.com/lbdroid/openssl.git
 
