@@ -8,5 +8,4 @@
 
 [submodule "jni/openssl"]
     path = jni/openssl
-    url = https://github.com/lbdroid/openssl.git
-
+    url = https://github.com/lbdroid/android_external_openssl.git
