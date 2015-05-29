@@ -99,6 +99,7 @@ CUPS_LIB_DIR       := cups/cups
 
 # Build CUPS library
 include $(CLEAR_VARS)
-include $(my_LOCAL_PATH)/$(CUPS_BASE_DIR)/Android.mk
+include $(my_LOCAL_PATH)/cups/Android.mk
 include $(my_LOCAL_PATH)/cups_shim/Android.mk
 include $(my_LOCAL_PATH)/libusb/android/jni/libusb.mk
+include $(my_LOCAL_PATH)/openssl/Android.mk
