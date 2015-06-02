@@ -58,16 +58,6 @@ public class JobListActivity extends AppCompatActivity {
 		jobsListView = (ListView) findViewById(R.id.jobsListView);
 		recordAdapter = new JobRecordAdapter(this);
 		jobsListView.setAdapter(recordAdapter);
-		try {
-			client = new CupsClient(Util.getClientURL(config).getHost(), Util.getClientURL(config).getPort(), config.tunneluuid, config.getTunnelPort(), config.tunnelfallback, this);
-		} catch (Exception e){
-			Util.showToast(this, e.toString());
-			finish();
-			return;
-		}
-		if (!(config.password.equals(""))){
-			client.setUserPass(config.userName, config.password);
-		}
 		jobsListView.setOnItemClickListener(new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view,
                 int position, long id) {
@@ -90,7 +80,7 @@ public class JobListActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy(){
 		super.onDestroy();
-		client.cleanup();
+		if (client != null) client.cleanup();
 	}
 
 	@Override
@@ -167,9 +157,15 @@ public class JobListActivity extends AppCompatActivity {
 
 		@Override
 		public void run() {
-			if (client == null){
-				return;
-			}
+			try {
+			    client = new CupsClient(Util.getClientURL(config).getHost(), Util.getClientURL(config).getPort(), config.tunneluuid, config.getTunnelPort(), config.tunnelfallback, this);
+		    } catch (Exception e){
+			    Util.showToast(this, e.toString());
+			    finish();
+			    return;
+		    }
+			if (client == null) return;
+			if (!(config.password.equals(""))) client.setUserPass(config.userName, config.password);
 			int passes = 0;
 			while (!stop){
 				if (passes == 0){
