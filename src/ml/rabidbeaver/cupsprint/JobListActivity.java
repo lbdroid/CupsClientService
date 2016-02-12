@@ -8,6 +8,7 @@ import ml.rabidbeaver.jna.cups_job_s;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -158,9 +159,9 @@ public class JobListActivity extends AppCompatActivity {
 		@Override
 		public void run() {
 			try {
-			    client = new CupsClient(Util.getClientURL(config).getHost(), Util.getClientURL(config).getPort(), config.tunneluuid, config.getTunnelPort(), config.tunnelfallback, this);
+			    client = new CupsClient(Util.getClientURL(config).getHost(), Util.getClientURL(config).getPort(), config.tunneluuid, config.getTunnelPort(), config.tunnelfallback, activity);
 		    } catch (Exception e){
-			    Util.showToast(this, e.toString());
+			    Util.showToast(activity, e.toString());
 			    finish();
 			    return;
 		    }
